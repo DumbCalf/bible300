@@ -1821,7 +1821,7 @@ class Bible300App {
         for (let option of options) {
             switch (option.value) {
                 case 'inter':
-                    option.textContent = 'Inter (Default)';
+                    option.textContent = 'Default';
                     break;
                 case 'noto-sans':
                     option.textContent = 'Noto Sans';
