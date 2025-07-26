@@ -11,10 +11,11 @@ class Bible300App {
         this.startDate = new Date(); // Default to today
         this.settings = {
             wordsOfChristRed: false,
+            wordsOfChristScope: 'earthly', // 'all' or 'earthly' (Gospels + Acts 1 only)
             fontSize: 'medium',
             fontFamily: 'inter', // inter, noto-sans, noto-serif
             darkMode: false, // Default to light theme
-            tabLayout: 'horizontal', // horizontal, dropdown
+            tabLayout: 'dropdown', // horizontal, dropdown
             showFloatingArrows: true // Show floating navigation arrows
         };
         
@@ -558,10 +559,8 @@ class Bible300App {
             const verseClass = verse.isAddition ? 'verse addition' : 'verse';
             let verseText = verse.text;
             
-            // Apply Words of Christ styling if enabled and verse is marked
-            if (verse.wordsOfChrist && this.settings.wordsOfChristRed) {
-                verseText = `<span class="words-of-christ">${verseText}</span>`;
-            }
+            // Words of Christ styling is now handled by preserved spans in the verse text
+            // The red color will be controlled by CSS based on settings
             
             contentHtml += `<p class="${verseClass}">`;
             if (verse.verse !== 0) {
@@ -591,6 +590,14 @@ class Bible300App {
         // Update the modal
         document.getElementById('reader-title').textContent = `${bookName} ${chapter}`;
         document.getElementById('reader-content').innerHTML = contentHtml;
+        
+        // Apply Words of Christ styling based on book/chapter and settings
+        const readerModal = document.getElementById('bible-reader');
+        if (this.shouldShowWordsOfChrist(bookName, chapter)) {
+            readerModal.classList.add('words-of-christ-enabled');
+        } else {
+            readerModal.classList.remove('words-of-christ-enabled');
+        }
         
         // Store current reading info with footnotes
         this.currentReading = { book: bookName, chapter: chapter, footnotes: footnotes };
@@ -1654,6 +1661,13 @@ class Bible300App {
             this.applySettings();
         });
 
+        // Words of Christ Scope setting
+        document.getElementById('words-of-christ-scope').addEventListener('change', (e) => {
+            this.settings.wordsOfChristScope = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
         // Font Family setting
         document.getElementById('font-family-setting').addEventListener('change', (e) => {
             console.log('Font family changed to:', e.target.value);
@@ -1717,6 +1731,7 @@ class Bible300App {
     loadSettingsUI() {
         // Load current settings into UI
         document.getElementById('words-of-christ-red').checked = this.settings.wordsOfChristRed;
+        document.getElementById('words-of-christ-scope').value = this.settings.wordsOfChristScope;
         document.getElementById('font-family-setting').value = this.settings.fontFamily;
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
@@ -1787,8 +1802,34 @@ class Bible300App {
             this.updateThemeColor('#fafbfc'); // Light mode background
         }
 
-        // Words of Christ in red will be applied when Bible content is displayed
-        // This is a placeholder for future implementation
+        // Words of Christ setting is now applied per-book in displayBibleContent
+        // Remove any existing global classes
+        document.documentElement.classList.remove('words-of-christ-enabled');
+        document.documentElement.classList.remove('words-of-christ-earthly-only');
+    }
+    
+    shouldShowWordsOfChrist(bookName, chapter = null) {
+        // Check if Words of Christ should be enabled for this book/chapter
+        if (!this.settings.wordsOfChristRed) {
+            return false;
+        }
+        
+        if (this.settings.wordsOfChristScope === 'all') {
+            return true;
+        }
+        
+        // For 'earthly' scope, only show in Gospels and Acts 1
+        const gospelBooks = ['Matthew', 'Mark', 'Luke', 'John'];
+        if (gospelBooks.includes(bookName)) {
+            return true;
+        }
+        
+        // Acts only for chapter 1 in earthly ministry scope
+        if (bookName === 'Acts' && chapter === 1) {
+            return true;
+        }
+        
+        return false;
     }
     
     updateThemeColor(color) {

@@ -1963,8 +1963,8 @@ body {
     border-color: var(--success);
 }
 
-/* Words of Christ in Red */
-.words-of-christ {
+/* Words of Christ in Red - only when setting is enabled for current book */
+.words-of-christ-enabled .words-of-christ {
     color: #dc2626;
     font-weight: 500;
 }
