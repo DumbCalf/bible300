@@ -1559,6 +1559,14 @@ class Bible300App {
     updateOverviewTab() {
         this.setupOverviewEventListeners();
         this.generateDaysOverview();
+        
+        // Apply any existing filter after generating days
+        setTimeout(() => {
+            const searchInput = document.getElementById('book-search-input');
+            if (searchInput && searchInput.value.trim()) {
+                this.filterDays();
+            }
+        }, 0);
     }
 
     setupOverviewEventListeners() {
@@ -1571,6 +1579,21 @@ class Bible300App {
                 this.viewingDay = dayNumber;
                 this.updateUI();
             }
+        });
+
+        // Live search/filter functionality
+        const searchInput = document.getElementById('book-search-input');
+        const clearBtn = document.getElementById('clear-search-btn');
+
+        // Live filtering as user types
+        searchInput.addEventListener('input', () => {
+            this.filterDays();
+            this.toggleSearchIcon();
+        });
+
+        // Clear filter
+        clearBtn.addEventListener('click', () => {
+            this.clearDayFilter();
         });
     }
 
@@ -1645,6 +1668,168 @@ class Bible300App {
                 text: `${dayPlan.newTestament.book} ${dayPlan.newTestament.chapter}` 
             }
         ];
+    }
+
+    filterDays() {
+        const searchInput = document.getElementById('book-search-input');
+        const query = searchInput.value.trim();
+        const clearBtn = document.getElementById('clear-search-btn');
+        
+        // Show/hide clear button based on input
+        clearBtn.style.display = query ? 'flex' : 'none';
+        
+        // If no query, show all days
+        if (!query) {
+            this.showAllDays();
+            return;
+        }
+        
+        const normalizedQuery = query.toLowerCase();
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        
+        dayCards.forEach(card => {
+            const day = parseInt(card.dataset.day);
+            const shouldShow = this.dayMatchesFilter(day, normalizedQuery);
+            
+            if (shouldShow) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update header to show filter status
+        this.updateFilterStatus(query);
+    }
+
+    dayMatchesFilter(day, query) {
+        const readings = this.getDayReadings(day);
+        
+        return readings.some(reading => {
+            const fullReading = reading.text;
+            const bookName = this.extractBookName(fullReading);
+            
+            // Check if book name matches or full reading contains query
+            return this.bookNameMatches(bookName, query) || 
+                   fullReading.toLowerCase().includes(query);
+        });
+    }
+
+    extractBookName(readingText) {
+        // Handle multi-word book names
+        const parts = readingText.split(' ');
+        
+        // Common multi-word book patterns
+        const multiWordBooks = [
+            '1 Chronicles', '2 Chronicles', '1 Corinthians', '2 Corinthians',
+            '1 Kings', '2 Kings', '1 Maccabees', '2 Maccabees',
+            '1 Peter', '2 Peter', '1 Samuel', '2 Samuel',
+            '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy',
+            '1 John', '2 John', '3 John', 'Song of Solomon', 'Wisdom of Solomon'
+        ];
+        
+        // Check for multi-word books first
+        for (const multiBook of multiWordBooks) {
+            if (readingText.startsWith(multiBook)) {
+                return multiBook;
+            }
+        }
+        
+        // Default to first word
+        return parts[0];
+    }
+
+    bookNameMatches(bookName, query) {
+        const normalizedBook = bookName.toLowerCase();
+        
+        // Direct match
+        if (normalizedBook.includes(query)) {
+            return true;
+        }
+        
+        // Handle common variations
+        const variations = {
+            'psalms': 'psalm',
+            'psalm': 'psalms',
+            'matt': 'matthew',
+            'matthew': 'matt',
+            'gen': 'genesis',
+            'genesis': 'gen',
+            'ex': 'exodus',
+            'exodus': 'ex',
+            'rev': 'revelation',
+            'revelation': 'rev',
+            '1chr': '1 chronicles',
+            '2chr': '2 chronicles',
+            '1cor': '1 corinthians',
+            '2cor': '2 corinthians',
+            '1sam': '1 samuel',
+            '2sam': '2 samuel',
+            '1ki': '1 kings',
+            '2ki': '2 kings',
+            '1pet': '1 peter',
+            '2pet': '2 peter',
+            '1tim': '1 timothy',
+            '2tim': '2 timothy',
+            '1th': '1 thessalonians',
+            '2th': '2 thessalonians',
+            'song': 'song of solomon',
+            'wisdom': 'wisdom of solomon'
+        };
+        
+        // Check variations
+        if (variations[query] && normalizedBook.includes(variations[query])) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    showAllDays() {
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        dayCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        this.updateFilterStatus('');
+    }
+
+    updateFilterStatus(query) {
+        const header = document.querySelector('#overview .section-header h2');
+        
+        if (query) {
+            const visibleCards = document.querySelectorAll('.day-overview-card[style*="block"], .day-overview-card:not([style*="none"])');
+            const visibleCount = Array.from(visibleCards).filter(card => 
+                !card.style.display || card.style.display === 'block'
+            ).length;
+            
+            header.textContent = `300-Day Reading Plan Overview (${visibleCount} days match "${query}")`;
+        } else {
+            header.textContent = '300-Day Reading Plan Overview';
+        }
+    }
+
+    toggleSearchIcon() {
+        const searchInput = document.getElementById('book-search-input');
+        const searchIcon = document.querySelector('.search-icon');
+        
+        if (searchInput && searchIcon) {
+            if (searchInput.value.trim()) {
+                searchIcon.style.display = 'none';
+            } else {
+                searchIcon.style.display = 'block';
+            }
+        }
+    }
+
+    clearDayFilter() {
+        const searchInput = document.getElementById('book-search-input');
+        const clearBtn = document.getElementById('clear-search-btn');
+        
+        searchInput.value = '';
+        clearBtn.style.display = 'none';
+        this.showAllDays();
+        this.toggleSearchIcon(); // Show search icon again
+        searchInput.focus();
     }
 
     // Settings Tab Methods
