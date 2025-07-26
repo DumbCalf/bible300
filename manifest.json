@@ -2,7 +2,7 @@
     "name": "Bible 300 - Reading Plan & Navigation",
     "short_name": "Bible 300",
     "description": "A 300-day Bible reading plan with complete KJV Bible navigation and offline access",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#2563eb",
@@ -56,7 +56,7 @@
             "name": "Today's Reading",
             "short_name": "Today",
             "description": "Open today's Bible reading",
-            "url": "/?tab=reading-plan",
+            "url": "./?tab=reading-plan",
             "icons": [
                 {
                     "src": "icons/shortcut-today.png",
@@ -68,7 +68,7 @@
             "name": "Bible Navigation",
             "short_name": "Bible",
             "description": "Browse Bible books and chapters",
-            "url": "/?tab=bible-nav",
+            "url": "./?tab=bible-nav",
             "icons": [
                 {
                     "src": "icons/shortcut-bible.png",
@@ -80,7 +80,7 @@
     "protocol_handlers": [
         {
             "protocol": "web+bible",
-            "url": "/?book=%s"
+            "url": "./?book=%s"
         }
     ]
 }
