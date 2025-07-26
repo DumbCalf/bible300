@@ -564,7 +564,9 @@ class Bible300App {
             }
             
             contentHtml += `<p class="${verseClass}">`;
-            contentHtml += `<span class="verse-number">${verse.verse}</span>`;
+            if (verse.verse !== 0) {
+                contentHtml += `<span class="verse-number">${verse.verse}</span>`;
+            }
             contentHtml += verseText;
             contentHtml += `</p>`;
         });

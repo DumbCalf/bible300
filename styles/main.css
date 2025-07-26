@@ -113,7 +113,7 @@ body {
     left: 0;
     right: 0;
     height: var(--header-height);
-    background: #1f2937;
+    background: var(--white);
     border-top: 1px solid var(--gray-200);
     border-bottom: 1px solid var(--gray-200);
     box-shadow: var(--shadow-sm);
@@ -1869,7 +1869,7 @@ body {
 }
 
 .light-mode .header {
-    background: #fafbfc;
+    background: #ffffff;
     border-top-color: var(--gray-200);
     border-bottom-color: var(--gray-200);
 }
