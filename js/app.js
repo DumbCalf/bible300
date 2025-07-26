@@ -13,7 +13,7 @@ class Bible300App {
             wordsOfChristRed: false,
             fontSize: 'medium',
             fontFamily: 'inter', // inter, noto-sans, noto-serif
-            darkMode: true, // Default to dark theme (but inverted logic)
+            darkMode: false, // Default to light theme
             tabLayout: 'horizontal', // horizontal, dropdown
             showFloatingArrows: true // Show floating navigation arrows
         };
@@ -1414,14 +1414,6 @@ class Bible300App {
             }
         }
         
-        // Number keys for tab switching
-        if (e.key >= '1' && e.key <= '3' && !e.target.matches('input')) {
-            const tabs = ['reading-plan', 'bible-nav', 'progress'];
-            const tabIndex = parseInt(e.key) - 1;
-            if (tabs[tabIndex]) {
-                this.switchTab(tabs[tabIndex]);
-            }
-        }
     }
     
     showError(message) {
@@ -1691,8 +1683,7 @@ class Bible300App {
 
         // Dark Mode toggle
         document.getElementById('dark-mode').addEventListener('change', (e) => {
-            // Invert the setting since our CSS logic is inverted
-            this.settings.darkMode = !e.target.checked;
+            this.settings.darkMode = e.target.checked;
             this.saveSettings();
             this.applySettings();
         });
@@ -1728,10 +1719,7 @@ class Bible300App {
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
-        // Invert the toggle display since our CSS logic is inverted
-        // When darkMode is false (dark theme), toggle should be OFF
-        // When darkMode is true (light theme), toggle should be ON
-        document.getElementById('dark-mode').checked = !this.settings.darkMode;
+        document.getElementById('dark-mode').checked = this.settings.darkMode;
     }
 
     saveSettings() {
@@ -1744,26 +1732,9 @@ class Bible300App {
             if (saved) {
                 const settings = JSON.parse(saved);
                 
-                // Check if this is an older version that needs dark mode migration
-                if (!settings.hasOwnProperty('darkModeMigrated') || settings.darkModeMigrated !== true) {
-                    console.log('Forcing dark mode default for all users');
-                    // Force dark mode = true for all users (new and existing)
-                    this.settings = {
-                        wordsOfChristRed: settings.wordsOfChristRed || false,
-                        fontSize: settings.fontSize || 'medium',
-                        fontFamily: settings.fontFamily || 'inter',
-                        darkMode: true, // Default to dark theme (but inverted logic)
-                        darkModeMigrated: true // Mark as migrated
-                    };
-                    console.log('Migrated settings:', this.settings);
-                    this.saveSettings(); // Save the updated settings
-                } else {
-                    this.settings = { ...this.settings, ...settings };
-                }
+                this.settings = { ...this.settings, ...settings };
             } else {
-                // First time user - save the default settings including dark mode = true
-                console.log('First time user, saving default settings with dark mode = true');
-                this.settings.darkModeMigrated = true;
+                // First time user - save the default settings
                 this.saveSettings();
             }
         } catch (error) {
@@ -1807,9 +1778,9 @@ class Bible300App {
 
         // Apply dark mode setting
         if (this.settings.darkMode) {
-            document.documentElement.classList.add('dark-mode');
+            document.documentElement.classList.remove('light-mode');
         } else {
-            document.documentElement.classList.remove('dark-mode');
+            document.documentElement.classList.add('light-mode');
         }
 
         // Words of Christ in red will be applied when Bible content is displayed
