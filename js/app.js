@@ -1560,12 +1560,26 @@ class Bible300App {
         this.setupOverviewEventListeners();
         this.generateDaysOverview();
         
-        // Apply any existing filter after generating days
+        // Reset to "All Days" filter and clear search when switching to overview
         setTimeout(() => {
+            // Clear search input
             const searchInput = document.getElementById('book-search-input');
-            if (searchInput && searchInput.value.trim()) {
-                this.filterDays();
+            const clearBtn = document.getElementById('clear-search-btn');
+            const searchResultsText = document.getElementById('search-results-text');
+            
+            if (searchInput) {
+                searchInput.value = '';
             }
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            if (searchResultsText) {
+                searchResultsText.style.display = 'none';
+            }
+            
+            // Reset to "All Days" filter
+            this.updateActiveFilterButton('all');
+            this.applyQuickFilter('all');
         }, 0);
     }
 
