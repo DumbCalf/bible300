@@ -1824,10 +1824,10 @@ class Bible300App {
                     option.textContent = 'Inter (Default)';
                     break;
                 case 'noto-sans':
-                    option.textContent = isLoadingRealFonts ? 'Noto Sans' : 'Sans Serif (System)';
+                    option.textContent = 'Noto Sans';
                     break;
                 case 'noto-serif':
-                    option.textContent = isLoadingRealFonts ? 'Noto Serif' : 'Serif (System)';
+                    option.textContent = 'Noto Serif';
                     break;
             }
         }
