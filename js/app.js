@@ -628,11 +628,38 @@ class Bible300App {
             </div>
         `;
         
-        // Position popup near the clicked element
+        // Position popup near the clicked element with simple edge detection
         const rect = event.target.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
         popup.style.display = 'block';
-        popup.style.left = `${rect.left + window.scrollX}px`;
-        popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        
+        // Get actual popup dimensions after showing
+        const popupRect = popup.getBoundingClientRect();
+        const popupWidth = popupRect.width || 300;
+        const popupHeight = popupRect.height || 100;
+        
+        let left = rect.left + window.scrollX;
+        let top = rect.bottom + window.scrollY + 5;
+        
+        // Simple right edge check - shift left if would overflow
+        if (left + popupWidth > viewportWidth - 10) {
+            left = rect.right + window.scrollX - popupWidth;
+        }
+        
+        // Simple left edge check
+        if (left < 10) {
+            left = 10;
+        }
+        
+        // Simple bottom edge check - show above if would overflow
+        if (rect.bottom + popupHeight > viewportHeight - 10) {
+            top = rect.top + window.scrollY - popupHeight - 5;
+        }
+        
+        popup.style.left = `${left}px`;
+        popup.style.top = `${top}px`;
         
         // Hide popup when clicking outside
         setTimeout(() => {

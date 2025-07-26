@@ -1162,6 +1162,19 @@ body {
     color: var(--gray-800);
 }
 
+.reader-content > *:first-child {
+    margin-top: 0 !important;
+}
+
+.bible-chapter h2 {
+    margin-top: 0 !important;
+}
+
+.bible-chapter {
+    margin: 0;
+    padding: 0;
+}
+
 .reader-content .verse {
     font-weight: 600;
     color: var(--primary-blue);
@@ -1302,10 +1315,12 @@ body {
         margin: var(--space-4);
     }
     
-    .modal-header,
+    .modal-header {
+        padding: var(--space-3) var(--space-4);
+    }
+    
     .modal-body {
-        padding: var(--space-4);
-        padding-bottom: 120px;
+        padding: 0 var(--space-4) 120px var(--space-4);
     }
     
     .reader-controls {
@@ -1931,14 +1946,8 @@ body {
 
 @media (max-width: 768px) {
     .footnote-popup {
-        position: fixed;
-        left: 10px !important;
-        right: 10px !important;
-        max-width: none;
-        width: calc(100% - 20px);
-        transform: none !important;
-        bottom: 80px;
-        top: auto !important;
+        max-width: 280px;
+        width: auto;
     }
 }
 
