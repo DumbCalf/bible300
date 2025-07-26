@@ -13,7 +13,8 @@ class Bible300App {
             wordsOfChristRed: false,
             fontSize: 'medium',
             fontFamily: 'inter', // inter, noto-sans, noto-serif
-            darkMode: true // Default to dark theme (but inverted logic)
+            darkMode: true, // Default to dark theme (but inverted logic)
+            tabLayout: 'horizontal' // horizontal, dropdown
         };
         
         // Load saved data
@@ -41,6 +42,32 @@ class Bible300App {
                 const tab = e.currentTarget.dataset.tab;
                 this.switchTab(tab);
             });
+        });
+        
+        // Dropdown navigation
+        document.getElementById('nav-dropdown-toggle').addEventListener('click', () => {
+            this.toggleNavDropdown();
+        });
+        
+        document.querySelectorAll('.nav-dropdown-item').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.currentTarget.dataset.tab;
+                this.switchTab(tab);
+                this.closeNavDropdown();
+            });
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('nav-dropdown');
+            if (!dropdown.contains(e.target)) {
+                this.closeNavDropdown();
+            }
+        });
+        
+        // Logo click to go to Today tab
+        document.querySelector('.logo').addEventListener('click', () => {
+            this.switchTab('reading-plan');
         });
         
         // Testament tabs
@@ -224,6 +251,9 @@ class Bible300App {
         });
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         
+        // Update dropdown navigation
+        this.updateDropdownNavigation(tabName);
+        
         // Update tab content
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
@@ -244,6 +274,43 @@ class Bible300App {
         } else if (tabName === 'settings') {
             this.updateSettingsTab();
         }
+    }
+    
+    updateDropdownNavigation(tabName) {
+        // Map tab names to display info
+        const tabInfo = {
+            'reading-plan': { icon: 'fas fa-calendar-alt', text: 'Today' },
+            'overview': { icon: 'fas fa-list-alt', text: 'Overview' },
+            'bible-nav': { icon: 'fas fa-book', text: 'Bible' },
+            'progress': { icon: 'fas fa-chart-line', text: 'Progress' },
+            'settings': { icon: 'fas fa-cog', text: 'Settings' }
+        };
+        
+        const info = tabInfo[tabName];
+        if (info) {
+            document.getElementById('nav-dropdown-icon').className = info.icon;
+            document.getElementById('nav-dropdown-text').textContent = info.text;
+        }
+        
+        // Update active states for dropdown items
+        document.querySelectorAll('.nav-dropdown-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const activeDropdownItem = document.querySelector(`.nav-dropdown-item[data-tab="${tabName}"]`);
+        if (activeDropdownItem) {
+            activeDropdownItem.classList.add('active');
+        }
+    }
+    
+    toggleNavDropdown() {
+        const dropdown = document.getElementById('nav-dropdown');
+        dropdown.classList.toggle('open');
+    }
+    
+    closeNavDropdown() {
+        const dropdown = document.getElementById('nav-dropdown');
+        dropdown.classList.remove('open');
     }
     
     switchTestament(testament) {
@@ -703,6 +770,9 @@ class Bible300App {
         if (newChapter < 1 || newChapter > bookInfo.chapters) {
             return; // Could implement book navigation here
         }
+        
+        // Hide footnote popup when navigating to new chapter
+        this.hideFootnotePopup();
         
         this.openBook(book, newChapter);
     }
@@ -1637,6 +1707,13 @@ class Bible300App {
             this.applySettings();
         });
 
+        // Tab Layout setting
+        document.getElementById('tab-layout-setting').addEventListener('change', (e) => {
+            this.settings.tabLayout = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
         // Dark Mode toggle
         document.getElementById('dark-mode').addEventListener('change', (e) => {
             // Invert the setting since our CSS logic is inverted
@@ -1674,6 +1751,7 @@ class Bible300App {
         document.getElementById('words-of-christ-red').checked = this.settings.wordsOfChristRed;
         document.getElementById('font-family-setting').value = this.settings.fontFamily;
         document.getElementById('font-size-setting').value = this.settings.fontSize;
+        document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         // Invert the toggle display since our CSS logic is inverted
         // When darkMode is false (dark theme), toggle should be OFF
         // When darkMode is true (light theme), toggle should be ON
@@ -1739,6 +1817,10 @@ class Bible300App {
         // Apply font size setting
         document.documentElement.classList.remove('font-small', 'font-medium', 'font-large', 'font-extra-large');
         document.documentElement.classList.add(`font-${this.settings.fontSize}`);
+        
+        // Apply tab layout setting
+        document.documentElement.classList.remove('layout-horizontal', 'layout-dropdown');
+        document.documentElement.classList.add(`layout-${this.settings.tabLayout}`);
 
         // Apply dark mode setting
         if (this.settings.darkMode) {

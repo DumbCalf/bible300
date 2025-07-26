@@ -47,6 +47,37 @@
                         Settings
                     </button>
                 </nav>
+                
+                <!-- Dropdown Navigation (hidden by default) -->
+                <div class="nav-dropdown" id="nav-dropdown">
+                    <button class="nav-dropdown-toggle" id="nav-dropdown-toggle">
+                        <i class="fas fa-calendar-alt" id="nav-dropdown-icon"></i>
+                        <span id="nav-dropdown-text">Today</span>
+                        <i class="fas fa-chevron-down nav-dropdown-arrow"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+                        <button class="nav-dropdown-item" data-tab="reading-plan">
+                            <i class="fas fa-calendar-alt"></i>
+                            Today
+                        </button>
+                        <button class="nav-dropdown-item" data-tab="overview">
+                            <i class="fas fa-list-alt"></i>
+                            Overview
+                        </button>
+                        <button class="nav-dropdown-item" data-tab="bible-nav">
+                            <i class="fas fa-book"></i>
+                            Bible
+                        </button>
+                        <button class="nav-dropdown-item" data-tab="progress">
+                            <i class="fas fa-chart-line"></i>
+                            Progress
+                        </button>
+                        <button class="nav-dropdown-item" data-tab="settings">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -251,6 +282,19 @@
                                     <option value="medium" selected>Medium</option>
                                     <option value="large">Large</option>
                                     <option value="extra-large">Extra Large</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label class="setting-label">Tab Layout</label>
+                                <p class="setting-description">Choose how navigation tabs are displayed</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="tab-layout-setting" class="setting-select">
+                                    <option value="horizontal" selected>Horizontal</option>
+                                    <option value="dropdown">Dropdown</option>
                                 </select>
                             </div>
                         </div>
