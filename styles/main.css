@@ -1678,13 +1678,13 @@ body {
 
 .font-noto-sans,
 .font-noto-sans *:not(.fas):not(.far):not(.fab):not(.fal):not(.fad):not([class*="fa-"]) {
-    font-family: 'Noto Sans Local', Arial, sans-serif !important;
+    font-family: 'Noto Sans Local' !important;
     letter-spacing: 0.1px;
 }
 
 .font-noto-serif,
 .font-noto-serif *:not(.fas):not(.far):not(.fab):not(.fal):not(.fad):not([class*="fa-"]) {
-    font-family: 'Noto Serif Local', Georgia, serif !important;
+    font-family: 'Noto Serif Local' !important;
     letter-spacing: 0.05px;
 }
 
