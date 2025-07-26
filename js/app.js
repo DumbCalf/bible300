@@ -1943,6 +1943,9 @@ class Bible300App {
         const readerContent = document.getElementById('reader-content');
         if (!readerContent) return;
         
+        // Remove existing listeners first to prevent duplicates
+        this.removeSwipeListeners();
+        
         let startX = null;
         let startY = null;
         let isScrolling = null;

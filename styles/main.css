@@ -1185,11 +1185,22 @@ body {
     
     .main-nav {
         gap: var(--space-1);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .main-nav::-webkit-scrollbar {
+        display: none;
     }
     
     .nav-btn {
         padding: var(--space-2) var(--space-3);
         font-size: var(--font-size-xs);
+        min-width: 60px;
+        flex-shrink: 0;
+        text-align: center;
     }
     
     .nav-btn span {
@@ -1294,6 +1305,7 @@ body {
     .modal-header,
     .modal-body {
         padding: var(--space-4);
+        padding-bottom: 120px;
     }
     
     .reader-controls {
@@ -1915,6 +1927,19 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .footnote-popup {
+        position: fixed;
+        left: 10px !important;
+        right: 10px !important;
+        max-width: none;
+        width: calc(100% - 20px);
+        transform: none !important;
+        bottom: 80px;
+        top: auto !important;
+    }
 }
 
 .footnote-popup-content {
