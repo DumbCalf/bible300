@@ -1124,7 +1124,7 @@ body {
 
 .modal-body {
     padding: var(--space-6);
-    padding-bottom: 60px;
+    padding-bottom: 80px;
     max-height: calc(90vh - 120px);
     overflow-y: auto;
 }
@@ -1194,6 +1194,7 @@ body {
     
     .logo {
         font-size: var(--font-size-lg);
+        line-height: 1.1;
     }
     
     .main-nav {
