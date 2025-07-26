@@ -1779,12 +1779,28 @@ class Bible300App {
         // Apply dark mode setting
         if (this.settings.darkMode) {
             document.documentElement.classList.remove('light-mode');
+            this.updateThemeColor('#1f2937'); // Dark mode background
         } else {
             document.documentElement.classList.add('light-mode');
+            this.updateThemeColor('#fafbfc'); // Light mode background
         }
 
         // Words of Christ in red will be applied when Bible content is displayed
         // This is a placeholder for future implementation
+    }
+    
+    updateThemeColor(color) {
+        // Update the theme-color meta tag for mobile browsers
+        let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', color);
+        } else {
+            // Create the meta tag if it doesn't exist
+            themeColorMeta = document.createElement('meta');
+            themeColorMeta.name = 'theme-color';
+            themeColorMeta.content = color;
+            document.head.appendChild(themeColorMeta);
+        }
     }
 
     async checkFontLoading(fontFamily) {
