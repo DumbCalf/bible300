@@ -280,6 +280,11 @@ body {
     display: block;
 }
 
+/* Hide floating arrows when setting is disabled */
+.hide-floating-arrows .floating-arrows {
+    display: none !important;
+}
+
 /* Main Content */
 .main-content {
     margin-top: var(--header-height);
@@ -842,6 +847,9 @@ body {
     gap: var(--space-2);
     font-size: var(--font-size-sm);
     font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .activity-status.completed {

@@ -14,7 +14,8 @@ class Bible300App {
             fontSize: 'medium',
             fontFamily: 'inter', // inter, noto-sans, noto-serif
             darkMode: true, // Default to dark theme (but inverted logic)
-            tabLayout: 'horizontal' // horizontal, dropdown
+            tabLayout: 'horizontal', // horizontal, dropdown
+            showFloatingArrows: true // Show floating navigation arrows
         };
         
         // Load saved data
@@ -89,13 +90,6 @@ class Bible300App {
             this.closeBibleReader();
         });
         
-        document.getElementById('prev-chapter').addEventListener('click', () => {
-            this.navigateChapter(-1);
-        });
-        
-        document.getElementById('next-chapter').addEventListener('click', () => {
-            this.navigateChapter(1);
-        });
         
         // Chapter selector header
         document.getElementById('chapter-selector-header').addEventListener('click', () => {
@@ -575,32 +569,6 @@ class Bible300App {
             contentHtml += `</p>`;
         });
         
-        // Add bottom navigation controls
-        const bookInfo = this.findBookInfo(bookName);
-        const canGoPrev = chapter > 1;
-        const canGoNext = bookInfo && chapter < bookInfo.chapters;
-        
-        if (canGoPrev || canGoNext) {
-            contentHtml += `<div class="bottom-navigation">`;
-            
-            if (canGoPrev) {
-                contentHtml += `<button class="nav-chapter-btn bottom-nav-btn" onclick="app.navigateChapter(-1)">`;
-                contentHtml += `<i class="fas fa-chevron-left"></i> Chapter ${chapter - 1}`;
-                contentHtml += `</button>`;
-            } else {
-                contentHtml += `<div class="nav-spacer"></div>`;
-            }
-            
-            if (canGoNext) {
-                contentHtml += `<button class="nav-chapter-btn bottom-nav-btn" onclick="app.navigateChapter(1)">`;
-                contentHtml += `Chapter ${chapter + 1} <i class="fas fa-chevron-right"></i>`;
-                contentHtml += `</button>`;
-            } else {
-                contentHtml += `<div class="nav-spacer"></div>`;
-            }
-            
-            contentHtml += `</div>`;
-        }
         
         // Add footnotes section if any exist
         if (footnotes.length > 0) {
@@ -1714,6 +1682,13 @@ class Bible300App {
             this.applySettings();
         });
 
+        // Show Floating Arrows toggle
+        document.getElementById('show-floating-arrows').addEventListener('change', (e) => {
+            this.settings.showFloatingArrows = e.target.checked;
+            this.saveSettings();
+            this.applySettings();
+        });
+
         // Dark Mode toggle
         document.getElementById('dark-mode').addEventListener('change', (e) => {
             // Invert the setting since our CSS logic is inverted
@@ -1752,6 +1727,7 @@ class Bible300App {
         document.getElementById('font-family-setting').value = this.settings.fontFamily;
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
+        document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
         // Invert the toggle display since our CSS logic is inverted
         // When darkMode is false (dark theme), toggle should be OFF
         // When darkMode is true (light theme), toggle should be ON
@@ -1821,6 +1797,13 @@ class Bible300App {
         // Apply tab layout setting
         document.documentElement.classList.remove('layout-horizontal', 'layout-dropdown');
         document.documentElement.classList.add(`layout-${this.settings.tabLayout}`);
+        
+        // Apply floating arrows setting
+        if (this.settings.showFloatingArrows) {
+            document.documentElement.classList.remove('hide-floating-arrows');
+        } else {
+            document.documentElement.classList.add('hide-floating-arrows');
+        }
 
         // Apply dark mode setting
         if (this.settings.darkMode) {

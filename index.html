@@ -301,6 +301,19 @@
 
                         <div class="setting-item">
                             <div class="setting-info">
+                                <label class="setting-label">Show Floating Navigation Arrows</label>
+                                <p class="setting-description">Display floating arrow buttons for chapter navigation</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="show-floating-arrows" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
                                 <label class="setting-label">Dark Mode</label>
                                 <p class="setting-description">Use dark theme for comfortable reading in low light</p>
                             </div>
@@ -390,16 +403,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="reader-controls">
-                        <button id="prev-chapter" class="nav-chapter-btn">
-                            <i class="fas fa-chevron-left"></i>
-                            Previous
-                        </button>
-                        <button id="next-chapter" class="nav-chapter-btn">
-                            <i class="fas fa-chevron-right"></i>
-                            Next
-                        </button>
-                    </div>
                     <div id="reader-content" class="reader-content">
                         <!-- Bible content will be loaded here -->
                     </div>
