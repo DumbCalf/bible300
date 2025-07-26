@@ -319,6 +319,10 @@ body {
     margin-bottom: var(--space-8);
 }
 
+#overview .section-header {
+    display: block;
+}
+
 .section-header h2 {
     font-size: var(--font-size-3xl);
     font-weight: 700;
@@ -1975,15 +1979,13 @@ body {
 }
 
 .search-container {
-    display: flex;
-    gap: 0.5rem;
+    position: relative;
     margin-bottom: 1rem;
-    align-items: center;
 }
 
 .search-input-wrapper {
     position: relative;
-    flex: 1;
+    width: 100%;
 }
 
 .search-icon {
@@ -1998,7 +2000,7 @@ body {
 
 .search-input {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    padding: 0.75rem 2.5rem 0.75rem 2.5rem;
     border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 1rem;
@@ -2018,21 +2020,72 @@ body {
 }
 
 .clear-btn {
-    padding: 0.75rem 1rem;
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
-    border-radius: 8px;
-    background: var(--muted);
-    color: white;
+    color: var(--muted);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    padding: 0.25rem;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 48px;
+    font-size: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .clear-btn:hover {
-    background: #6b7280;
+    color: var(--text);
+    background: var(--border);
+}
+
+.search-results-text {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    font-weight: normal;
+}
+
+.quick-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: var(--space-3) var(--space-6);
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+}
+
+.filter-btn.active {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white);
+}
+
+.filter-btn i {
+    font-size: 0.85rem;
 }
 
 /* Bible Reader Content */

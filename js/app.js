@@ -1588,12 +1588,21 @@ class Bible300App {
         // Live filtering as user types
         searchInput.addEventListener('input', () => {
             this.filterDays();
-            this.toggleSearchIcon();
         });
 
         // Clear filter
         clearBtn.addEventListener('click', () => {
             this.clearDayFilter();
+        });
+
+        // Quick filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterType = btn.dataset.filter;
+                this.updateActiveFilterButton(filterType);
+                this.applyQuickFilter(filterType);
+            });
         });
     }
 
@@ -1640,11 +1649,7 @@ class Bible300App {
             ];
         }
         
-        // Check if any readings need deuterocanonical integration
         let oldTestamentText = `${dayPlan.oldTestament.book} ${dayPlan.oldTestament.chapter}`;
-        if (dayPlan.oldTestament.book === 'Daniel' || dayPlan.oldTestament.book === 'Esther') {
-            oldTestamentText += ' (with additions)';
-        }
         
         return [
             { 
@@ -1678,28 +1683,57 @@ class Bible300App {
         // Show/hide clear button based on input
         clearBtn.style.display = query ? 'flex' : 'none';
         
-        // If no query, show all days
+        // Get current quick filter
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        const quickFilterType = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+        
+        // If no query, apply current quick filter
         if (!query) {
-            this.showAllDays();
+            this.applyQuickFilter(quickFilterType);
             return;
         }
         
         const normalizedQuery = query.toLowerCase();
         const dayCards = document.querySelectorAll('.day-overview-card');
+        let visibleCount = 0;
         
         dayCards.forEach(card => {
             const day = parseInt(card.dataset.day);
-            const shouldShow = this.dayMatchesFilter(day, normalizedQuery);
             
-            if (shouldShow) {
+            // Check both book filter and quick filter
+            const matchesBookFilter = this.dayMatchesFilter(day, normalizedQuery);
+            const matchesQuickFilter = this.dayMatchesQuickFilter(day, quickFilterType);
+            
+            if (matchesBookFilter && matchesQuickFilter) {
                 card.style.display = 'block';
+                visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
         
-        // Update header to show filter status
-        this.updateFilterStatus(query);
+        // Update header to show combined filter status
+        this.updateCombinedFilterStatus(query, quickFilterType, visibleCount);
+    }
+
+    dayMatchesQuickFilter(day, filterType) {
+        switch (filterType) {
+            case 'all':
+                return true;
+            case 'completed':
+                return this.completedDays.has(day);
+            case 'remaining':
+                return !this.completedDays.has(day);
+            default:
+                return true;
+        }
+    }
+
+    updateCombinedFilterStatus(query, quickFilterType, count) {
+        const searchResultsText = document.getElementById('search-results-text');
+        
+        searchResultsText.textContent = `${count} days match "${query}"`;
+        searchResultsText.style.display = 'block';
     }
 
     dayMatchesFilter(day, query) {
@@ -1794,7 +1828,7 @@ class Bible300App {
     }
 
     updateFilterStatus(query) {
-        const header = document.querySelector('#overview .section-header h2');
+        const searchResultsText = document.getElementById('search-results-text');
         
         if (query) {
             const visibleCards = document.querySelectorAll('.day-overview-card[style*="block"], .day-overview-card:not([style*="none"])');
@@ -1802,9 +1836,10 @@ class Bible300App {
                 !card.style.display || card.style.display === 'block'
             ).length;
             
-            header.textContent = `300-Day Reading Plan Overview (${visibleCount} days match "${query}")`;
+            searchResultsText.textContent = `${visibleCount} days match "${query}"`;
+            searchResultsText.style.display = 'block';
         } else {
-            header.textContent = '300-Day Reading Plan Overview';
+            searchResultsText.style.display = 'none';
         }
     }
 
@@ -1821,15 +1856,93 @@ class Bible300App {
         }
     }
 
+    applyQuickFilter(filterType) {
+        const searchInput = document.getElementById('book-search-input');
+        const query = searchInput.value.trim();
+        
+        // If there's a search query, use the combined filtering logic
+        if (query) {
+            this.filterDays();
+            return;
+        }
+        
+        // Otherwise, apply just the quick filter
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        let visibleCount = 0;
+        
+        dayCards.forEach(card => {
+            const day = parseInt(card.dataset.day);
+            let shouldShow = false;
+            
+            switch (filterType) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'completed':
+                    shouldShow = this.completedDays.has(day);
+                    break;
+                case 'remaining':
+                    shouldShow = !this.completedDays.has(day);
+                    break;
+            }
+            
+            if (shouldShow) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update header
+        this.updateQuickFilterStatus(filterType, visibleCount);
+    }
+
+    updateActiveFilterButton(activeFilter) {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            if (btn.dataset.filter === activeFilter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    updateQuickFilterStatus(filterType, count) {
+        const searchResultsText = document.getElementById('search-results-text');
+        
+        switch (filterType) {
+            case 'all':
+                searchResultsText.style.display = 'none';
+                break;
+            case 'completed':
+                searchResultsText.textContent = `${count} completed days`;
+                searchResultsText.style.display = 'block';
+                break;
+            case 'remaining':
+                searchResultsText.textContent = `${count} remaining days`;
+                searchResultsText.style.display = 'block';
+                break;
+        }
+    }
+
     clearDayFilter() {
         const searchInput = document.getElementById('book-search-input');
         const clearBtn = document.getElementById('clear-search-btn');
         
         searchInput.value = '';
         clearBtn.style.display = 'none';
-        this.showAllDays();
-        this.toggleSearchIcon(); // Show search icon again
         searchInput.focus();
+        
+        // Reapply the current quick filter instead of showing all days
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        if (activeFilterBtn) {
+            const filterType = activeFilterBtn.dataset.filter;
+            this.applyQuickFilter(filterType);
+        } else {
+            this.showAllDays();
+        }
     }
 
     // Settings Tab Methods

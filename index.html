@@ -138,7 +138,8 @@
             <!-- Reading Plan Overview Tab -->
             <section id="overview" class="tab-content">
                 <div class="section-header">
-                    <h2>300-Day Reading Plan Overview</h2>
+                    <h2>Reading Plan Overview</h2>
+                    <div class="search-results-text" id="search-results-text" style="display: none;"></div>
                 </div>
                 
                 <div class="overview-search-section">
@@ -149,6 +150,18 @@
                         </div>
                         <button id="clear-search-btn" class="clear-btn" style="display: none;">
                             <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="quick-filters">
+                        <button class="filter-btn active" data-filter="all">
+                            All Days
+                        </button>
+                        <button class="filter-btn" data-filter="completed">
+                            Completed
+                        </button>
+                        <button class="filter-btn" data-filter="remaining">
+                            Remaining
                         </button>
                     </div>
                 </div>
