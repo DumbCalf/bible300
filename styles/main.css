@@ -920,8 +920,7 @@ body {
 .activity-day-date {
     color: var(--gray-600);
     font-size: var(--font-size-sm);
-    text-align: center;
-    flex: 1;
+    margin: 0 auto;
 }
 
 /* Mobile-specific text wrapping for activity dates */
