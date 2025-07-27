@@ -1410,6 +1410,7 @@ body {
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        margin-left: calc(-1 * var(--space-2));
     }
     
     .nav-btn {
