@@ -454,9 +454,6 @@ body {
     margin-bottom: 0;
 }
 
-.reading-category:hover {
-    background: var(--gray-200);
-}
 
 
 .category-checkbox {
@@ -475,6 +472,11 @@ body {
 
 .category-checkbox:hover {
     border-color: var(--primary-blue);
+}
+
+.light-mode .category-checkbox:hover {
+    border-color: var(--primary-blue);
+    background: var(--gray-100);
 }
 
 .category-checkbox.checked {
@@ -825,9 +827,6 @@ body {
     transition: all var(--transition-fast);
 }
 
-.activity-item:hover {
-    background: var(--gray-50);
-}
 
 .activity-day {
     display: flex;
@@ -1946,18 +1945,12 @@ body {
     background: var(--gray-100);
 }
 
-.light-mode .reading-category:hover {
-    background: var(--gray-200);
-}
-
+.light-mode 
 .light-mode .date-info-item {
     background: var(--gray-100);
 }
 
-.light-mode .activity-item:hover {
-    background: var(--gray-50);
-}
-
+.light-mode 
 .light-mode .reading-category-overview {
     background: var(--gray-100);
 }

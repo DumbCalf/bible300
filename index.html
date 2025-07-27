@@ -253,7 +253,7 @@
                 </div>
 
                 <div class="recent-activity-container">
-                    <h3>Recent Activity</h3>
+                    <h3 id="recent-activity-header">Recent Activity</h3>
                     <div class="activity-feed" id="activity-feed">
                         <!-- Recent activity will be populated here -->
                     </div>
@@ -350,6 +350,7 @@
                             </div>
                         </div>
 
+
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Dark Mode</label>
@@ -357,7 +358,7 @@
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="dark-mode" />
+                                    <input type="checkbox" id="dark-mode" checked />
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -367,6 +368,19 @@
 
                     <div class="settings-section">
                         <h3>Data Management</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label class="setting-label">Recent Activity View</label>
+                                <p class="setting-description">Choose how recent activity is displayed</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="recent-activity-view" class="setting-select">
+                                    <option value="last-7-days">Last 7 Days</option>
+                                    <option value="current-week" selected>Current Week</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Export Progress</label>
@@ -505,7 +519,7 @@
                         <input type="date" id="start-date-input" />
                         <div class="start-date-actions">
                             <button class="cancel-btn" id="cancel-start-date-btn">Cancel</button>
-                            <button class="jump-btn" id="update-start-date-btn">Update Start Date</button>
+                            <button class="jump-btn" id="update-start-date-btn">Change Start Date</button>
                         </div>
                     </div>
                 </div>

@@ -14,9 +14,10 @@ class Bible300App {
             wordsOfChristScope: 'earthly', // 'all' or 'earthly' (Gospels + Acts 1 only)
             fontSize: 'medium',
             fontFamily: 'inter', // inter, noto-sans, noto-serif
-            darkMode: false, // Default to light theme
+            darkMode: true, // Default to dark theme
             tabLayout: 'dropdown', // horizontal, dropdown
-            showFloatingArrows: true // Show floating navigation arrows
+            showFloatingArrows: true, // Show floating navigation arrows
+            recentActivityView: 'current-week' // 'last-7-days' or 'current-week'
         };
         
         // Load saved data
@@ -257,6 +258,9 @@ class Bible300App {
         
         this.currentTab = tabName;
         
+        // Scroll to top when switching tabs
+        window.scrollTo(0, 0);
+        
         // Update specific tab content
         if (tabName === 'progress') {
             this.updateProgressTab();
@@ -266,6 +270,9 @@ class Bible300App {
             // Reset to actual current day when switching to Today tab
             this.viewingDay = this.getCurrentDay();
             this.updateUI();
+        } else if (tabName === 'bible-nav') {
+            // Always default to Old Testament when switching to Bible tab
+            this.switchTestament('old');
         } else if (tabName === 'settings') {
             this.updateSettingsTab();
         }
@@ -769,7 +776,7 @@ class Bible300App {
             
             // Mark current day as complete
             this.completedDays.add(day);
-            this.dayCompletionTimestamps[day] = new Date().toISOString();
+            this.dayCompletionTimestamps[day] = new Date().toLocaleString();
             
             // Mark all categories complete for current day
             const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
@@ -783,7 +790,7 @@ class Bible300App {
             for (let prevDay = 1; prevDay < day; prevDay++) {
                 if (!this.completedDays.has(prevDay)) {
                     this.completedDays.add(prevDay);
-                    this.dayCompletionTimestamps[prevDay] = new Date().toISOString();
+                    this.dayCompletionTimestamps[prevDay] = new Date().toLocaleString();
                     previousDaysMarked++;
                     
                     // Mark all categories complete for previous days too
@@ -808,7 +815,8 @@ class Bible300App {
             
             // Show completion feedback
             if (previousDaysMarked > 0) {
-                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous days also completed)`, 'success');
+                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
+                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous ${dayWord} also completed)`, 'success');
             } else {
                 this.showToast('Day marked complete!');
             }
@@ -984,24 +992,22 @@ class Bible300App {
     }
     
     checkAutoComplete(day) {
-        console.log('Checking auto-complete for day:', day); // debug
         const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
         const allCompleted = categories.every(categoryId => 
             this.isCategoryCompleted(day, categoryId)
         );
-        console.log('All completed:', allCompleted, 'Day already complete:', this.completedDays.has(day)); // debug
         
         if (allCompleted && !this.completedDays.has(day)) {
             // All categories completed - mark day as complete
             this.completedDays.add(day);
-            this.dayCompletionTimestamps[day] = new Date().toISOString();
+            this.dayCompletionTimestamps[day] = new Date().toLocaleString();
             
             // Mark all previous days as complete too
             let previousDaysMarked = 0;
             for (let prevDay = 1; prevDay < day; prevDay++) {
                 if (!this.completedDays.has(prevDay)) {
                     this.completedDays.add(prevDay);
-                    this.dayCompletionTimestamps[prevDay] = new Date().toISOString();
+                    this.dayCompletionTimestamps[prevDay] = new Date().toLocaleString();
                     previousDaysMarked++;
                 }
             }
@@ -1019,7 +1025,8 @@ class Bible300App {
             }
             
             if (previousDaysMarked > 0) {
-                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous days also marked complete)`, 'success');
+                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
+                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous ${dayWord} also marked complete)`, 'success');
             } else {
                 this.showToast('Day completed!', 'success');
             }
@@ -1143,29 +1150,32 @@ class Bible300App {
         document.getElementById('streak-days').textContent = streak;
         
         // Update recent activity feed
-        this.generateRecentActivity();
+        this.updateRecentActivityDisplay();
         
         // Update dates
         this.updateDateInfo();
     }
     
     getReadingDayForDate(calendarDate) {
-        // Calculate how many days since start date
+        // Calculate how many days since start date (use device local dates)
         const startDate = new Date(this.startDate);
-        startDate.setHours(0, 0, 0, 0);
-        calendarDate.setHours(0, 0, 0, 0);
+        const calendarDateLocal = new Date(calendarDate);
         
-        const daysDiff = Math.floor((calendarDate - startDate) / (1000 * 60 * 60 * 24));
+        // Calculate difference in days using local dates
+        const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const calendarDay = new Date(calendarDateLocal.getFullYear(), calendarDateLocal.getMonth(), calendarDateLocal.getDate());
+        
+        const daysDiff = Math.floor((calendarDay - startDay) / (1000 * 60 * 60 * 24));
         
         if (daysDiff < 0) return null; // Before start date
         
         // Find the reading day that should be done on this calendar date
         // Account for missed days - if you miss days, you stay on the same reading
         let readingDay = 1;
-        let calendarDay = 0;
+        let dayCount = 0;
         
-        while (calendarDay < daysDiff && readingDay <= 300) {
-            calendarDay++;
+        while (dayCount < daysDiff && readingDay <= 300) {
+            dayCount++;
             // Only advance to next reading if current reading was completed
             if (this.completedDays.has(readingDay)) {
                 readingDay++;
@@ -1177,16 +1187,22 @@ class Bible300App {
     
     getDaysCompletedOnDate(calendarDate) {
         const daysCompleted = [];
-        const targetDateStr = calendarDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        
+        // Ensure we're working with local date strings for consistent comparison
+        const targetYear = calendarDate.getFullYear();
+        const targetMonth = calendarDate.getMonth();
+        const targetDay = calendarDate.getDate();
         
         // Check all completed days to see which were completed on this calendar date
         for (const day of this.completedDays) {
             const timestamp = this.dayCompletionTimestamps[day];
             if (timestamp) {
                 const completionDate = new Date(timestamp);
-                const completionDateStr = completionDate.toISOString().split('T')[0];
                 
-                if (completionDateStr === targetDateStr) {
+                // Compare using local date components to avoid timezone issues
+                if (completionDate.getFullYear() === targetYear &&
+                    completionDate.getMonth() === targetMonth &&
+                    completionDate.getDate() === targetDay) {
                     daysCompleted.push(day);
                 }
             }
@@ -1205,9 +1221,7 @@ class Bible300App {
         
         // Show last 7 calendar days (most recent first)
         for (let i = 0; i <= 6; i++) {
-            const calendarDate = new Date(today);
-            calendarDate.setDate(today.getDate() - i);
-            calendarDate.setHours(0, 0, 0, 0);
+            const calendarDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
             
             // Get all days completed on this calendar date
             const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
@@ -1224,6 +1238,7 @@ class Bible300App {
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
             dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+                weekday: 'short',
                 month: 'short', 
                 day: 'numeric' 
             });
@@ -1231,7 +1246,7 @@ class Bible300App {
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
             
-            // Show multiple days if completed on same date
+            // Only show day numbers if readings were completed on this date
             if (daysCompletedOnDate.length > 1) {
                 const minDay = Math.min(...daysCompletedOnDate);
                 const maxDay = Math.max(...daysCompletedOnDate);
@@ -1239,7 +1254,8 @@ class Bible300App {
             } else if (daysCompletedOnDate.length === 1) {
                 dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
-                dayNumber.textContent = `Day ${readingDay}`;
+                // No readings completed on this date - don't show day number
+                dayNumber.textContent = '';
             }
             
             activityDay.appendChild(dayDate);
@@ -1249,21 +1265,30 @@ class Bible300App {
             activityStatus.className = 'activity-status';
             
             const todayDate = new Date();
-            todayDate.setHours(0, 0, 0, 0);
+            
+            // Check if start date is before today to determine N/A vs Missed logic (use local dates)
+            const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+            const currentDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+            const calendarDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), calendarDate.getDate());
+            const isStartDateBeforeToday = startDay < currentDay;
             
             if (daysCompletedOnDate.length > 0) {
                 activityStatus.classList.add('completed');
                 if (daysCompletedOnDate.length > 1) {
-                    activityStatus.innerHTML = `<i class="fas fa-check-double"></i> ${daysCompletedOnDate.length} Days Completed`;
+                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
                 } else {
                     activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
                 }
-            } else if (calendarDate.getTime() === todayDate.getTime()) {
+            } else if (calendarDay.getTime() === currentDay.getTime()) {
                 activityStatus.classList.add('current');
                 activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
-            } else if (calendarDate > todayDate) {
+            } else if (calendarDay > currentDay) {
                 activityStatus.classList.add('upcoming');
                 activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
+            } else if (isStartDateBeforeToday && calendarDay >= startDay && calendarDay < currentDay) {
+                // Days between start date and today when start date is in the past - show as N/A
+                activityStatus.classList.add('not-available');
+                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
             } else {
                 activityStatus.classList.add('missed');
                 activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
@@ -1273,6 +1298,123 @@ class Bible300App {
             activityItem.appendChild(activityStatus);
             
             activityFeed.appendChild(activityItem);
+        }
+    }
+    
+    generateCurrentWeekActivity() {
+        const activityFeed = document.getElementById('activity-feed');
+        if (!activityFeed) return;
+        
+        activityFeed.innerHTML = '';
+        
+        const today = new Date();
+        
+        // Get the start of the current week (Sunday) using local dates
+        const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+        
+        // Show all 7 days of the current week (Saturday to Sunday, inverted)
+        for (let i = 6; i >= 0; i--) {
+            const calendarDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+            
+            // Get all days completed on this calendar date
+            const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
+            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            
+            const activityDay = document.createElement('div');
+            activityDay.className = 'activity-day';
+            
+            const dayDate = document.createElement('div');
+            dayDate.className = 'activity-day-number';
+            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'activity-day-date';
+            
+            // Handle dates before start date
+            if (readingDay === null) {
+                dayNumber.textContent = '';
+            } else {
+                // Only show day numbers if readings were completed on this date
+                if (daysCompletedOnDate.length > 1) {
+                    const minDay = Math.min(...daysCompletedOnDate);
+                    const maxDay = Math.max(...daysCompletedOnDate);
+                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
+                } else if (daysCompletedOnDate.length === 1) {
+                    dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
+                } else {
+                    // No readings completed on this date - don't show day number
+                    dayNumber.textContent = '';
+                }
+            }
+            
+            activityDay.appendChild(dayDate);
+            activityDay.appendChild(dayNumber);
+            
+            const activityStatus = document.createElement('div');
+            activityStatus.className = 'activity-status';
+            
+            const todayDate = new Date();
+            const currentDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+            const calendarDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), calendarDate.getDate());
+            
+            if (readingDay === null) {
+                // Dates before start date
+                activityStatus.classList.add('not-available');
+                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+            } else if (daysCompletedOnDate.length > 0) {
+                activityStatus.classList.add('completed');
+                if (daysCompletedOnDate.length > 1) {
+                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
+                } else {
+                    activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                }
+            } else if (calendarDay.getTime() === currentDay.getTime()) {
+                activityStatus.classList.add('current');
+                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
+            } else if (calendarDay > currentDay) {
+                activityStatus.classList.add('upcoming');
+                activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
+            } else {
+                // Check if start date is before today to determine N/A vs Missed logic (use local dates)
+                const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+                const isStartDateBeforeToday = startDay < currentDay;
+                
+                if (isStartDateBeforeToday && calendarDay >= startDay && calendarDay < currentDay) {
+                    // Days between start date and today when start date is in the past - show as N/A
+                    activityStatus.classList.add('not-available');
+                    activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+                } else {
+                    activityStatus.classList.add('missed');
+                    activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
+                }
+            }
+            
+            activityItem.appendChild(activityDay);
+            activityItem.appendChild(activityStatus);
+            
+            activityFeed.appendChild(activityItem);
+        }
+    }
+    
+    updateRecentActivityDisplay() {
+        // Update header text based on selected view
+        const headerElement = document.getElementById('recent-activity-header');
+        if (headerElement) {
+            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Current Week' : 'Last 7 Days';
+        }
+        
+        if (this.settings.recentActivityView === 'current-week') {
+            this.generateCurrentWeekActivity();
+        } else {
+            this.generateRecentActivity();
         }
     }
     
@@ -1301,23 +1443,21 @@ class Bible300App {
     
     calculateDaysMissed() {
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         
         let missedDays = 0;
         
-        // Check each day from start date to today
+        // Check each day from start date to today (use local dates)
         for (let day = 1; day <= 300; day++) {
-            const dayDate = new Date(this.startDate);
-            dayDate.setDate(this.startDate.getDate() + (day - 1));
-            dayDate.setHours(0, 0, 0, 0);
+            const dayDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + (day - 1));
             
             // If this day's date has passed and it's not completed, it's missed
-            if (dayDate < today && !this.completedDays.has(day)) {
+            if (dayDate < currentDay && !this.completedDays.has(day)) {
                 missedDays++;
             }
             
             // Stop checking if we're past today
-            if (dayDate >= today) {
+            if (dayDate >= currentDay) {
                 break;
             }
         }
@@ -1326,16 +1466,14 @@ class Bible300App {
     }
 
     calculateExpectedFinishDate() {
-        // Original plan: start date + 299 days (300-day plan)
-        const originalFinish = new Date(this.startDate);
-        originalFinish.setDate(this.startDate.getDate() + 299);
+        // Original plan: start date + 299 days (300-day plan) using local dates
+        const originalFinish = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + 299);
         
         // Calculate missed days based on actual calendar dates
         const daysMissed = this.calculateDaysMissed();
         
         // Expected finish = original finish + missed days
-        const expectedFinish = new Date(originalFinish);
-        expectedFinish.setDate(originalFinish.getDate() + daysMissed);
+        const expectedFinish = new Date(originalFinish.getFullYear(), originalFinish.getMonth(), originalFinish.getDate() + daysMissed);
         
         return expectedFinish;
     }
@@ -1345,7 +1483,8 @@ class Bible300App {
         const input = document.getElementById('start-date-input');
         
         // Set current start date as default
-        input.value = this.startDate.toISOString().split('T')[0];
+        const dateString = this.startDate.toLocaleDateString('en-CA');
+        input.value = dateString;
         
         modal.classList.add('active');
     }
@@ -1366,7 +1505,7 @@ class Bible300App {
             this.startDate = newDate;
             this.saveProgress();
             this.updateDateInfo();
-            this.generateRecentActivity();
+            this.updateRecentActivityDisplay();
             this.closeStartDateModal();
             this.showToast('Start date updated successfully!');
         } else {
@@ -1430,7 +1569,6 @@ class Bible300App {
     }
     
     showToast(message, type = 'success') {
-        console.log('Showing toast:', message, type); // debug
         // Create toast notification
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -1484,8 +1622,8 @@ class Bible300App {
             completedDays: Array.from(this.completedDays),
             dayCompletionTimestamps: this.dayCompletionTimestamps,
             categoryCompletions: this.categoryCompletions,
-            startDate: this.startDate.toISOString(),
-            lastUpdated: new Date().toISOString()
+            startDate: this.startDate.toLocaleDateString('en-CA'),
+            lastUpdated: new Date().toLocaleString()
         };
         
         localStorage.setItem('bible300Progress', JSON.stringify(data));
@@ -1500,7 +1638,13 @@ class Bible300App {
                 this.completedDays = new Set(data.completedDays || []);
                 this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
                 this.categoryCompletions = data.categoryCompletions || {};
-                this.startDate = data.startDate ? new Date(data.startDate) : new Date();
+                // Parse date string in YYYY-MM-DD format to avoid timezone issues
+                if (data.startDate) {
+                    const [year, month, day] = data.startDate.split('-').map(Number);
+                    this.startDate = new Date(year, month - 1, day);
+                } else {
+                    this.startDate = new Date();
+                }
             }
         } catch (error) {
             console.error('Error loading progress:', error);
@@ -1514,7 +1658,7 @@ class Bible300App {
             completedDays: Array.from(this.completedDays),
             dayCompletionTimestamps: this.dayCompletionTimestamps,
             categoryCompletions: this.categoryCompletions,
-            exportDate: new Date().toISOString(),
+            exportDate: new Date().toLocaleString(),
             version: '1.0.0'
         };
         
@@ -1523,7 +1667,9 @@ class Bible300App {
         
         const a = document.createElement('a');
         a.href = url;
-        a.download = `bible300-progress-${new Date().toISOString().split('T')[0]}.json`;
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        a.download = `bible300-progress-${dateStr}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1560,12 +1706,26 @@ class Bible300App {
         this.setupOverviewEventListeners();
         this.generateDaysOverview();
         
-        // Apply any existing filter after generating days
+        // Reset to "All Days" filter and clear search when switching to overview
         setTimeout(() => {
+            // Clear search input
             const searchInput = document.getElementById('book-search-input');
-            if (searchInput && searchInput.value.trim()) {
-                this.filterDays();
+            const clearBtn = document.getElementById('clear-search-btn');
+            const searchResultsText = document.getElementById('search-results-text');
+            
+            if (searchInput) {
+                searchInput.value = '';
             }
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            if (searchResultsText) {
+                searchResultsText.style.display = 'none';
+            }
+            
+            // Reset to "All Days" filter
+            this.updateActiveFilterButton('all');
+            this.applyQuickFilter('all');
         }, 0);
     }
 
@@ -1968,7 +2128,6 @@ class Bible300App {
 
         // Font Family setting
         document.getElementById('font-family-setting').addEventListener('change', (e) => {
-            console.log('Font family changed to:', e.target.value);
             this.settings.fontFamily = e.target.value;
             this.saveSettings();
             this.applySettings();
@@ -1993,6 +2152,13 @@ class Bible300App {
             this.settings.showFloatingArrows = e.target.checked;
             this.saveSettings();
             this.applySettings();
+        });
+
+        // Recent Activity View setting
+        document.getElementById('recent-activity-view').addEventListener('change', (e) => {
+            this.settings.recentActivityView = e.target.value;
+            this.saveSettings();
+            this.updateRecentActivityDisplay();
         });
 
         // Dark Mode toggle
@@ -2034,6 +2200,7 @@ class Bible300App {
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
+        document.getElementById('recent-activity-view').value = this.settings.recentActivityView;
         document.getElementById('dark-mode').checked = this.settings.darkMode;
     }
 
@@ -2061,11 +2228,8 @@ class Bible300App {
 
     applySettings() {
         // Apply font family setting
-        console.log('Applying font family:', this.settings.fontFamily);
         document.documentElement.classList.remove('font-inter', 'font-noto-sans', 'font-noto-serif');
         document.documentElement.classList.add(`font-${this.settings.fontFamily}`);
-        console.log('Applied class:', `font-${this.settings.fontFamily}`);
-        console.log('Current documentElement classes:', document.documentElement.className);
         
         // Load fonts if needed and update UI labels
         if (this.settings.fontFamily !== 'inter') {
@@ -2254,9 +2418,9 @@ class Bible300App {
             currentDay: this.currentDay,
             completedDays: Array.from(this.completedDays),
             categoryCompletions: this.categoryCompletions,
-            startDate: this.startDate.toISOString(),
+            startDate: this.startDate.toLocaleDateString('en-CA'),
             settings: this.settings,
-            exportDate: new Date().toISOString(),
+            exportDate: new Date().toLocaleString(),
             version: '2.1.0'
         };
 
@@ -2264,7 +2428,9 @@ class Bible300App {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `bible300-backup-${new Date().toISOString().split('T')[0]}.json`;
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        a.download = `bible300-backup-${dateStr}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -2285,7 +2451,13 @@ class Bible300App {
                     this.completedDays = new Set(data.completedDays);
                     this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
                     this.categoryCompletions = data.categoryCompletions;
-                    this.startDate = data.startDate ? new Date(data.startDate) : new Date();
+                    // Parse date string in YYYY-MM-DD format to avoid timezone issues
+                if (data.startDate) {
+                    const [year, month, day] = data.startDate.split('-').map(Number);
+                    this.startDate = new Date(year, month - 1, day);
+                } else {
+                    this.startDate = new Date();
+                }
                     
                     if (data.settings) {
                         this.settings = { ...this.settings, ...data.settings };
