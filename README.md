@@ -50,7 +50,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Entire Bible and reading plan cached instantly**
 - Install as native app on mobile devices
 - Fast loading with comprehensive service worker caching
-- Home screen icon support
+- **Custom home screen icon** for iOS Safari "Add to Home Screen"
 - **Dropdown navigation by default** (mobile-optimized)
 - Horizontal navigation option available
 
