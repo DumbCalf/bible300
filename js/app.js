@@ -17,8 +17,12 @@ class Bible300App {
             darkMode: true, // Default to dark theme
             tabLayout: 'dropdown', // horizontal, dropdown
             showFloatingArrows: true, // Show floating navigation arrows
-            recentActivityView: 'current-week' // 'last-7-days' or 'current-week'
+            recentActivityView: 'current-week', // 'last-7-days' or 'current-week'
+            showActivityGraph: true // Show visual activity graph
         };
+        
+        // Store current activity data for graph rendering
+        this.currentActivityData = [];
         
         // Load saved data
         this.loadProgress();
@@ -1216,6 +1220,7 @@ class Bible300App {
         if (!activityFeed) return;
         
         activityFeed.innerHTML = '';
+        this.currentActivityData = []; // Reset activity data
         
         const today = new Date();
         
@@ -1296,6 +1301,19 @@ class Bible300App {
                 activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
             }
             
+            // Extract data for graph rendering
+            const dayOfWeek = calendarDate.toLocaleDateString('en-US', { weekday: 'short' });
+            const statusClass = activityStatus.classList[1]; // Get the status class (completed, current, etc.)
+            const statusIcon = activityStatus.innerHTML.match(/<i class="([^"]+)"><\/i>/)?.[1] || '';
+            
+            this.currentActivityData.push({
+                date: calendarDate,
+                dayOfWeek: dayOfWeek,
+                statusClass: statusClass,
+                statusIcon: statusIcon,
+                daysCompleted: daysCompletedOnDate
+            });
+            
             activityItem.appendChild(activityDay);
             activityItem.appendChild(activityStatus);
             
@@ -1308,6 +1326,7 @@ class Bible300App {
         if (!activityFeed) return;
         
         activityFeed.innerHTML = '';
+        this.currentActivityData = []; // Reset activity data
         
         const today = new Date();
         
@@ -1401,11 +1420,53 @@ class Bible300App {
                 }
             }
             
+            // Extract data for graph rendering
+            const dayOfWeek = calendarDate.toLocaleDateString('en-US', { weekday: 'short' });
+            const statusClass = activityStatus.classList[1]; // Get the status class (completed, current, etc.)
+            const statusIcon = activityStatus.innerHTML.match(/<i class="([^"]+)"><\/i>/)?.[1] || '';
+            
+            this.currentActivityData.push({
+                date: calendarDate,
+                dayOfWeek: dayOfWeek,
+                statusClass: statusClass,
+                statusIcon: statusIcon,
+                daysCompleted: daysCompletedOnDate
+            });
+            
             activityItem.appendChild(activityDay);
             activityItem.appendChild(activityStatus);
             
             activityFeed.appendChild(activityItem);
         }
+    }
+    
+    renderActivityGraph() {
+        const activityGraph = document.getElementById('activity-graph');
+        if (!activityGraph) return;
+        
+        // Show the graph
+        activityGraph.style.display = 'flex';
+        activityGraph.innerHTML = '';
+        
+        // Render each day from the extracted activity data (reverse to show oldest first)
+        this.currentActivityData.slice().reverse().forEach(dayData => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'activity-graph-day';
+            
+            // Create symbol element
+            const symbolElement = document.createElement('div');
+            symbolElement.className = `activity-graph-symbol ${dayData.statusClass}`;
+            symbolElement.innerHTML = `<i class="${dayData.statusIcon}"></i>`;
+            
+            // Create day label element  
+            const labelElement = document.createElement('div');
+            labelElement.className = 'activity-graph-label';
+            labelElement.textContent = dayData.dayOfWeek;
+            
+            dayElement.appendChild(symbolElement);
+            dayElement.appendChild(labelElement);
+            activityGraph.appendChild(dayElement);
+        });
     }
     
     updateRecentActivityDisplay() {
@@ -1415,10 +1476,22 @@ class Bible300App {
             headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Current Week' : 'Last 7 Days';
         }
         
+        // Generate activity data and render both list and graph
         if (this.settings.recentActivityView === 'current-week') {
             this.generateCurrentWeekActivity();
         } else {
             this.generateRecentActivity();
+        }
+        
+        // Render activity graph if enabled
+        if (this.settings.showActivityGraph) {
+            this.renderActivityGraph();
+        } else {
+            // Hide graph if disabled
+            const activityGraph = document.getElementById('activity-graph');
+            if (activityGraph) {
+                activityGraph.style.display = 'none';
+            }
         }
     }
     
@@ -2158,6 +2231,12 @@ class Bible300App {
             this.applySettings();
         });
 
+        document.getElementById('show-activity-graph').addEventListener('change', (e) => {
+            this.settings.showActivityGraph = e.target.checked;
+            this.saveSettings();
+            this.updateRecentActivityDisplay(); // Refresh activity display to show/hide graph
+        });
+
         // Recent Activity View setting
         document.getElementById('recent-activity-view').addEventListener('change', (e) => {
             this.settings.recentActivityView = e.target.value;
@@ -2204,6 +2283,7 @@ class Bible300App {
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
+        document.getElementById('show-activity-graph').checked = this.settings.showActivityGraph;
         document.getElementById('recent-activity-view').value = this.settings.recentActivityView;
         document.getElementById('dark-mode').checked = this.settings.darkMode;
     }

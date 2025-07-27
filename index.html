@@ -254,6 +254,9 @@
 
                 <div class="recent-activity-container">
                     <h3 id="recent-activity-header">Recent Activity</h3>
+                    <div class="activity-graph" id="activity-graph">
+                        <!-- Activity graph will be populated here -->
+                    </div>
                     <div class="activity-feed" id="activity-feed">
                         <!-- Recent activity will be populated here -->
                     </div>
@@ -378,6 +381,19 @@
                                     <option value="last-7-days">Last 7 Days</option>
                                     <option value="current-week" selected>Current Week</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label class="setting-label">Show Activity Graph</label>
+                                <p class="setting-description">Display visual activity status</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="show-activity-graph" checked />
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
 

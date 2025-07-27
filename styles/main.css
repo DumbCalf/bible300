@@ -833,6 +833,62 @@ body {
     gap: var(--space-3);
 }
 
+.activity-graph {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    width: 100%;
+}
+
+.activity-graph-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-graph-symbol {
+    font-size: var(--font-size-lg);
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-graph-symbol.completed {
+    color: var(--success);
+}
+
+.activity-graph-symbol.missed {
+    color: var(--danger);
+}
+
+.activity-graph-symbol.current {
+    color: var(--primary-blue);
+}
+
+.activity-graph-symbol.upcoming {
+    color: var(--gray-500);
+}
+
+.activity-graph-symbol.not-available {
+    color: var(--gray-400);
+}
+
+.activity-graph-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--gray-700);
+    text-align: center;
+}
+
 .activity-item {
     display: flex;
     align-items: center;
@@ -897,6 +953,10 @@ body {
 
 .activity-status.upcoming {
     color: var(--gray-500);
+}
+
+.activity-status.not-available {
+    color: var(--gray-400);
 }
 
 /* Date Info Container */
