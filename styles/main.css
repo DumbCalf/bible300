@@ -147,17 +147,19 @@ body {
 }
 
 .logo {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-2xl);
     font-weight: 700;
     color: var(--primary-blue);
     display: flex;
     align-items: center;
     gap: var(--space-2);
     cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .logo i {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-3xl);
 }
 
 .main-nav {
@@ -1398,7 +1400,7 @@ body {
     }
     
     .logo {
-        font-size: var(--font-size-lg);
+        font-size: var(--font-size-xl);
         line-height: 1.1;
     }
     
@@ -1408,6 +1410,10 @@ body {
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         -ms-overflow-style: none;
+    }
+    
+    .nav-btn {
+        padding: var(--space-1) var(--space-2);
     }
     
     .main-nav::-webkit-scrollbar {
