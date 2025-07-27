@@ -1,6 +1,6 @@
-const CACHE_NAME = 'bible-300-v1.3.0';
-const STATIC_CACHE = 'bible-300-static-v1.3.0';
-const DYNAMIC_CACHE = 'bible-300-dynamic-v1.3.0';
+const CACHE_NAME = 'bible-300-v2.0.0';
+const STATIC_CACHE = 'bible-300-static-v2.0.0';
+const DYNAMIC_CACHE = 'bible-300-dynamic-v2.0.0';
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -11,23 +11,14 @@ const STATIC_ASSETS = [
     '/js/app.js',
     '/data/reading-plan.js',
     '/data/bible-text.js',
-    '/fonts/NotoSans-VariableFont.ttf',
-    '/fonts/NotoSerif-VariableFont.ttf',
+    '/fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf',
+    '/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf',
+    '/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf',
+    '/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-// Bible books that should be cached for offline use
-const BIBLE_BOOKS = [
-    'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth',
-    '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah',
-    'Esther', 'Job', 'Psalm', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah',
-    'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah',
-    'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi',
-    'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians',
-    'Galations', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians',
-    '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter',
-    '1 John', '2 John', '3 John', 'Jude', 'Revelation'
-];
+// All Bible content is now cached via the single bible-text.js file
 
 // Install event - cache static assets
 self.addEventListener('install', event => {
@@ -77,11 +68,8 @@ self.addEventListener('fetch', event => {
 
     // Handle different types of requests
     if (request.method === 'GET') {
-        if (url.pathname.endsWith('.htm') || url.pathname.includes('eng-kjv_html/')) {
-            // Bible content - cache with network-first strategy
-            event.respondWith(handleBibleContent(request));
-        } else if (STATIC_ASSETS.some(asset => url.pathname.includes(asset))) {
-            // Static assets - cache-first strategy
+        if (STATIC_ASSETS.some(asset => url.pathname.includes(asset))) {
+            // Static assets (including complete bible-text.js) - cache-first strategy
             event.respondWith(handleStaticAssets(request));
         } else {
             // Other requests - network-first with cache fallback
@@ -90,37 +78,6 @@ self.addEventListener('fetch', event => {
     }
 });
 
-// Handle Bible content with network-first strategy
-async function handleBibleContent(request) {
-    try {
-        // Try network first for fresh content
-        const networkResponse = await fetch(request);
-        
-        if (networkResponse.ok) {
-            // Cache the fresh content
-            const cache = await caches.open(DYNAMIC_CACHE);
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-        }
-        
-        // If network fails, try cache
-        return await caches.match(request) || new Response('Content not available offline', {
-            status: 503,
-            statusText: 'Service Unavailable'
-        });
-    } catch (error) {
-        // Network error - try cache
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        
-        return new Response('Content not available offline', {
-            status: 503,
-            statusText: 'Service Unavailable'
-        });
-    }
-}
 
 // Handle static assets with cache-first strategy
 async function handleStaticAssets(request) {

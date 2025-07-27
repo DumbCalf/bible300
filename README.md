@@ -1,6 +1,6 @@
 # Bible 300
 
-A 300-day Bible reading plan progressive web app (PWA) featuring the complete King James Version with deuterocanonical books.
+A 300-day Bible reading plan progressive web app (PWA) featuring the complete King James Version with deuterocanonical books. **Fully functional offline immediately after first visit.**
 
 ## Features
 
@@ -44,9 +44,10 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Reading statistics and analytics
 
 ### 📱 Progressive Web App
-- Works completely offline after first visit
+- **Complete offline functionality immediately after first visit**
+- **Entire Bible and reading plan cached instantly**
 - Install as native app on mobile devices
-- Fast loading with service worker caching
+- Fast loading with comprehensive service worker caching
 - Home screen icon support
 - **Dropdown navigation by default** (mobile-optimized)
 - Horizontal navigation option available
@@ -61,11 +62,38 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Auto-completion when all categories are finished
 - Toast notifications for user feedback
 
+## Offline Functionality
+
+### 🚀 Immediate Full Offline Access
+**Everything cached on first visit:**
+- ✅ **Complete Bible text** - All books, chapters, and verses
+- ✅ **Entire 300-day reading plan** - Every day's assignments
+- ✅ **All fonts** - Noto Sans, Noto Serif (regular + italic), Font Awesome
+- ✅ **Complete app functionality** - No features require internet
+
+### 📚 What Works Offline
+- **Read any Bible chapter** - Complete KJV with deuterocanonical books
+- **Follow reading plan** - All 300 days accessible
+- **Track progress** - Mark days and categories complete
+- **View recent activity** - Both Current Week and Last 7 Days
+- **Search Bible** - Full-text search across entire Bible
+- **Customize settings** - Fonts, themes, layouts
+- **Navigate seamlessly** - All books, chapters, footnotes
+- **Install as app** - Full PWA functionality
+
+### 🔄 Data Storage
+- **Reading progress** - Stored locally, persists between sessions
+- **Settings** - All preferences saved locally
+- **Recent activity** - Calculated from local data and device time
+- **No data loss** - Everything works without internet connection
+
 ## Usage
 
 1. Visit the app URL in your browser
-2. Add to home screen for native app experience
-3. Navigate using the dropdown menu or tabs:
+2. **Everything downloads automatically** - Complete Bible, reading plan, fonts
+3. **Immediately usable offline** - Close browser, turn off internet, reopen
+4. Add to home screen for native app experience
+5. Navigate using the dropdown menu or tabs:
    - **Today**: Current day's reading plan with category checkboxes
    - **Overview**: All 300 days with search and filtering
    - **Bible**: Full Bible navigation (defaults to Old Testament)
@@ -83,7 +111,7 @@ Each day includes readings from:
 ### Settings & Customization
 - **Recent Activity View**: Current Week (default) or Last 7 Days
 - **Tab Layout**: Dropdown (default) or Horizontal
-- **Font Options**: Size and family customization
+- **Font Options**: Size and family customization with full italic support
 - **Words of Christ**: Red text with scope options
 - **Dark/Light Mode**: Dark mode enabled by default
 - **Data Management**: Export, import, and reset functionality
@@ -91,20 +119,26 @@ Each day includes readings from:
 ## Technical Details
 
 - **Translation**: King James Version (KJV) - Catholic Edition
-- **Offline Support**: Full offline functionality via service worker
+- **Offline Support**: **Complete offline functionality immediately**
+- **Caching Strategy**: Aggressive caching of all content on first visit
+- **Data Size**: ~14MB initial download includes entire Bible
+- **Storage**: LocalStorage for progress, ServiceWorker cache for content
 - **Responsive**: Works on phones, tablets, and desktop
 - **Browser Support**: Modern browsers with PWA capabilities
-- **Local Storage**: Progress and settings stored locally
 - **Timezone Handling**: All dates use device local timezone
 - **Performance**: Optimized loading and smooth navigation
 
 ## Installation
 
-The app automatically caches all content for offline use after your first visit. For the best experience:
+### First Visit
+1. Visit the app URL in your browser
+2. **Automatic download** - Complete Bible and reading plan cache immediately
+3. **Instant offline capability** - Full functionality without internet
 
-1. Visit the app in your mobile browser
-2. Tap "Add to Home Screen" when prompted
-3. Use as a native app with full offline access
+### Native App Experience
+1. Tap "Add to Home Screen" when prompted
+2. Use as a native app with complete offline access
+3. **No internet required** after installation
 
 ## Browser vs Mobile Experience
 
@@ -113,7 +147,17 @@ The app provides platform-optimized experiences:
 - **Native form controls** that adapt to each platform
 - **Touch-optimized** interface elements
 - **Responsive** layout that works across all screen sizes
+- **Complete offline parity** - Same features online and offline
+
+## Offline-First Design
+
+This app is built with an **offline-first philosophy**:
+- **Primary use case**: Reading without internet connection
+- **Complete functionality**: No reduced feature set when offline
+- **Instant access**: No waiting for downloads during use
+- **Reliable experience**: Works in areas with poor connectivity
+- **Data persistence**: All progress saved locally
 
 ---
 
-*Bible 300 PWA v2.1.0 - A modern way to read through the Bible in 300 days*
+*Bible 300 PWA v2.1.0 - A modern way to read through the Bible in 300 days, completely offline*
