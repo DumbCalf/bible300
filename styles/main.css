@@ -848,6 +848,8 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
 .activity-day-number {
@@ -859,6 +861,7 @@ body {
 .activity-day-date {
     color: var(--gray-600);
     font-size: var(--font-size-sm);
+    white-space: nowrap;
 }
 
 .activity-status {

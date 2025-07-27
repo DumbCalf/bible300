@@ -1237,11 +1237,13 @@ class Bible300App {
             
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
-            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+            const dateString = calendarDate.toLocaleDateString('en-US', { 
                 weekday: 'short',
                 month: 'short', 
                 day: 'numeric' 
             });
+            // Replace spaces between month and day with non-breaking spaces
+            dayDate.textContent = dateString.replace(/(\w{3})\s+(\d+)/, '$1\u00A0$2');
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
@@ -1250,7 +1252,7 @@ class Bible300App {
             if (daysCompletedOnDate.length > 1) {
                 const minDay = Math.min(...daysCompletedOnDate);
                 const maxDay = Math.max(...daysCompletedOnDate);
-                dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
+                dayNumber.textContent = `Days ${minDay}-${maxDay}\u00A0(${daysCompletedOnDate.length}\u00A0days)`;
             } else if (daysCompletedOnDate.length === 1) {
                 dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
@@ -1329,11 +1331,13 @@ class Bible300App {
             
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
-            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+            const dateString = calendarDate.toLocaleDateString('en-US', { 
                 weekday: 'short',
                 month: 'short', 
                 day: 'numeric' 
             });
+            // Replace spaces between month and day with non-breaking spaces
+            dayDate.textContent = dateString.replace(/(\w{3})\s+(\d+)/, '$1\u00A0$2');
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
@@ -1346,7 +1350,7 @@ class Bible300App {
                 if (daysCompletedOnDate.length > 1) {
                     const minDay = Math.min(...daysCompletedOnDate);
                     const maxDay = Math.max(...daysCompletedOnDate);
-                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
+                    dayNumber.textContent = `Days ${minDay}-${maxDay}\u00A0(${daysCompletedOnDate.length}\u00A0days)`;
                 } else if (daysCompletedOnDate.length === 1) {
                     dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
                 } else {
