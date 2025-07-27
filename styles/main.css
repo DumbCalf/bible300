@@ -922,7 +922,6 @@ body {
     font-size: var(--font-size-sm);
     text-align: center;
     flex: 1;
-    margin-left: -10px;
 }
 
 /* Mobile-specific text wrapping for activity dates */
