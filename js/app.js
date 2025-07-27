@@ -17,6 +17,7 @@ class Bible300App {
             darkMode: true, // Default to dark theme
             tabLayout: 'dropdown', // horizontal, dropdown
             showFloatingArrows: true, // Show floating navigation arrows
+            enableSwipeNavigation: true, // Enable swipe gestures for chapter navigation
             recentActivityView: 'current-week', // 'last-7-days' or 'current-week'
             showActivityGraph: true // Show visual activity graph
         };
@@ -1264,7 +1265,16 @@ class Bible300App {
             if (daysCompletedOnDate.length > 1) {
                 const minDay = Math.min(...daysCompletedOnDate);
                 const maxDay = Math.max(...daysCompletedOnDate);
-                dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length}\u00A0days)`;
+                
+                // Create column layout for multiple days
+                const dayRange = document.createElement('div');
+                dayRange.textContent = `Days ${minDay}-${maxDay}`;
+                const dayCount = document.createElement('div');
+                dayCount.textContent = `(${daysCompletedOnDate.length}\u00A0days)`;
+                dayCount.style.textAlign = 'center';
+                
+                dayNumber.appendChild(dayRange);
+                dayNumber.appendChild(dayCount);
             } else if (daysCompletedOnDate.length === 1) {
                 dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
@@ -1383,7 +1393,16 @@ class Bible300App {
                 if (daysCompletedOnDate.length > 1) {
                     const minDay = Math.min(...daysCompletedOnDate);
                     const maxDay = Math.max(...daysCompletedOnDate);
-                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length}\u00A0days)`;
+                    
+                    // Create column layout for multiple days
+                    const dayRange = document.createElement('div');
+                    dayRange.textContent = `Days ${minDay}-${maxDay}`;
+                    const dayCount = document.createElement('div');
+                    dayCount.textContent = `(${daysCompletedOnDate.length}\u00A0days)`;
+                    dayCount.style.textAlign = 'center';
+                    
+                    dayNumber.appendChild(dayRange);
+                    dayNumber.appendChild(dayCount);
                 } else if (daysCompletedOnDate.length === 1) {
                     dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
                 } else {
@@ -2245,6 +2264,13 @@ class Bible300App {
             this.applySettings();
         });
 
+        // Enable Swipe Navigation toggle
+        document.getElementById('enable-swipe-navigation').addEventListener('change', (e) => {
+            this.settings.enableSwipeNavigation = e.target.checked;
+            this.saveSettings();
+            this.applySettings();
+        });
+
         document.getElementById('show-activity-graph').addEventListener('change', (e) => {
             this.settings.showActivityGraph = e.target.checked;
             this.saveSettings();
@@ -2297,6 +2323,7 @@ class Bible300App {
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
+        document.getElementById('enable-swipe-navigation').checked = this.settings.enableSwipeNavigation;
         document.getElementById('show-activity-graph').checked = this.settings.showActivityGraph;
         document.getElementById('recent-activity-view').value = this.settings.recentActivityView;
         document.getElementById('dark-mode').checked = this.settings.darkMode;
@@ -2351,6 +2378,11 @@ class Bible300App {
             document.documentElement.classList.remove('hide-floating-arrows');
         } else {
             document.documentElement.classList.add('hide-floating-arrows');
+        }
+
+        // Apply swipe navigation setting - only if reader is open
+        if (document.getElementById('bible-reader').classList.contains('active')) {
+            this.setupSwipeGestures();
         }
 
         // Apply dark mode setting
@@ -2632,6 +2664,12 @@ class Bible300App {
     setupSwipeGestures() {
         const readerContent = document.getElementById('reader-content');
         if (!readerContent) return;
+        
+        // Check if swipe navigation is enabled
+        if (!this.settings.enableSwipeNavigation) {
+            this.removeSwipeListeners();
+            return;
+        }
         
         // Remove existing listeners first to prevent duplicates
         this.removeSwipeListeners();

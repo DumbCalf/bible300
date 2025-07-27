@@ -6,7 +6,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 
 ### 📖 Complete Bible Navigation
 - Full KJV Bible with deuterocanonical books (Catholic edition)
-- Easy book and chapter navigation with swipe gestures
+- Easy book and chapter navigation with swipe gestures (configurable)
 - Search functionality across all books
 - Clickable footnotes with detailed references
 - Floating navigation arrows (optional)
@@ -115,6 +115,7 @@ Each day includes readings from:
 - **Recent Activity View**: Current Week (default) or Last 7 Days
 - **Activity Graph**: Toggle visual activity status display (enabled by default)
 - **Tab Layout**: Dropdown (default) or Horizontal
+- **Navigation**: Configurable swipe gestures for mobile chapter navigation
 - **Font Options**: Size and family customization with full italic support
 - **Words of Christ**: Red text with scope options
 - **Dark/Light Mode**: Dark mode enabled by default
