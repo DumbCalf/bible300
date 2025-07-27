@@ -861,7 +861,9 @@ body {
 .activity-day-date {
     color: var(--gray-600);
     font-size: var(--font-size-sm);
-    white-space: nowrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100px;
 }
 
 .activity-status {
