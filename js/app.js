@@ -1,0 +1,2668 @@
+// Bible 300 - Main Application
+class Bible300App {
+    constructor() {
+        this.currentDay = 1; // The actual current/active day for progression
+        this.viewingDay = 1; // The day currently being viewed in the UI
+        this.completedDays = new Set();
+        this.dayCompletionTimestamps = {}; // Track when each day was completed
+        this.categoryCompletions = {}; // Track individual category completions
+        this.currentTab = 'reading-plan';
+        this.currentTestament = 'old';
+        this.startDate = new Date(); // Default to today
+        this.settings = {
+            wordsOfChristRed: false,
+            wordsOfChristScope: 'earthly', // 'all' or 'earthly' (Gospels + Acts 1 only)
+            fontSize: 'medium',
+            fontFamily: 'inter', // inter, noto-sans, noto-serif
+            darkMode: true, // Default to dark theme
+            tabLayout: 'dropdown', // horizontal, dropdown
+            showFloatingArrows: true, // Show floating navigation arrows
+            recentActivityView: 'current-week' // 'last-7-days' or 'current-week'
+        };
+        
+        // Load saved data
+        this.loadProgress();
+        this.loadSettings();
+        
+        // Initialize the app
+        this.init();
+    }
+    
+    init() {
+        this.viewingDay = this.getCurrentDay(); // Initialize viewing day to actual current day
+        this.setupEventListeners();
+        this.applySettings(); // Apply saved settings
+        this.updateUI();
+        this.loadBibleBooks();
+        this.updateProgressTab();
+        this.switchTab('reading-plan'); // Ensure Today tab is selected on load
+    }
+    
+    setupEventListeners() {
+        // Tab navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.currentTarget.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
+        
+        // Dropdown navigation
+        document.getElementById('nav-dropdown-toggle').addEventListener('click', () => {
+            this.toggleNavDropdown();
+        });
+        
+        document.querySelectorAll('.nav-dropdown-item').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.currentTarget.dataset.tab;
+                this.switchTab(tab);
+                this.closeNavDropdown();
+            });
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('nav-dropdown');
+            if (!dropdown.contains(e.target)) {
+                this.closeNavDropdown();
+            }
+        });
+        
+        // Logo click to go to Today tab
+        document.querySelector('.logo').addEventListener('click', () => {
+            this.switchTab('reading-plan');
+        });
+        
+        // Testament tabs
+        document.querySelectorAll('.testament-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const testament = e.currentTarget.dataset.testament;
+                this.switchTestament(testament);
+            });
+        });
+        
+        // Complete reading button
+        document.getElementById('mark-complete').addEventListener('click', () => {
+            this.markDayComplete();
+        });
+        
+        
+        // Modal controls
+        document.getElementById('close-reader').addEventListener('click', () => {
+            this.closeBibleReader();
+        });
+        
+        
+        // Chapter selector header
+        document.getElementById('chapter-selector-header').addEventListener('click', () => {
+            this.toggleChapterMenu();
+        });
+        
+        // Floating arrow navigation
+        document.getElementById('floating-prev').addEventListener('click', () => {
+            this.navigateChapter(-1);
+        });
+        
+        document.getElementById('floating-next').addEventListener('click', () => {
+            this.navigateChapter(1);
+        });
+        
+        // Close chapter menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const chapterHeader = document.getElementById('chapter-selector-header');
+            const chapterMenu = document.getElementById('chapter-menu');
+            if (!chapterHeader.contains(e.target) && !chapterMenu.contains(e.target) && chapterMenu.classList.contains('active')) {
+                this.hideChapterMenu();
+            }
+        });
+        
+        // Close modal on background click
+        document.getElementById('bible-reader').addEventListener('click', (e) => {
+            if (e.target.id === 'bible-reader') {
+                this.closeBibleReader();
+            }
+        });
+        
+        // Day navigation events
+        document.getElementById('prev-day').addEventListener('click', () => {
+            this.navigateDay(-1);
+        });
+        
+        document.getElementById('next-day').addEventListener('click', () => {
+            this.navigateDay(1);
+        });
+        
+        document.getElementById('jump-day').addEventListener('click', () => {
+            this.showDayJumpModal();
+        });
+        
+        // Day jump modal
+        document.getElementById('close-day-jump').addEventListener('click', () => {
+            this.closeDayJumpModal();
+        });
+        
+        document.getElementById('cancel-day-jump-btn').addEventListener('click', () => {
+            this.closeDayJumpModal();
+        });
+        
+        document.getElementById('confirm-jump-btn').addEventListener('click', () => {
+            this.jumpToDay();
+        });
+        
+        document.getElementById('day-jump-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'day-jump-modal') {
+                this.closeDayJumpModal();
+            }
+        });
+        
+        // Enter key in day input
+        document.getElementById('day-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.jumpToDay();
+            }
+        });
+        
+        // Start date modal events
+        document.getElementById('change-start-date-btn').addEventListener('click', () => {
+            this.showStartDateModal();
+        });
+        
+        document.getElementById('close-start-date').addEventListener('click', () => {
+            this.closeStartDateModal();
+        });
+        
+        document.getElementById('cancel-start-date-btn').addEventListener('click', () => {
+            this.closeStartDateModal();
+        });
+        
+        document.getElementById('update-start-date-btn').addEventListener('click', () => {
+            this.updateStartDate();
+        });
+        
+        document.getElementById('start-date-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'start-date-modal') {
+                this.closeStartDateModal();
+            }
+        });
+        
+        // Reset data modal events (button removed from progress section, only in settings)
+        
+        document.getElementById('close-reset-data').addEventListener('click', () => {
+            this.closeResetDataModal();
+        });
+        
+        document.getElementById('cancel-reset-data-btn').addEventListener('click', () => {
+            this.closeResetDataModal();
+        });
+        
+        document.getElementById('confirm-reset-data-btn').addEventListener('click', () => {
+            this.resetAllData();
+        });
+        
+        document.getElementById('reset-data-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'reset-data-modal') {
+                this.closeResetDataModal();
+            }
+        });
+        
+        // Event delegation for reading plan interactions
+        document.getElementById('today-reading').addEventListener('click', (e) => {
+            // Handle checkbox clicks
+            if (e.target.closest('.category-checkbox')) {
+                const checkbox = e.target.closest('.category-checkbox');
+                const day = parseInt(checkbox.dataset.day);
+                const categoryId = checkbox.dataset.categoryId;
+                this.toggleCategoryCompletion(day, categoryId);
+            }
+            
+            // Handle read button clicks
+            if (e.target.closest('.read-btn')) {
+                const readBtn = e.target.closest('.read-btn');
+                const reading = readBtn.dataset.reading;
+                this.openReadingFromPlan(reading);
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            this.handleKeyboardShortcuts(e);
+        });
+    }
+    
+    getCurrentDay() {
+        // Find the first day that hasn't been completed
+        for (let day = 1; day <= 300; day++) {
+            if (!this.completedDays.has(day)) {
+                return day;
+            }
+        }
+        // If all days are completed, return 300
+        return 300;
+    }
+    
+    switchTab(tabName) {
+        // Update nav buttons
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Update dropdown navigation
+        this.updateDropdownNavigation(tabName);
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        
+        this.currentTab = tabName;
+        
+        // Scroll to top when switching tabs
+        window.scrollTo(0, 0);
+        
+        // Update specific tab content
+        if (tabName === 'progress') {
+            this.updateProgressTab();
+        } else if (tabName === 'overview') {
+            this.updateOverviewTab();
+        } else if (tabName === 'reading-plan') {
+            // Reset to actual current day when switching to Today tab
+            this.viewingDay = this.getCurrentDay();
+            this.updateUI();
+        } else if (tabName === 'bible-nav') {
+            // Always default to Old Testament when switching to Bible tab
+            this.switchTestament('old');
+        } else if (tabName === 'settings') {
+            this.updateSettingsTab();
+        }
+    }
+    
+    updateDropdownNavigation(tabName) {
+        // Map tab names to display info
+        const tabInfo = {
+            'reading-plan': { icon: 'fas fa-calendar-alt', text: 'Today' },
+            'overview': { icon: 'fas fa-list-alt', text: 'Overview' },
+            'bible-nav': { icon: 'fas fa-book', text: 'Bible' },
+            'progress': { icon: 'fas fa-chart-line', text: 'Progress' },
+            'settings': { icon: 'fas fa-cog', text: 'Settings' }
+        };
+        
+        const info = tabInfo[tabName];
+        if (info) {
+            document.getElementById('nav-dropdown-icon').className = info.icon;
+            document.getElementById('nav-dropdown-text').textContent = info.text;
+        }
+        
+        // Update active states for dropdown items
+        document.querySelectorAll('.nav-dropdown-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const activeDropdownItem = document.querySelector(`.nav-dropdown-item[data-tab="${tabName}"]`);
+        if (activeDropdownItem) {
+            activeDropdownItem.classList.add('active');
+        }
+    }
+    
+    toggleNavDropdown() {
+        const dropdown = document.getElementById('nav-dropdown');
+        dropdown.classList.toggle('open');
+    }
+    
+    closeNavDropdown() {
+        const dropdown = document.getElementById('nav-dropdown');
+        dropdown.classList.remove('open');
+    }
+    
+    switchTestament(testament) {
+        document.querySelectorAll('.testament-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-testament="${testament}"]`).classList.add('active');
+        
+        this.currentTestament = testament;
+        this.loadBibleBooks();
+    }
+    
+    loadBibleBooks() {
+        const booksContainer = document.getElementById('books-container');
+        const categoryData = this.getCategoryData(this.currentTestament);
+        
+        booksContainer.innerHTML = categoryData.map(category => `
+            <div class="book-category">
+                <div class="category-title">
+                    <div class="category-icon">
+                        <i class="${category.icon}"></i>
+                    </div>
+                    ${category.name}
+                </div>
+                <div class="books-grid">
+                    ${category.books.map(book => `
+                        <div class="book-card" onclick="app.openBook('${book.name}')">
+                            <div class="book-title">${book.displayName || book.name}</div>
+                            <div class="book-chapters">${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapters'}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    getCategoryData(testament) {
+        const catholicBible = this.getBibleBooksStructure();
+        
+        if (testament === 'old') {
+            return [
+                {
+                    id: 'pentateuch',
+                    name: 'Pentateuch',
+                    icon: 'fas fa-scroll',
+                    books: catholicBible.old.pentateuch
+                },
+                {
+                    id: 'historical',
+                    name: 'Historical Books',
+                    icon: 'fas fa-landmark',
+                    books: catholicBible.old.historical
+                },
+                {
+                    id: 'wisdom',
+                    name: 'Wisdom Books',
+                    icon: 'fas fa-balance-scale',
+                    books: catholicBible.old.wisdom
+                },
+                {
+                    id: 'major-prophets',
+                    name: 'Major Prophets',
+                    icon: 'fas fa-gavel',
+                    books: catholicBible.old['major-prophets']
+                },
+                {
+                    id: 'minor-prophets',
+                    name: 'Minor Prophets',
+                    icon: 'fas fa-gavel',
+                    books: catholicBible.old['minor-prophets']
+                }
+            ];
+        } else {
+            return [
+                {
+                    id: 'gospels',
+                    name: 'Gospels & Acts',
+                    icon: 'fas fa-cross',
+                    books: catholicBible.new.gospels
+                },
+                {
+                    id: 'epistles',
+                    name: 'Epistles',
+                    icon: 'fas fa-envelope',
+                    books: catholicBible.new.epistles
+                },
+                {
+                    id: 'revelation',
+                    name: 'Revelation',
+                    icon: 'fas fa-eye',
+                    books: catholicBible.new.revelation
+                }
+            ];
+        }
+    }
+    
+    getBibleBooksStructure() {
+        return {
+            old: {
+                pentateuch: [
+                    { name: 'Genesis', chapters: 50 },
+                    { name: 'Exodus', chapters: 40 },
+                    { name: 'Leviticus', chapters: 27 },
+                    { name: 'Numbers', chapters: 36 },
+                    { name: 'Deuteronomy', chapters: 34 }
+                ],
+                historical: [
+                    { name: 'Joshua', chapters: 24 },
+                    { name: 'Judges', chapters: 21 },
+                    { name: 'Ruth', chapters: 4 },
+                    { name: '1 Samuel', chapters: 31 },
+                    { name: '2 Samuel', chapters: 24 },
+                    { name: '1 Kings', chapters: 22 },
+                    { name: '2 Kings', chapters: 25 },
+                    { name: '1 Chronicles', chapters: 29 },
+                    { name: '2 Chronicles', chapters: 36 },
+                    { name: 'Ezra', chapters: 10 },
+                    { name: 'Nehemiah', chapters: 13 },
+                    { name: 'Tobit', chapters: 14 },
+                    { name: 'Judith', chapters: 16 },
+                    { name: 'Esther', chapters: 10 },
+                    { name: '1 Maccabees', chapters: 16 },
+                    { name: '2 Maccabees', chapters: 15 }
+                ],
+                wisdom: [
+                    { name: 'Job', chapters: 42 },
+                    { name: 'Psalm', displayName: 'Psalms', chapters: 150 },
+                    { name: 'Proverbs', chapters: 31 },
+                    { name: 'Ecclesiastes', chapters: 12 },
+                    { name: 'Song of Solomon', chapters: 8 },
+                    { name: 'Wisdom of Solomon', chapters: 19 },
+                    { name: 'Sirach', chapters: 51 }
+                ],
+                'major-prophets': [
+                    { name: 'Isaiah', chapters: 66 },
+                    { name: 'Jeremiah', chapters: 52 },
+                    { name: 'Lamentations', chapters: 5 },
+                    { name: 'Baruch', chapters: 6 },
+                    { name: 'Ezekiel', chapters: 48 },
+                    { name: 'Daniel', chapters: 14 }
+                ],
+                'minor-prophets': [
+                    { name: 'Hosea', chapters: 14 },
+                    { name: 'Joel', chapters: 3 },
+                    { name: 'Amos', chapters: 9 },
+                    { name: 'Obadiah', chapters: 1 },
+                    { name: 'Jonah', chapters: 4 },
+                    { name: 'Micah', chapters: 7 },
+                    { name: 'Nahum', chapters: 3 },
+                    { name: 'Habakkuk', chapters: 3 },
+                    { name: 'Zephaniah', chapters: 3 },
+                    { name: 'Haggai', chapters: 2 },
+                    { name: 'Zechariah', chapters: 14 },
+                    { name: 'Malachi', chapters: 4 }
+                ]
+            },
+            new: {
+                gospels: [
+                    { name: 'Matthew', chapters: 28 },
+                    { name: 'Mark', chapters: 16 },
+                    { name: 'Luke', chapters: 24 },
+                    { name: 'John', chapters: 21 },
+                    { name: 'Acts', chapters: 28 }
+                ],
+                epistles: [
+                    { name: 'Romans', chapters: 16 },
+                    { name: '1 Corinthians', chapters: 16 },
+                    { name: '2 Corinthians', chapters: 13 },
+                    { name: 'Galatians', chapters: 6 },
+                    { name: 'Ephesians', chapters: 6 },
+                    { name: 'Philippians', chapters: 4 },
+                    { name: 'Colossians', chapters: 4 },
+                    { name: '1 Thessalonians', chapters: 5 },
+                    { name: '2 Thessalonians', chapters: 3 },
+                    { name: '1 Timothy', chapters: 6 },
+                    { name: '2 Timothy', chapters: 4 },
+                    { name: 'Titus', chapters: 3 },
+                    { name: 'Philemon', chapters: 1 },
+                    { name: 'Hebrews', chapters: 13 },
+                    { name: 'James', chapters: 5 },
+                    { name: '1 Peter', chapters: 5 },
+                    { name: '2 Peter', chapters: 3 },
+                    { name: '1 John', chapters: 5 },
+                    { name: '2 John', chapters: 1 },
+                    { name: '3 John', chapters: 1 },
+                    { name: 'Jude', chapters: 1 }
+                ],
+                revelation: [
+                    { name: 'Revelation', chapters: 22 }
+                ]
+            }
+        };
+    }
+    
+    getBibleBooks(testament, category = null) {
+        const catholicBible = this.getBibleBooksStructure();
+        
+        if (category) {
+            return catholicBible[testament]?.[category] || [];
+        }
+        
+        // Return all books for the testament if no category specified
+        const testamentBooks = catholicBible[testament];
+        if (!testamentBooks) return [];
+        
+        return Object.values(testamentBooks).flat();
+    }
+    
+    
+    async openBook(bookName, chapter = 1) {
+        try {
+            // Use getBibleVerses which handles both regular and Esther section structures
+            const verses = getBibleVerses(bookName, chapter.toString());
+            const chapterData = getBibleChapter(bookName, chapter.toString());
+            
+            if (!verses) {
+                throw new Error(`Chapter not found: ${bookName} ${chapter}`);
+            }
+            
+            // Create a combined structure for displayBibleContent
+            const combinedData = {
+                verses: verses,
+                footnotes: chapterData ? chapterData.footnotes || [] : []
+            };
+            
+            this.displayBibleContent(bookName, chapter, combinedData);
+        } catch (error) {
+            console.error('Error loading Bible content:', error);
+            this.showError(`Failed to load ${bookName} chapter ${chapter}`);
+        }
+    }
+    
+    displayBibleContent(bookName, chapter, chapterData) {
+        // Build HTML from JSON verse data
+        let contentHtml = `<div class="bible-chapter">`;
+        contentHtml += `<h2>${bookName} ${chapter}</h2>`;
+        
+        // Handle new data structure with verses and footnotes
+        const verses = chapterData.verses || chapterData; // Backward compatibility
+        const footnotes = chapterData.footnotes || [];
+        
+        verses.forEach(verse => {
+            // Handle chapter headings for Esther
+            if (verse.isChapterHeading) {
+                contentHtml += `<div class="chapter-heading">`;
+                contentHtml += `<h3>${verse.text}</h3>`;
+                contentHtml += `</div>`;
+                return;
+            }
+            
+            const verseClass = verse.isAddition ? 'verse addition' : 'verse';
+            let verseText = verse.text;
+            
+            // Words of Christ styling is now handled by preserved spans in the verse text
+            // The red color will be controlled by CSS based on settings
+            
+            contentHtml += `<p class="${verseClass}">`;
+            if (verse.verse !== 0) {
+                contentHtml += `<span class="verse-number">${verse.verse}</span>`;
+            }
+            contentHtml += verseText;
+            contentHtml += `</p>`;
+        });
+        
+        
+        // Add footnotes section if any exist
+        if (footnotes.length > 0) {
+            contentHtml += `<div class="footnotes-section">`;
+            contentHtml += `<hr class="footnotes-divider">`;
+            contentHtml += `<h4>Footnotes</h4>`;
+            footnotes.forEach(footnote => {
+                contentHtml += `<div class="footnote" id="${footnote.id}">`;
+                contentHtml += `<span class="footnote-marker">${footnote.marker}</span> `;
+                contentHtml += `<span class="footnote-text">${footnote.text}</span>`;
+                contentHtml += `</div>`;
+            });
+            contentHtml += `</div>`;
+        }
+        
+        contentHtml += `</div>`;
+        
+        // Update the modal
+        document.getElementById('reader-title').textContent = `${bookName} ${chapter}`;
+        document.getElementById('reader-content').innerHTML = contentHtml;
+        
+        // Apply Words of Christ styling based on book/chapter and settings
+        const readerModal = document.getElementById('bible-reader');
+        if (this.shouldShowWordsOfChrist(bookName, chapter)) {
+            readerModal.classList.add('words-of-christ-enabled');
+        } else {
+            readerModal.classList.remove('words-of-christ-enabled');
+        }
+        
+        // Store current reading info with footnotes
+        this.currentReading = { book: bookName, chapter: chapter, footnotes: footnotes };
+        
+        // Add footnote click handlers
+        this.setupFootnoteHandlers();
+        
+        // Show the modal
+        document.getElementById('bible-reader').classList.add('active');
+        
+        // Setup chapter menu and floating arrows
+        this.setupChapterMenu(bookName, chapter);
+        this.setupFloatingArrows(bookName, chapter);
+        this.setupSwipeGestures();
+        
+        // Scroll to top - use setTimeout to ensure content is rendered
+        setTimeout(() => {
+            const modalBody = document.querySelector('#bible-reader .modal-body');
+            if (modalBody) {
+                modalBody.scrollTop = 0;
+            }
+        }, 0);
+        
+        // Apply font settings to the reader content
+        this.applyReaderFont();
+    }
+    
+    closeBibleReader() {
+        document.getElementById('bible-reader').classList.remove('active');
+        this.hideFootnotePopup();
+        this.hideChapterMenu();
+        this.removeSwipeListeners();
+    }
+    
+    setupFootnoteHandlers() {
+        // Add click handlers to footnote markers
+        const footnoteMarkers = document.querySelectorAll('.footnote-marker[data-footnote]');
+        footnoteMarkers.forEach(marker => {
+            marker.addEventListener('click', (e) => {
+                const footnoteId = marker.getAttribute('data-footnote');
+                this.showFootnotePopup(e, footnoteId);
+            });
+            
+            // Add hover effect
+            marker.style.cursor = 'pointer';
+            marker.style.color = '#007bff';
+            marker.style.textDecoration = 'underline';
+        });
+    }
+    
+    showFootnotePopup(event, footnoteId) {
+        if (!this.currentReading || !this.currentReading.footnotes) return;
+        
+        const footnote = this.currentReading.footnotes.find(f => f.id === footnoteId);
+        if (!footnote) return;
+        
+        // Create popup if it doesn't exist
+        let popup = document.getElementById('footnote-popup');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'footnote-popup';
+            popup.className = 'footnote-popup';
+            document.body.appendChild(popup);
+        }
+        
+        // Set popup content
+        popup.innerHTML = `
+            <div class="footnote-popup-content">
+                <span class="footnote-popup-marker">${footnote.marker}</span>
+                <span class="footnote-popup-text">${footnote.text}</span>
+                <button class="footnote-popup-close" onclick="app.hideFootnotePopup()">×</button>
+            </div>
+        `;
+        
+        // Position popup near the clicked element with simple edge detection
+        const rect = event.target.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        popup.style.display = 'block';
+        
+        // Get actual popup dimensions after showing
+        const popupRect = popup.getBoundingClientRect();
+        const popupWidth = popupRect.width || 300;
+        const popupHeight = popupRect.height || 100;
+        
+        let left = rect.left + window.scrollX;
+        let top = rect.bottom + window.scrollY + 5;
+        
+        // Simple right edge check - shift left if would overflow
+        if (left + popupWidth > viewportWidth - 10) {
+            left = rect.right + window.scrollX - popupWidth;
+        }
+        
+        // Simple left edge check
+        if (left < 10) {
+            left = 10;
+        }
+        
+        // Simple bottom edge check - show above if would overflow
+        if (rect.bottom + popupHeight > viewportHeight - 10) {
+            top = rect.top + window.scrollY - popupHeight - 5;
+        }
+        
+        popup.style.left = `${left}px`;
+        popup.style.top = `${top}px`;
+        
+        // Hide popup when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', this.hideFootnotePopupHandler, { once: true });
+        }, 100);
+    }
+    
+    hideFootnotePopup() {
+        const popup = document.getElementById('footnote-popup');
+        if (popup) {
+            popup.style.display = 'none';
+        }
+    }
+    
+    hideFootnotePopupHandler = (event) => {
+        const popup = document.getElementById('footnote-popup');
+        if (popup && !popup.contains(event.target) && !event.target.classList.contains('footnote-marker')) {
+            this.hideFootnotePopup();
+        }
+    }
+    
+    applyReaderFont() {
+        const readerContent = document.getElementById('reader-content');
+        if (!readerContent) return;
+        
+        // Apply font settings to the Bible reader content
+        readerContent.className = '';
+        readerContent.classList.add(`font-${this.settings.fontFamily}`, `font-${this.settings.fontSize}`);
+    }
+    
+    navigateChapter(direction) {
+        if (!this.currentReading) return;
+        
+        const { book, chapter } = this.currentReading;
+        const bookInfo = this.findBookInfo(book);
+        
+        if (!bookInfo) return;
+        
+        let newChapter = chapter + direction;
+        
+        if (newChapter < 1 || newChapter > bookInfo.chapters) {
+            return; // Could implement book navigation here
+        }
+        
+        // Hide footnote popup when navigating to new chapter
+        this.hideFootnotePopup();
+        
+        this.openBook(book, newChapter);
+    }
+    
+    findBookInfo(bookName) {
+        const allBooks = [
+            ...this.getBibleBooks('old'),
+            ...this.getBibleBooks('new')
+        ];
+        
+        return allBooks.find(book => book.name === bookName);
+    }
+    
+    markDayComplete() {
+        if (!this.completedDays.has(this.viewingDay)) {
+            const day = this.viewingDay;
+            
+            // Mark current day as complete
+            this.completedDays.add(day);
+            this.dayCompletionTimestamps[day] = new Date().toLocaleString();
+            
+            // Mark all categories complete for current day
+            const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
+            categories.forEach(categoryId => {
+                const key = `${day}-${categoryId}`;
+                this.categoryCompletions[key] = true;
+            });
+            
+            // Mark all previous days as complete too
+            let previousDaysMarked = 0;
+            for (let prevDay = 1; prevDay < day; prevDay++) {
+                if (!this.completedDays.has(prevDay)) {
+                    this.completedDays.add(prevDay);
+                    this.dayCompletionTimestamps[prevDay] = new Date().toLocaleString();
+                    previousDaysMarked++;
+                    
+                    // Mark all categories complete for previous days too
+                    categories.forEach(categoryId => {
+                        const key = `${prevDay}-${categoryId}`;
+                        this.categoryCompletions[key] = true;
+                    });
+                }
+            }
+            
+            // Update currentDay to reflect the new current day
+            this.currentDay = this.getCurrentDay();
+            
+            this.saveProgress();
+            this.updateUI();
+            this.updateProgressTab();
+            
+            // Update overview tab if it's currently visible
+            if (this.currentTab === 'overview') {
+                this.updateOverviewTab();
+            }
+            
+            // Show completion feedback
+            if (previousDaysMarked > 0) {
+                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
+                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous ${dayWord} also completed)`, 'success');
+            } else {
+                this.showToast('Day marked complete!');
+            }
+        }
+    }
+    
+    updateUI() {
+        // Update day counter
+        document.getElementById('current-day').textContent = this.viewingDay;
+        
+        // Update day counter color based on completion
+        const dayCounter = document.querySelector('.day-counter');
+        if (this.completedDays.has(this.viewingDay)) {
+            dayCounter.classList.add('completed');
+        } else {
+            dayCounter.classList.remove('completed');
+        }
+        
+        // Update navigation buttons
+        this.updateNavigationButtons();
+        
+        // Update progress
+        const completionPercent = (this.completedDays.size / 300 * 100).toFixed(2);
+        document.querySelector('.progress-fill').style.width = `${completionPercent}%`;
+        document.querySelector('.progress-text span:last-child').textContent = `${completionPercent}%`;
+        document.querySelector('.progress-text span:first-child').textContent = 
+            `${this.completedDays.size} of 300 days completed`;
+        
+        // Update reading date
+        const today = new Date();
+        document.getElementById('reading-date').textContent = today.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Update today's reading based on current day
+        this.updateTodaysReading();
+        this.updateDayCompletionStatus();
+    }
+    
+    updateTodaysReading() {
+        const readingPlan = this.getReadingForDay(this.viewingDay);
+        const todayReading = document.getElementById('today-reading');
+        
+        todayReading.innerHTML = readingPlan.map(category => {
+            const isCompleted = this.isCategoryCompleted(this.viewingDay, category.id);
+            return `
+                <div class="reading-category" data-category="${category.id}">
+                    <div class="category-checkbox ${isCompleted ? 'checked' : ''}" 
+                         data-day="${this.viewingDay}" data-category-id="${category.id}">
+                        ${isCompleted ? '<i class="fas fa-check"></i>' : ''}
+                    </div>
+                    <div class="category-icon">
+                        <i class="${category.icon}"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-title">${category.title}</div>
+                        <div class="category-reading">${category.reading}</div>
+                    </div>
+                    <button class="read-btn" data-reading="${category.reading}">Read</button>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    getReadingForDay(day) {
+        // Find the reading for this day from the READING_PLAN data
+        const dayPlan = READING_PLAN.find(plan => plan.day === day);
+        
+        if (!dayPlan) {
+            // Fallback if day not found - use simple cycle
+            const index = (day - 1) % 5;
+            const psalms = ['Psalm 1', 'Psalm 2', 'Psalm 3', 'Psalm 4', 'Psalm 5'];
+            const gospels = ['Matthew 1', 'Matthew 2', 'Matthew 3', 'Matthew 4', 'Matthew 5'];
+            const wisdom = ['Proverbs 1', 'Proverbs 2', 'Proverbs 3', 'Job 1', 'Ecclesiastes 1'];
+            const oldTestament = ['Genesis 1', 'Genesis 2', 'Genesis 3', 'Exodus 1', 'Exodus 2'];
+            const newTestament = ['Romans 1', 'Romans 2', '1 Corinthians 1', '1 Corinthians 2', 'Ephesians 1'];
+            
+            return [
+                {
+                    id: 'psalm',
+                    title: 'Psalm',
+                    reading: psalms[index],
+                    icon: 'fas fa-music'
+                },
+                {
+                    id: 'gospel',
+                    title: 'Gospel',
+                    reading: gospels[index],
+                    icon: 'fas fa-cross'
+                },
+                {
+                    id: 'wisdom',
+                    title: 'Wisdom',
+                    reading: wisdom[index],
+                    icon: 'fas fa-balance-scale'
+                },
+                {
+                    id: 'old-testament',
+                    title: 'Old Testament',
+                    reading: oldTestament[index],
+                    icon: 'fas fa-scroll'
+                },
+                {
+                    id: 'new-testament',
+                    title: 'New Testament',
+                    reading: newTestament[index],
+                    icon: 'fas fa-dove'
+                }
+            ];
+        }
+        
+        return [
+            {
+                id: 'psalm',
+                title: 'Psalm',
+                reading: `${dayPlan.psalm.book} ${dayPlan.psalm.chapter}`,
+                icon: 'fas fa-music'
+            },
+            {
+                id: 'gospel',
+                title: 'Gospel',
+                reading: `${dayPlan.gospel.book} ${dayPlan.gospel.chapter}`,
+                icon: 'fas fa-cross'
+            },
+            {
+                id: 'wisdom',
+                title: 'Wisdom',
+                reading: `${dayPlan.wisdom.book} ${dayPlan.wisdom.chapter}`,
+                icon: 'fas fa-balance-scale'
+            },
+            {
+                id: 'old-testament',
+                title: 'Old Testament',
+                reading: `${dayPlan.oldTestament.book} ${dayPlan.oldTestament.chapter}`,
+                icon: 'fas fa-scroll'
+            },
+            {
+                id: 'new-testament',
+                title: 'New Testament',
+                reading: `${dayPlan.newTestament.book} ${dayPlan.newTestament.chapter}`,
+                icon: 'fas fa-dove'
+            }
+        ];
+    }
+    
+    async openReadingFromPlan(reading) {
+        // Parse the reading (e.g., "Genesis 1-2" or "Genesis 1")
+        const match = reading.match(/^(.+?)\s+(\d+)(?:-(\d+))?$/);
+        if (match) {
+            const [, book, startChapter, endChapter] = match;
+            await this.openBook(book, parseInt(startChapter));
+        }
+    }
+    
+    toggleCategoryCompletion(day, categoryId) {
+        const key = `${day}-${categoryId}`;
+        
+        if (this.categoryCompletions[key]) {
+            delete this.categoryCompletions[key];
+        } else {
+            this.categoryCompletions[key] = true;
+        }
+        
+        this.saveProgress();
+        this.updateTodaysReading();
+        
+        // Check if all categories are complete and auto-mark day complete
+        this.checkAutoComplete(day);
+        this.updateDayCompletionStatus();
+    }
+    
+    checkAutoComplete(day) {
+        const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
+        const allCompleted = categories.every(categoryId => 
+            this.isCategoryCompleted(day, categoryId)
+        );
+        
+        if (allCompleted && !this.completedDays.has(day)) {
+            // All categories completed - mark day as complete
+            this.completedDays.add(day);
+            this.dayCompletionTimestamps[day] = new Date().toLocaleString();
+            
+            // Mark all previous days as complete too
+            let previousDaysMarked = 0;
+            for (let prevDay = 1; prevDay < day; prevDay++) {
+                if (!this.completedDays.has(prevDay)) {
+                    this.completedDays.add(prevDay);
+                    this.dayCompletionTimestamps[prevDay] = new Date().toLocaleString();
+                    previousDaysMarked++;
+                }
+            }
+            
+            // Update currentDay to reflect the new current day
+            this.currentDay = this.getCurrentDay();
+            
+            this.saveProgress();
+            this.updateUI();
+            this.updateProgressTab();
+            
+            // Update overview tab if it's currently visible
+            if (this.currentTab === 'overview') {
+                this.updateOverviewTab();
+            }
+            
+            if (previousDaysMarked > 0) {
+                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
+                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous ${dayWord} also marked complete)`, 'success');
+            } else {
+                this.showToast('Day completed!', 'success');
+            }
+        } else if (!allCompleted && this.completedDays.has(day)) {
+            // Not all categories completed but day was marked complete - undo completion
+            this.completedDays.delete(day);
+            delete this.dayCompletionTimestamps[day];
+            this.saveProgress();
+            this.updateUI();
+            this.updateProgressTab();
+            
+            // Update overview tab if it's currently visible
+            if (this.currentTab === 'overview') {
+                this.updateOverviewTab();
+            }
+            
+            this.showToast('Day completion undone', 'orange');
+        }
+    }
+    
+    isCategoryCompleted(day, categoryId) {
+        const key = `${day}-${categoryId}`;
+        return !!this.categoryCompletions[key];
+    }
+    
+    updateDayCompletionStatus() {
+        const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
+        const completedCategories = categories.filter(categoryId => 
+            this.isCategoryCompleted(this.viewingDay, categoryId)
+        ).length;
+        
+        const completeBtn = document.getElementById('mark-complete');
+        
+        if (this.completedDays.has(this.viewingDay)) {
+            completeBtn.innerHTML = '<i class="fas fa-check-double"></i> Day Completed';
+            completeBtn.disabled = true;
+        } else if (completedCategories === 5) {
+            // This shouldn't normally be reached due to auto-complete, but just in case
+            completeBtn.innerHTML = '<i class="fas fa-check"></i> All Categories Complete!';
+            completeBtn.disabled = false;
+        } else {
+            completeBtn.innerHTML = `<i class="fas fa-check"></i> Mark Day Complete (${completedCategories}/5)`;
+            completeBtn.disabled = false;
+        }
+    }
+    
+    updateNavigationButtons() {
+        const prevBtn = document.getElementById('prev-day');
+        const nextBtn = document.getElementById('next-day');
+        
+        // Disable previous button if on day 1
+        prevBtn.disabled = this.viewingDay <= 1;
+        
+        // Disable next button if on day 300
+        nextBtn.disabled = this.viewingDay >= 300;
+    }
+    
+    navigateDay(direction) {
+        const newDay = this.viewingDay + direction;
+        
+        if (newDay >= 1 && newDay <= 300) {
+            this.viewingDay = newDay;
+            this.updateUI();
+        }
+    }
+    
+    showDayJumpModal() {
+        const modal = document.getElementById('day-jump-modal');
+        const input = document.getElementById('day-input');
+        
+        input.value = this.currentDay;
+        modal.classList.add('active');
+        
+        // Focus and select the input
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 100);
+    }
+    
+    closeDayJumpModal() {
+        document.getElementById('day-jump-modal').classList.remove('active');
+    }
+    
+    jumpToDay() {
+        const input = document.getElementById('day-input');
+        const day = parseInt(input.value);
+        
+        if (isNaN(day) || day < 1 || day > 300) {
+            this.showError('Please enter a valid day number between 1 and 300');
+            return;
+        }
+        
+        this.viewingDay = day;
+        this.closeDayJumpModal();
+        this.updateUI();
+        this.updateProgressTab();
+        
+        this.showToast(`Jumped to Day ${day}`);
+    }
+    
+    updateProgressTab() {
+        // Update stats
+        document.getElementById('days-completed').textContent = this.completedDays.size;
+        document.getElementById('completion-percent').textContent = 
+            `${(this.completedDays.size / 300 * 100).toFixed(1)}%`;
+            
+        // Calculate days missed based on actual calendar dates
+        const daysMissed = this.calculateDaysMissed();
+        document.getElementById('days-missed').textContent = daysMissed;
+            
+        // Calculate streak (simplified)
+        let streak = 0;
+        for (let i = this.currentDay - 1; i >= 1; i--) {
+            if (this.completedDays.has(i)) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+        document.getElementById('streak-days').textContent = streak;
+        
+        // Update recent activity feed
+        this.updateRecentActivityDisplay();
+        
+        // Update dates
+        this.updateDateInfo();
+    }
+    
+    getReadingDayForDate(calendarDate) {
+        // Calculate how many days since start date (use device local dates)
+        const startDate = new Date(this.startDate);
+        const calendarDateLocal = new Date(calendarDate);
+        
+        // Calculate difference in days using local dates
+        const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const calendarDay = new Date(calendarDateLocal.getFullYear(), calendarDateLocal.getMonth(), calendarDateLocal.getDate());
+        
+        const daysDiff = Math.floor((calendarDay - startDay) / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff < 0) return null; // Before start date
+        
+        // Find the reading day that should be done on this calendar date
+        // Account for missed days - if you miss days, you stay on the same reading
+        let readingDay = 1;
+        let dayCount = 0;
+        
+        while (dayCount < daysDiff && readingDay <= 300) {
+            dayCount++;
+            // Only advance to next reading if current reading was completed
+            if (this.completedDays.has(readingDay)) {
+                readingDay++;
+            }
+        }
+        
+        return readingDay <= 300 ? readingDay : 300;
+    }
+    
+    getDaysCompletedOnDate(calendarDate) {
+        const daysCompleted = [];
+        
+        // Ensure we're working with local date strings for consistent comparison
+        const targetYear = calendarDate.getFullYear();
+        const targetMonth = calendarDate.getMonth();
+        const targetDay = calendarDate.getDate();
+        
+        // Check all completed days to see which were completed on this calendar date
+        for (const day of this.completedDays) {
+            const timestamp = this.dayCompletionTimestamps[day];
+            if (timestamp) {
+                const completionDate = new Date(timestamp);
+                
+                // Compare using local date components to avoid timezone issues
+                if (completionDate.getFullYear() === targetYear &&
+                    completionDate.getMonth() === targetMonth &&
+                    completionDate.getDate() === targetDay) {
+                    daysCompleted.push(day);
+                }
+            }
+        }
+        
+        return daysCompleted.sort((a, b) => a - b);
+    }
+
+    generateRecentActivity() {
+        const activityFeed = document.getElementById('activity-feed');
+        if (!activityFeed) return;
+        
+        activityFeed.innerHTML = '';
+        
+        const today = new Date();
+        
+        // Show last 7 calendar days (most recent first)
+        for (let i = 0; i <= 6; i++) {
+            const calendarDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+            
+            // Get all days completed on this calendar date
+            const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
+            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
+            
+            if (readingDay === null) continue; // Skip dates before start date
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            
+            const activityDay = document.createElement('div');
+            activityDay.className = 'activity-day';
+            
+            const dayDate = document.createElement('div');
+            dayDate.className = 'activity-day-number';
+            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'activity-day-date';
+            
+            // Only show day numbers if readings were completed on this date
+            if (daysCompletedOnDate.length > 1) {
+                const minDay = Math.min(...daysCompletedOnDate);
+                const maxDay = Math.max(...daysCompletedOnDate);
+                dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
+            } else if (daysCompletedOnDate.length === 1) {
+                dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
+            } else {
+                // No readings completed on this date - don't show day number
+                dayNumber.textContent = '';
+            }
+            
+            activityDay.appendChild(dayDate);
+            activityDay.appendChild(dayNumber);
+            
+            const activityStatus = document.createElement('div');
+            activityStatus.className = 'activity-status';
+            
+            const todayDate = new Date();
+            
+            // Check if start date is before today to determine N/A vs Missed logic (use local dates)
+            const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+            const currentDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+            const calendarDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), calendarDate.getDate());
+            const isStartDateBeforeToday = startDay < currentDay;
+            
+            if (daysCompletedOnDate.length > 0) {
+                activityStatus.classList.add('completed');
+                if (daysCompletedOnDate.length > 1) {
+                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
+                } else {
+                    activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                }
+            } else if (calendarDay.getTime() === currentDay.getTime()) {
+                activityStatus.classList.add('current');
+                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
+            } else if (calendarDay > currentDay) {
+                activityStatus.classList.add('upcoming');
+                activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
+            } else if (isStartDateBeforeToday && calendarDay >= startDay && calendarDay < currentDay) {
+                // Days between start date and today when start date is in the past - show as N/A
+                activityStatus.classList.add('not-available');
+                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+            } else {
+                activityStatus.classList.add('missed');
+                activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
+            }
+            
+            activityItem.appendChild(activityDay);
+            activityItem.appendChild(activityStatus);
+            
+            activityFeed.appendChild(activityItem);
+        }
+    }
+    
+    generateCurrentWeekActivity() {
+        const activityFeed = document.getElementById('activity-feed');
+        if (!activityFeed) return;
+        
+        activityFeed.innerHTML = '';
+        
+        const today = new Date();
+        
+        // Get the start of the current week (Sunday) using local dates
+        const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+        
+        // Show all 7 days of the current week (Saturday to Sunday, inverted)
+        for (let i = 6; i >= 0; i--) {
+            const calendarDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+            
+            // Get all days completed on this calendar date
+            const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
+            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            
+            const activityDay = document.createElement('div');
+            activityDay.className = 'activity-day';
+            
+            const dayDate = document.createElement('div');
+            dayDate.className = 'activity-day-number';
+            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'activity-day-date';
+            
+            // Handle dates before start date
+            if (readingDay === null) {
+                dayNumber.textContent = '';
+            } else {
+                // Only show day numbers if readings were completed on this date
+                if (daysCompletedOnDate.length > 1) {
+                    const minDay = Math.min(...daysCompletedOnDate);
+                    const maxDay = Math.max(...daysCompletedOnDate);
+                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
+                } else if (daysCompletedOnDate.length === 1) {
+                    dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
+                } else {
+                    // No readings completed on this date - don't show day number
+                    dayNumber.textContent = '';
+                }
+            }
+            
+            activityDay.appendChild(dayDate);
+            activityDay.appendChild(dayNumber);
+            
+            const activityStatus = document.createElement('div');
+            activityStatus.className = 'activity-status';
+            
+            const todayDate = new Date();
+            const currentDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+            const calendarDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), calendarDate.getDate());
+            
+            if (readingDay === null) {
+                // Dates before start date
+                activityStatus.classList.add('not-available');
+                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+            } else if (daysCompletedOnDate.length > 0) {
+                activityStatus.classList.add('completed');
+                if (daysCompletedOnDate.length > 1) {
+                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
+                } else {
+                    activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                }
+            } else if (calendarDay.getTime() === currentDay.getTime()) {
+                activityStatus.classList.add('current');
+                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
+            } else if (calendarDay > currentDay) {
+                activityStatus.classList.add('upcoming');
+                activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
+            } else {
+                // Check if start date is before today to determine N/A vs Missed logic (use local dates)
+                const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+                const isStartDateBeforeToday = startDay < currentDay;
+                
+                if (isStartDateBeforeToday && calendarDay >= startDay && calendarDay < currentDay) {
+                    // Days between start date and today when start date is in the past - show as N/A
+                    activityStatus.classList.add('not-available');
+                    activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+                } else {
+                    activityStatus.classList.add('missed');
+                    activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
+                }
+            }
+            
+            activityItem.appendChild(activityDay);
+            activityItem.appendChild(activityStatus);
+            
+            activityFeed.appendChild(activityItem);
+        }
+    }
+    
+    updateRecentActivityDisplay() {
+        // Update header text based on selected view
+        const headerElement = document.getElementById('recent-activity-header');
+        if (headerElement) {
+            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Current Week' : 'Last 7 Days';
+        }
+        
+        if (this.settings.recentActivityView === 'current-week') {
+            this.generateCurrentWeekActivity();
+        } else {
+            this.generateRecentActivity();
+        }
+    }
+    
+    updateDateInfo() {
+        // Update start date display
+        const startDateElement = document.getElementById('start-date');
+        if (startDateElement) {
+            startDateElement.textContent = this.startDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        // Calculate and update expected finish date
+        const expectedFinishElement = document.getElementById('expected-finish');
+        if (expectedFinishElement) {
+            const expectedFinish = this.calculateExpectedFinishDate();
+            expectedFinishElement.textContent = expectedFinish.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    }
+    
+    calculateDaysMissed() {
+        const today = new Date();
+        const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        
+        let missedDays = 0;
+        
+        // Check each day from start date to today (use local dates)
+        for (let day = 1; day <= 300; day++) {
+            const dayDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + (day - 1));
+            
+            // If this day's date has passed and it's not completed, it's missed
+            if (dayDate < currentDay && !this.completedDays.has(day)) {
+                missedDays++;
+            }
+            
+            // Stop checking if we're past today
+            if (dayDate >= currentDay) {
+                break;
+            }
+        }
+        
+        return missedDays;
+    }
+
+    calculateExpectedFinishDate() {
+        // Original plan: start date + 299 days (300-day plan) using local dates
+        const originalFinish = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + 299);
+        
+        // Calculate missed days based on actual calendar dates
+        const daysMissed = this.calculateDaysMissed();
+        
+        // Expected finish = original finish + missed days
+        const expectedFinish = new Date(originalFinish.getFullYear(), originalFinish.getMonth(), originalFinish.getDate() + daysMissed);
+        
+        return expectedFinish;
+    }
+    
+    showStartDateModal() {
+        const modal = document.getElementById('start-date-modal');
+        const input = document.getElementById('start-date-input');
+        
+        // Set current start date as default
+        const dateString = this.startDate.toLocaleDateString('en-CA');
+        input.value = dateString;
+        
+        modal.classList.add('active');
+    }
+    
+    closeStartDateModal() {
+        document.getElementById('start-date-modal').classList.remove('active');
+    }
+    
+    updateStartDate() {
+        const input = document.getElementById('start-date-input');
+        const dateString = input.value;
+        
+        if (dateString) {
+            // Parse the date string manually to avoid timezone issues
+            const [year, month, day] = dateString.split('-').map(Number);
+            const newDate = new Date(year, month - 1, day); // month is 0-indexed
+            
+            this.startDate = newDate;
+            this.saveProgress();
+            this.updateDateInfo();
+            this.updateRecentActivityDisplay();
+            this.closeStartDateModal();
+            this.showToast('Start date updated successfully!');
+        } else {
+            this.showToast('Please select a valid date', 'error');
+        }
+    }
+    
+    showResetDataModal() {
+        document.getElementById('reset-data-modal').classList.add('active');
+    }
+    
+    closeResetDataModal() {
+        document.getElementById('reset-data-modal').classList.remove('active');
+    }
+    
+    resetAllData() {
+        // Clear all localStorage data
+        localStorage.removeItem('bible300Progress');
+        
+        // Reset all app state
+        this.currentDay = 1;
+        this.viewingDay = 1;
+        this.completedDays = new Set();
+        this.dayCompletionTimestamps = {};
+        this.categoryCompletions = {};
+        this.startDate = new Date();
+        
+        // Update UI
+        this.updateUI();
+        this.updateProgressTab();
+        
+        // Close modal and show confirmation
+        this.closeResetDataModal();
+        this.showToast('All data has been reset successfully!');
+    }
+
+    handleKeyboardShortcuts(e) {
+        // ESC to close modals
+        if (e.key === 'Escape') {
+            this.closeBibleReader();
+            this.closeDayJumpModal();
+            this.closeStartDateModal();
+            this.closeResetDataModal();
+        }
+        
+        // Arrow keys for chapter navigation when modal is open
+        if (document.getElementById('bible-reader').classList.contains('active')) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.navigateChapter(-1);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.navigateChapter(1);
+            }
+        }
+        
+    }
+    
+    showError(message) {
+        this.showToast(message, 'error');
+    }
+    
+    showToast(message, type = 'success') {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        
+        let backgroundColor;
+        switch(type) {
+            case 'error':
+                backgroundColor = '#ef4444';
+                break;
+            case 'orange':
+                backgroundColor = '#f59e0b';
+                break;
+            case 'gray':
+                backgroundColor = '#6b7280';
+                break;
+            case 'success':
+            default:
+                backgroundColor = '#10b981';
+                break;
+        }
+        
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${backgroundColor};
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    saveProgress() {
+        const data = {
+            currentDay: this.currentDay,
+            completedDays: Array.from(this.completedDays),
+            dayCompletionTimestamps: this.dayCompletionTimestamps,
+            categoryCompletions: this.categoryCompletions,
+            startDate: this.startDate.toLocaleDateString('en-CA'),
+            lastUpdated: new Date().toLocaleString()
+        };
+        
+        localStorage.setItem('bible300Progress', JSON.stringify(data));
+    }
+    
+    loadProgress() {
+        try {
+            const saved = localStorage.getItem('bible300Progress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                this.currentDay = data.currentDay || 1;
+                this.completedDays = new Set(data.completedDays || []);
+                this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
+                this.categoryCompletions = data.categoryCompletions || {};
+                // Parse date string in YYYY-MM-DD format to avoid timezone issues
+                if (data.startDate) {
+                    const [year, month, day] = data.startDate.split('-').map(Number);
+                    this.startDate = new Date(year, month - 1, day);
+                } else {
+                    this.startDate = new Date();
+                }
+            }
+        } catch (error) {
+            console.error('Error loading progress:', error);
+        }
+    }
+    
+    // Export/Import functionality for backup
+    exportProgress() {
+        const data = {
+            currentDay: this.currentDay,
+            completedDays: Array.from(this.completedDays),
+            dayCompletionTimestamps: this.dayCompletionTimestamps,
+            categoryCompletions: this.categoryCompletions,
+            exportDate: new Date().toLocaleString(),
+            version: '1.0.0'
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        a.download = `bible300-progress-${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        URL.revokeObjectURL(url);
+        this.showToast('Progress exported successfully!');
+    }
+    
+    async importProgress(file) {
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            
+            if (data.version && data.currentDay && data.completedDays) {
+                this.currentDay = data.currentDay;
+                this.completedDays = new Set(data.completedDays);
+                this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
+                this.categoryCompletions = data.categoryCompletions || {};
+                this.saveProgress();
+                this.updateUI();
+                this.updateProgressTab();
+                this.showToast('Progress imported successfully!');
+            } else {
+                throw new Error('Invalid backup file format');
+            }
+        } catch (error) {
+            console.error('Error importing progress:', error);
+            this.showError('Failed to import progress. Please check the file format.');
+        }
+    }
+
+    // Overview Tab Methods
+    updateOverviewTab() {
+        this.setupOverviewEventListeners();
+        this.generateDaysOverview();
+        
+        // Reset to "All Days" filter and clear search when switching to overview
+        setTimeout(() => {
+            // Clear search input
+            const searchInput = document.getElementById('book-search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const searchResultsText = document.getElementById('search-results-text');
+            
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            if (searchResultsText) {
+                searchResultsText.style.display = 'none';
+            }
+            
+            // Reset to "All Days" filter
+            this.updateActiveFilterButton('all');
+            this.applyQuickFilter('all');
+        }, 0);
+    }
+
+    setupOverviewEventListeners() {
+        // Click on day card to navigate
+        document.getElementById('days-container').addEventListener('click', (e) => {
+            const dayCard = e.target.closest('.day-overview-card');
+            if (dayCard) {
+                const dayNumber = parseInt(dayCard.dataset.day);
+                this.switchTab('reading-plan');
+                this.viewingDay = dayNumber;
+                this.updateUI();
+            }
+        });
+
+        // Live search/filter functionality
+        const searchInput = document.getElementById('book-search-input');
+        const clearBtn = document.getElementById('clear-search-btn');
+
+        // Live filtering as user types
+        searchInput.addEventListener('input', () => {
+            this.filterDays();
+        });
+
+        // Clear filter
+        clearBtn.addEventListener('click', () => {
+            this.clearDayFilter();
+        });
+
+        // Quick filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterType = btn.dataset.filter;
+                this.updateActiveFilterButton(filterType);
+                this.applyQuickFilter(filterType);
+            });
+        });
+    }
+
+    generateDaysOverview() {
+        const container = document.getElementById('days-container');
+        let html = '';
+
+        for (let day = 1; day <= 300; day++) {
+            const readings = this.getDayReadings(day);
+            const isCompleted = this.completedDays.has(day);
+
+            html += `
+                <div class="day-overview-card ${isCompleted ? 'completed' : ''}" data-day="${day}">
+                    <div class="day-overview-header">
+                        <div class="day-overview-number">Day ${day}</div>
+                    </div>
+                    <div class="day-overview-readings">
+                        ${readings.map(reading => `
+                            <div class="reading-category-overview">
+                                <span class="category-name">${reading.category}</span>
+                                <span class="reading-text">${reading.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+    }
+
+    getDayReadings(day) {
+        // Find the reading for this day from the READING_PLAN data
+        const dayPlan = READING_PLAN.find(plan => plan.day === day);
+        
+        if (!dayPlan) {
+            // Fallback if day not found
+            return [
+                { category: 'Psalm', text: `Psalm ${day}` },
+                { category: 'Gospel', text: `Gospel Reading ${day}` },
+                { category: 'Wisdom', text: `Wisdom ${day}` },
+                { category: 'OT', text: `Old Testament ${day}` },
+                { category: 'NT', text: `New Testament ${day}` }
+            ];
+        }
+        
+        let oldTestamentText = `${dayPlan.oldTestament.book} ${dayPlan.oldTestament.chapter}`;
+        
+        return [
+            { 
+                category: 'Psalm', 
+                text: `${dayPlan.psalm.book} ${dayPlan.psalm.chapter}` 
+            },
+            { 
+                category: 'Gospel', 
+                text: `${dayPlan.gospel.book} ${dayPlan.gospel.chapter}` 
+            },
+            { 
+                category: 'Wisdom', 
+                text: `${dayPlan.wisdom.book} ${dayPlan.wisdom.chapter}` 
+            },
+            { 
+                category: 'OT', 
+                text: oldTestamentText
+            },
+            { 
+                category: 'NT', 
+                text: `${dayPlan.newTestament.book} ${dayPlan.newTestament.chapter}` 
+            }
+        ];
+    }
+
+    filterDays() {
+        const searchInput = document.getElementById('book-search-input');
+        const query = searchInput.value.trim();
+        const clearBtn = document.getElementById('clear-search-btn');
+        
+        // Show/hide clear button based on input
+        clearBtn.style.display = query ? 'flex' : 'none';
+        
+        // Get current quick filter
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        const quickFilterType = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+        
+        // If no query, apply current quick filter
+        if (!query) {
+            this.applyQuickFilter(quickFilterType);
+            return;
+        }
+        
+        const normalizedQuery = query.toLowerCase();
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        let visibleCount = 0;
+        
+        dayCards.forEach(card => {
+            const day = parseInt(card.dataset.day);
+            
+            // Check both book filter and quick filter
+            const matchesBookFilter = this.dayMatchesFilter(day, normalizedQuery);
+            const matchesQuickFilter = this.dayMatchesQuickFilter(day, quickFilterType);
+            
+            if (matchesBookFilter && matchesQuickFilter) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update header to show combined filter status
+        this.updateCombinedFilterStatus(query, quickFilterType, visibleCount);
+    }
+
+    dayMatchesQuickFilter(day, filterType) {
+        switch (filterType) {
+            case 'all':
+                return true;
+            case 'completed':
+                return this.completedDays.has(day);
+            case 'remaining':
+                return !this.completedDays.has(day);
+            default:
+                return true;
+        }
+    }
+
+    updateCombinedFilterStatus(query, quickFilterType, count) {
+        const searchResultsText = document.getElementById('search-results-text');
+        
+        searchResultsText.textContent = `${count} days match "${query}"`;
+        searchResultsText.style.display = 'block';
+    }
+
+    dayMatchesFilter(day, query) {
+        const readings = this.getDayReadings(day);
+        
+        return readings.some(reading => {
+            const fullReading = reading.text;
+            const bookName = this.extractBookName(fullReading);
+            
+            // Check if book name matches or full reading contains query
+            return this.bookNameMatches(bookName, query) || 
+                   fullReading.toLowerCase().includes(query);
+        });
+    }
+
+    extractBookName(readingText) {
+        // Handle multi-word book names
+        const parts = readingText.split(' ');
+        
+        // Common multi-word book patterns
+        const multiWordBooks = [
+            '1 Chronicles', '2 Chronicles', '1 Corinthians', '2 Corinthians',
+            '1 Kings', '2 Kings', '1 Maccabees', '2 Maccabees',
+            '1 Peter', '2 Peter', '1 Samuel', '2 Samuel',
+            '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy',
+            '1 John', '2 John', '3 John', 'Song of Solomon', 'Wisdom of Solomon'
+        ];
+        
+        // Check for multi-word books first
+        for (const multiBook of multiWordBooks) {
+            if (readingText.startsWith(multiBook)) {
+                return multiBook;
+            }
+        }
+        
+        // Default to first word
+        return parts[0];
+    }
+
+    bookNameMatches(bookName, query) {
+        const normalizedBook = bookName.toLowerCase();
+        
+        // Direct match
+        if (normalizedBook.includes(query)) {
+            return true;
+        }
+        
+        // Handle common variations
+        const variations = {
+            'psalms': 'psalm',
+            'psalm': 'psalms',
+            'matt': 'matthew',
+            'matthew': 'matt',
+            'gen': 'genesis',
+            'genesis': 'gen',
+            'ex': 'exodus',
+            'exodus': 'ex',
+            'rev': 'revelation',
+            'revelation': 'rev',
+            '1chr': '1 chronicles',
+            '2chr': '2 chronicles',
+            '1cor': '1 corinthians',
+            '2cor': '2 corinthians',
+            '1sam': '1 samuel',
+            '2sam': '2 samuel',
+            '1ki': '1 kings',
+            '2ki': '2 kings',
+            '1pet': '1 peter',
+            '2pet': '2 peter',
+            '1tim': '1 timothy',
+            '2tim': '2 timothy',
+            '1th': '1 thessalonians',
+            '2th': '2 thessalonians',
+            'song': 'song of solomon',
+            'wisdom': 'wisdom of solomon'
+        };
+        
+        // Check variations
+        if (variations[query] && normalizedBook.includes(variations[query])) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    showAllDays() {
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        dayCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        this.updateFilterStatus('');
+    }
+
+    updateFilterStatus(query) {
+        const searchResultsText = document.getElementById('search-results-text');
+        
+        if (query) {
+            const visibleCards = document.querySelectorAll('.day-overview-card[style*="block"], .day-overview-card:not([style*="none"])');
+            const visibleCount = Array.from(visibleCards).filter(card => 
+                !card.style.display || card.style.display === 'block'
+            ).length;
+            
+            searchResultsText.textContent = `${visibleCount} days match "${query}"`;
+            searchResultsText.style.display = 'block';
+        } else {
+            searchResultsText.style.display = 'none';
+        }
+    }
+
+    toggleSearchIcon() {
+        const searchInput = document.getElementById('book-search-input');
+        const searchIcon = document.querySelector('.search-icon');
+        
+        if (searchInput && searchIcon) {
+            if (searchInput.value.trim()) {
+                searchIcon.style.display = 'none';
+            } else {
+                searchIcon.style.display = 'block';
+            }
+        }
+    }
+
+    applyQuickFilter(filterType) {
+        const searchInput = document.getElementById('book-search-input');
+        const query = searchInput.value.trim();
+        
+        // If there's a search query, use the combined filtering logic
+        if (query) {
+            this.filterDays();
+            return;
+        }
+        
+        // Otherwise, apply just the quick filter
+        const dayCards = document.querySelectorAll('.day-overview-card');
+        let visibleCount = 0;
+        
+        dayCards.forEach(card => {
+            const day = parseInt(card.dataset.day);
+            let shouldShow = false;
+            
+            switch (filterType) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'completed':
+                    shouldShow = this.completedDays.has(day);
+                    break;
+                case 'remaining':
+                    shouldShow = !this.completedDays.has(day);
+                    break;
+            }
+            
+            if (shouldShow) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update header
+        this.updateQuickFilterStatus(filterType, visibleCount);
+    }
+
+    updateActiveFilterButton(activeFilter) {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            if (btn.dataset.filter === activeFilter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    updateQuickFilterStatus(filterType, count) {
+        const searchResultsText = document.getElementById('search-results-text');
+        
+        switch (filterType) {
+            case 'all':
+                searchResultsText.style.display = 'none';
+                break;
+            case 'completed':
+                searchResultsText.textContent = `${count} completed days`;
+                searchResultsText.style.display = 'block';
+                break;
+            case 'remaining':
+                searchResultsText.textContent = `${count} remaining days`;
+                searchResultsText.style.display = 'block';
+                break;
+        }
+    }
+
+    clearDayFilter() {
+        const searchInput = document.getElementById('book-search-input');
+        const clearBtn = document.getElementById('clear-search-btn');
+        
+        searchInput.value = '';
+        clearBtn.style.display = 'none';
+        searchInput.focus();
+        
+        // Reapply the current quick filter instead of showing all days
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        if (activeFilterBtn) {
+            const filterType = activeFilterBtn.dataset.filter;
+            this.applyQuickFilter(filterType);
+        } else {
+            this.showAllDays();
+        }
+    }
+
+    // Settings Tab Methods
+    updateSettingsTab() {
+        this.setupSettingsEventListeners();
+        this.loadSettingsUI();
+    }
+
+    setupSettingsEventListeners() {
+        // Words of Christ in Red toggle
+        document.getElementById('words-of-christ-red').addEventListener('change', (e) => {
+            this.settings.wordsOfChristRed = e.target.checked;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Words of Christ Scope setting
+        document.getElementById('words-of-christ-scope').addEventListener('change', (e) => {
+            this.settings.wordsOfChristScope = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Font Family setting
+        document.getElementById('font-family-setting').addEventListener('change', (e) => {
+            this.settings.fontFamily = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Font Size setting
+        document.getElementById('font-size-setting').addEventListener('change', (e) => {
+            this.settings.fontSize = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Tab Layout setting
+        document.getElementById('tab-layout-setting').addEventListener('change', (e) => {
+            this.settings.tabLayout = e.target.value;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Show Floating Arrows toggle
+        document.getElementById('show-floating-arrows').addEventListener('change', (e) => {
+            this.settings.showFloatingArrows = e.target.checked;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+        // Recent Activity View setting
+        document.getElementById('recent-activity-view').addEventListener('change', (e) => {
+            this.settings.recentActivityView = e.target.value;
+            this.saveSettings();
+            this.updateRecentActivityDisplay();
+        });
+
+        // Dark Mode toggle
+        document.getElementById('dark-mode').addEventListener('change', (e) => {
+            this.settings.darkMode = e.target.checked;
+            this.saveSettings();
+            this.applySettings();
+        });
+
+
+        // Export Progress button
+        document.getElementById('export-progress').addEventListener('click', () => {
+            this.exportProgress();
+        });
+
+        // Import Progress button
+        document.getElementById('import-progress').addEventListener('click', () => {
+            document.getElementById('import-file').click();
+        });
+
+        // Import file handler
+        document.getElementById('import-file').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                this.importProgress(e.target.files[0]);
+            }
+        });
+
+        // Reset All Data button
+        document.getElementById('reset-all-data').addEventListener('click', () => {
+            this.showResetDataModal();
+        });
+    }
+
+    loadSettingsUI() {
+        // Load current settings into UI
+        document.getElementById('words-of-christ-red').checked = this.settings.wordsOfChristRed;
+        document.getElementById('words-of-christ-scope').value = this.settings.wordsOfChristScope;
+        document.getElementById('font-family-setting').value = this.settings.fontFamily;
+        document.getElementById('font-size-setting').value = this.settings.fontSize;
+        document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
+        document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
+        document.getElementById('recent-activity-view').value = this.settings.recentActivityView;
+        document.getElementById('dark-mode').checked = this.settings.darkMode;
+    }
+
+    saveSettings() {
+        localStorage.setItem('bible300Settings', JSON.stringify(this.settings));
+    }
+
+    loadSettings() {
+        try {
+            const saved = localStorage.getItem('bible300Settings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                
+                this.settings = { ...this.settings, ...settings };
+            } else {
+                // First time user - save the default settings
+                this.saveSettings();
+            }
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            // On error, save the default settings
+            this.saveSettings();
+        }
+    }
+
+    applySettings() {
+        // Apply font family setting
+        document.documentElement.classList.remove('font-inter', 'font-noto-sans', 'font-noto-serif');
+        document.documentElement.classList.add(`font-${this.settings.fontFamily}`);
+        
+        // Load fonts if needed and update UI labels
+        if (this.settings.fontFamily !== 'inter') {
+            this.checkFontLoading(this.settings.fontFamily).then(status => {
+                this.updateFontLabels(status);
+            });
+        } else {
+            this.updateFontLabels('system');
+        }
+
+        // Apply font size setting
+        document.documentElement.classList.remove('font-small', 'font-medium', 'font-large', 'font-extra-large');
+        document.documentElement.classList.add(`font-${this.settings.fontSize}`);
+        
+        // Apply tab layout setting
+        document.documentElement.classList.remove('layout-horizontal', 'layout-dropdown');
+        document.documentElement.classList.add(`layout-${this.settings.tabLayout}`);
+        
+        // Apply floating arrows setting
+        if (this.settings.showFloatingArrows) {
+            document.documentElement.classList.remove('hide-floating-arrows');
+        } else {
+            document.documentElement.classList.add('hide-floating-arrows');
+        }
+
+        // Apply dark mode setting
+        if (this.settings.darkMode) {
+            document.documentElement.classList.remove('light-mode');
+            this.updateThemeColor('#1f2937'); // Dark mode background
+        } else {
+            document.documentElement.classList.add('light-mode');
+            this.updateThemeColor('#fafbfc'); // Light mode background
+        }
+
+        // Words of Christ setting is now applied per-book in displayBibleContent
+        // Remove any existing global classes
+        document.documentElement.classList.remove('words-of-christ-enabled');
+        document.documentElement.classList.remove('words-of-christ-earthly-only');
+    }
+    
+    shouldShowWordsOfChrist(bookName, chapter = null) {
+        // Check if Words of Christ should be enabled for this book/chapter
+        if (!this.settings.wordsOfChristRed) {
+            return false;
+        }
+        
+        if (this.settings.wordsOfChristScope === 'all') {
+            return true;
+        }
+        
+        // For 'earthly' scope, only show in Gospels and Acts 1
+        const gospelBooks = ['Matthew', 'Mark', 'Luke', 'John'];
+        if (gospelBooks.includes(bookName)) {
+            return true;
+        }
+        
+        // Acts only for chapter 1 in earthly ministry scope
+        if (bookName === 'Acts' && chapter === 1) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    updateThemeColor(color) {
+        // Update the theme-color meta tag for mobile browsers
+        let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', color);
+        } else {
+            // Create the meta tag if it doesn't exist
+            themeColorMeta = document.createElement('meta');
+            themeColorMeta.name = 'theme-color';
+            themeColorMeta.content = color;
+            document.head.appendChild(themeColorMeta);
+        }
+    }
+
+    async checkFontLoading(fontFamily) {
+        if (fontFamily === 'inter') {
+            return 'System fonts (always available)';
+        }
+
+        const fontName = fontFamily === 'noto-sans' ? 'Noto Sans Local' : 'Noto Serif Local';
+        const fileName = fontFamily === 'noto-sans' ? 'NotoSans-VariableFont.ttf' : 'NotoSerif-VariableFont.ttf';
+        
+        try {
+            // First, check if we can actually fetch the font file
+            const fontUrl = `./fonts/${fileName}`;
+            const response = await fetch(fontUrl);
+            
+            if (!response.ok) {
+                return `❌ Font file fetch failed: ${response.status} (likely file:// protocol)`;
+            }
+            
+            // Try to load the font using FontFace API
+            if ('FontFace' in window) {
+                const fontFace = new FontFace(fontName, `url(${fontUrl})`);
+                const loadedFont = await fontFace.load();
+                
+                // Add to document fonts if not already there
+                if (!document.fonts.has(loadedFont)) {
+                    document.fonts.add(loadedFont);
+                }
+                
+                // Check if we're actually using the loaded font vs system font
+                const isUsingLoadedFont = await this.testFontActuallyLoaded(fontName);
+                
+                return `✅ Font file loaded via FontFace API | Actually applied: ${isUsingLoadedFont}`;
+            }
+            
+            return `❌ FontFace API not available`;
+            
+        } catch (error) {
+            return `❌ ${fontName} failed: ${error.message}`;
+        }
+    }
+
+    async testFontActuallyLoaded(fontName) {
+        // Test if the font is actually being used by comparing with a definitely different font
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Measure with Comic Sans (should be very different)
+        ctx.font = '48px "Comic Sans MS", cursive';
+        const comicWidth = ctx.measureText('Testing Font Width').width;
+        
+        // Measure with our target font
+        ctx.font = `48px "${fontName}", sans-serif`;
+        const targetWidth = ctx.measureText('Testing Font Width').width;
+        
+        // If widths are significantly different, the font is actually being used
+        const difference = Math.abs(comicWidth - targetWidth);
+        return difference > 5 ? 'YES - font is different from system' : 'NO - likely using system font';
+    }
+
+    updateFontLabels(status) {
+        const select = document.getElementById('font-family-setting');
+        if (!select) return;
+
+        const options = select.getElementsByTagName('option');
+        
+        // Update labels based on whether fonts are actually loading
+        const isLoadingRealFonts = status.includes('✅') && status.includes('Font file loaded');
+        
+        for (let option of options) {
+            switch (option.value) {
+                case 'inter':
+                    option.textContent = 'Default';
+                    break;
+                case 'noto-sans':
+                    option.textContent = 'Noto Sans';
+                    break;
+                case 'noto-serif':
+                    option.textContent = 'Noto Serif';
+                    break;
+            }
+        }
+    }
+
+    async checkFontByMeasurement(fontName) {
+        return new Promise((resolve) => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            // Measure with default font
+            context.font = '72px monospace';
+            const defaultWidth = context.measureText('The quick brown fox').width;
+            
+            // Measure with target font
+            context.font = `72px "${fontName}", monospace`;
+            const testWidth = context.measureText('The quick brown fox').width;
+            
+            // If widths are different, the font loaded
+            if (Math.abs(defaultWidth - testWidth) > 1) {
+                resolve(`✅ ${fontName} loaded`);
+            } else {
+                resolve(`❌ ${fontName} not loaded (using fallback)`);
+            }
+        });
+    }
+
+
+    exportProgress() {
+        const data = {
+            currentDay: this.currentDay,
+            completedDays: Array.from(this.completedDays),
+            categoryCompletions: this.categoryCompletions,
+            startDate: this.startDate.toLocaleDateString('en-CA'),
+            settings: this.settings,
+            exportDate: new Date().toLocaleString(),
+            version: '2.1.0'
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        a.download = `bible300-backup-${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.showToast('Progress exported successfully!');
+    }
+
+    importProgress(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (data.currentDay && data.completedDays && data.categoryCompletions) {
+                    this.currentDay = data.currentDay;
+                    this.viewingDay = this.getCurrentDay();
+                    this.completedDays = new Set(data.completedDays);
+                    this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
+                    this.categoryCompletions = data.categoryCompletions;
+                    // Parse date string in YYYY-MM-DD format to avoid timezone issues
+                if (data.startDate) {
+                    const [year, month, day] = data.startDate.split('-').map(Number);
+                    this.startDate = new Date(year, month - 1, day);
+                } else {
+                    this.startDate = new Date();
+                }
+                    
+                    if (data.settings) {
+                        this.settings = { ...this.settings, ...data.settings };
+                        this.saveSettings();
+                        this.applySettings();
+                    }
+                    
+                    this.saveProgress();
+                    this.updateUI();
+                    this.updateProgressTab();
+                    this.loadSettingsUI();
+                    
+                    this.showToast('Progress imported successfully!');
+                } else {
+                    throw new Error('Invalid backup file format');
+                }
+            } catch (error) {
+                console.error('Error importing progress:', error);
+                this.showToast('Failed to import progress. Please check the file format.', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+    
+    // Chapter Menu Methods  
+    setupChapterMenu(bookName, currentChapter) {
+        const bookInfo = this.findBookInfo(bookName);
+        if (!bookInfo) return;
+        
+        // Update chapter menu title
+        document.getElementById('chapter-menu-title').textContent = bookName;
+        
+        // Generate chapter grid
+        const grid = document.getElementById('chapter-grid');
+        let html = '';
+        
+        for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
+            const isCurrentChapter = chapter === currentChapter;
+            html += `<button class="chapter-btn ${isCurrentChapter ? 'current' : ''}" 
+                     onclick="app.openBook('${bookName}', ${chapter})">${chapter}</button>`;
+        }
+        
+        grid.innerHTML = html;
+    }
+    
+    toggleChapterMenu() {
+        const menu = document.getElementById('chapter-menu');
+        const header = document.getElementById('chapter-selector-header');
+        menu.classList.toggle('active');
+        header.classList.toggle('active');
+    }
+    
+    hideChapterMenu() {
+        const menu = document.getElementById('chapter-menu');
+        const header = document.getElementById('chapter-selector-header');
+        menu.classList.remove('active');
+        header.classList.remove('active');
+    }
+    
+    // Floating Arrows Methods
+    setupFloatingArrows(bookName, currentChapter) {
+        const bookInfo = this.findBookInfo(bookName);
+        if (!bookInfo) return;
+        
+        const prevBtn = document.getElementById('floating-prev');
+        const nextBtn = document.getElementById('floating-next');
+        
+        // Enable/disable buttons based on current chapter
+        prevBtn.disabled = currentChapter <= 1;
+        nextBtn.disabled = currentChapter >= bookInfo.chapters;
+    }
+    
+    // Swipe Gesture Methods
+    setupSwipeGestures() {
+        const readerContent = document.getElementById('reader-content');
+        if (!readerContent) return;
+        
+        // Remove existing listeners first to prevent duplicates
+        this.removeSwipeListeners();
+        
+        let startX = null;
+        let startY = null;
+        let isScrolling = null;
+        
+        const onTouchStart = (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isScrolling = null;
+        };
+        
+        const onTouchMove = (e) => {
+            if (!startX || !startY) return;
+            
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const diffX = startX - currentX;
+            const diffY = startY - currentY;
+            
+            if (isScrolling === null) {
+                isScrolling = Math.abs(diffY) > Math.abs(diffX);
+            }
+            
+            // If user is scrolling vertically, don't interfere
+            if (isScrolling) return;
+            
+            // Prevent horizontal scrolling during swipe
+            e.preventDefault();
+        };
+        
+        const onTouchEnd = (e) => {
+            if (!startX || !startY || isScrolling) {
+                startX = null;
+                startY = null;
+                isScrolling = null;
+                return;
+            }
+            
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+            const threshold = 50; // Minimum swipe distance
+            
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0) {
+                    // Swiped left - next chapter
+                    this.navigateChapter(1);
+                } else {
+                    // Swiped right - previous chapter
+                    this.navigateChapter(-1);
+                }
+            }
+            
+            startX = null;
+            startY = null;
+            isScrolling = null;
+        };
+        
+        // Store listeners for cleanup
+        this.swipeListeners = { onTouchStart, onTouchMove, onTouchEnd };
+        
+        // Add touch event listeners
+        readerContent.addEventListener('touchstart', onTouchStart, { passive: false });
+        readerContent.addEventListener('touchmove', onTouchMove, { passive: false });
+        readerContent.addEventListener('touchend', onTouchEnd, { passive: false });
+    }
+    
+    removeSwipeListeners() {
+        const readerContent = document.getElementById('reader-content');
+        if (!readerContent || !this.swipeListeners) return;
+        
+        readerContent.removeEventListener('touchstart', this.swipeListeners.onTouchStart);
+        readerContent.removeEventListener('touchmove', this.swipeListeners.onTouchMove);
+        readerContent.removeEventListener('touchend', this.swipeListeners.onTouchEnd);
+        
+        this.swipeListeners = null;
+    }
+}
+
+// Add CSS for toast animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new Bible300App();
+});
+
+// Handle install prompt for PWA
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Show install button/banner
+    showInstallPromotion();
+});
+
+function showInstallPromotion() {
+    // You could show a custom install banner here
+    console.log('PWA install prompt available');
+}
+
+// Handle successful installation
+window.addEventListener('appinstalled', (evt) => {
+    console.log('PWA was installed');
+    app.showToast('Bible 300 installed successfully! 📱');
+});
+
+// Handle updates
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        // Show update notification
+        app.showToast('App updated! New features available. 🚀');
+    });
+}
