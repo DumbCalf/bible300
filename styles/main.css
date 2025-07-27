@@ -861,9 +861,16 @@ body {
 .activity-day-date {
     color: var(--gray-600);
     font-size: var(--font-size-sm);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100px;
+}
+
+/* Mobile-specific text wrapping for activity dates */
+@media (max-width: 768px) {
+    .activity-day-date {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100px;
+    }
+}
 }
 
 .activity-status {
