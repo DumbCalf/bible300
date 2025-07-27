@@ -24,7 +24,8 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Reading streak counter
 - Customizable start date
 - Recent activity tracking with two view modes
-- Visual activity graph showing weekly status at a glance
+- **Visual activity graph** showing weekly status at a glance
+- **Compact date display** with stacked weekday/date format for mobile optimization
 
 ### 🎨 Reading Experience
 - Clean, distraction-free interface
