@@ -1252,7 +1252,7 @@ class Bible300App {
             if (daysCompletedOnDate.length > 1) {
                 const minDay = Math.min(...daysCompletedOnDate);
                 const maxDay = Math.max(...daysCompletedOnDate);
-                dayNumber.textContent = `Days ${minDay}-${maxDay}\u00A0(${daysCompletedOnDate.length}\u00A0days)`;
+                dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length}\u00A0days)`;
             } else if (daysCompletedOnDate.length === 1) {
                 dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
@@ -1350,7 +1350,7 @@ class Bible300App {
                 if (daysCompletedOnDate.length > 1) {
                     const minDay = Math.min(...daysCompletedOnDate);
                     const maxDay = Math.max(...daysCompletedOnDate);
-                    dayNumber.textContent = `Days ${minDay}-${maxDay}\u00A0(${daysCompletedOnDate.length}\u00A0days)`;
+                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length}\u00A0days)`;
                 } else if (daysCompletedOnDate.length === 1) {
                     dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
                 } else {
