@@ -915,6 +915,10 @@ body {
     font-weight: 600;
     color: var(--gray-900);
     min-width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
 }
 
 .activity-day-date {

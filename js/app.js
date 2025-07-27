@@ -1242,13 +1242,20 @@ class Bible300App {
             
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
-            const dateString = calendarDate.toLocaleDateString('en-US', { 
-                weekday: 'short',
+            
+            const weekday = calendarDate.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = calendarDate.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric' 
             });
-            // Replace spaces between month and day with non-breaking spaces
-            dayDate.textContent = dateString.replace(/(\w{3})\s+(\d+)/, '$1\u00A0$2');
+            
+            const weekdayElement = document.createElement('div');
+            weekdayElement.textContent = weekday;
+            const monthDayElement = document.createElement('div');
+            monthDayElement.textContent = monthDay;
+            
+            dayDate.appendChild(weekdayElement);
+            dayDate.appendChild(monthDayElement);
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
@@ -1350,13 +1357,20 @@ class Bible300App {
             
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
-            const dateString = calendarDate.toLocaleDateString('en-US', { 
-                weekday: 'short',
+            
+            const weekday = calendarDate.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = calendarDate.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric' 
             });
-            // Replace spaces between month and day with non-breaking spaces
-            dayDate.textContent = dateString.replace(/(\w{3})\s+(\d+)/, '$1\u00A0$2');
+            
+            const weekdayElement = document.createElement('div');
+            weekdayElement.textContent = weekday;
+            const monthDayElement = document.createElement('div');
+            monthDayElement.textContent = monthDay;
+            
+            dayDate.appendChild(weekdayElement);
+            dayDate.appendChild(monthDayElement);
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
