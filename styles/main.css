@@ -864,13 +864,12 @@ body {
 }
 
 /* Mobile-specific text wrapping for activity dates */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .activity-day-date {
         word-wrap: break-word;
         overflow-wrap: break-word;
         max-width: 100px;
     }
-}
 }
 
 .activity-status {
