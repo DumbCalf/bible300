@@ -905,9 +905,10 @@ body {
 .activity-day {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    justify-content: space-between;
     flex-wrap: nowrap;
     min-width: 0;
+    flex: 1;
 }
 
 .activity-day-number {
@@ -919,6 +920,8 @@ body {
 .activity-day-date {
     color: var(--gray-600);
     font-size: var(--font-size-sm);
+    text-align: center;
+    flex: 1;
 }
 
 /* Mobile-specific text wrapping for activity dates */
