@@ -16,8 +16,7 @@ class Bible300App {
             fontFamily: 'inter', // inter, noto-sans, noto-serif
             darkMode: false, // Default to light theme
             tabLayout: 'dropdown', // horizontal, dropdown
-            showFloatingArrows: true, // Show floating navigation arrows
-            recentActivityView: 'last-7-days' // 'last-7-days' or 'current-week'
+            showFloatingArrows: true // Show floating navigation arrows
         };
         
         // Load saved data
@@ -809,8 +808,7 @@ class Bible300App {
             
             // Show completion feedback
             if (previousDaysMarked > 0) {
-                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
-                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous ${dayWord} also completed)`, 'success');
+                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous days also completed)`, 'success');
             } else {
                 this.showToast('Day marked complete!');
             }
@@ -1021,8 +1019,7 @@ class Bible300App {
             }
             
             if (previousDaysMarked > 0) {
-                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
-                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous ${dayWord} also marked complete)`, 'success');
+                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous days also marked complete)`, 'success');
             } else {
                 this.showToast('Day completed!', 'success');
             }
@@ -1146,7 +1143,7 @@ class Bible300App {
         document.getElementById('streak-days').textContent = streak;
         
         // Update recent activity feed
-        this.updateRecentActivityDisplay();
+        this.generateRecentActivity();
         
         // Update dates
         this.updateDateInfo();
@@ -1180,22 +1177,16 @@ class Bible300App {
     
     getDaysCompletedOnDate(calendarDate) {
         const daysCompleted = [];
-        
-        // Ensure we're working with local date strings for consistent comparison
-        const targetYear = calendarDate.getFullYear();
-        const targetMonth = calendarDate.getMonth();
-        const targetDay = calendarDate.getDate();
+        const targetDateStr = calendarDate.toISOString().split('T')[0]; // YYYY-MM-DD format
         
         // Check all completed days to see which were completed on this calendar date
         for (const day of this.completedDays) {
             const timestamp = this.dayCompletionTimestamps[day];
             if (timestamp) {
                 const completionDate = new Date(timestamp);
+                const completionDateStr = completionDate.toISOString().split('T')[0];
                 
-                // Compare using local date components to avoid timezone issues
-                if (completionDate.getFullYear() === targetYear &&
-                    completionDate.getMonth() === targetMonth &&
-                    completionDate.getDate() === targetDay) {
+                if (completionDateStr === targetDateStr) {
                     daysCompleted.push(day);
                 }
             }
@@ -1233,7 +1224,6 @@ class Bible300App {
             const dayDate = document.createElement('div');
             dayDate.className = 'activity-day-number';
             dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
-                weekday: 'short',
                 month: 'short', 
                 day: 'numeric' 
             });
@@ -1241,7 +1231,7 @@ class Bible300App {
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
             
-            // Only show day numbers if readings were completed on this date
+            // Show multiple days if completed on same date
             if (daysCompletedOnDate.length > 1) {
                 const minDay = Math.min(...daysCompletedOnDate);
                 const maxDay = Math.max(...daysCompletedOnDate);
@@ -1249,8 +1239,7 @@ class Bible300App {
             } else if (daysCompletedOnDate.length === 1) {
                 dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
-                // No readings completed on this date - don't show day number
-                dayNumber.textContent = '';
+                dayNumber.textContent = `Day ${readingDay}`;
             }
             
             activityDay.appendChild(dayDate);
@@ -1262,15 +1251,10 @@ class Bible300App {
             const todayDate = new Date();
             todayDate.setHours(0, 0, 0, 0);
             
-            // Check if start date is before today to determine N/A vs Missed logic
-            const startDate = new Date(this.startDate);
-            startDate.setHours(0, 0, 0, 0);
-            const isStartDateBeforeToday = startDate < todayDate;
-            
             if (daysCompletedOnDate.length > 0) {
                 activityStatus.classList.add('completed');
                 if (daysCompletedOnDate.length > 1) {
-                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
+                    activityStatus.innerHTML = `<i class="fas fa-check-double"></i> ${daysCompletedOnDate.length} Days Completed`;
                 } else {
                     activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
                 }
@@ -1280,10 +1264,6 @@ class Bible300App {
             } else if (calendarDate > todayDate) {
                 activityStatus.classList.add('upcoming');
                 activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
-            } else if (isStartDateBeforeToday && calendarDate >= startDate && calendarDate < todayDate) {
-                // Days between start date and today when start date is in the past - show as N/A
-                activityStatus.classList.add('not-available');
-                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
             } else {
                 activityStatus.classList.add('missed');
                 activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
@@ -1293,121 +1273,6 @@ class Bible300App {
             activityItem.appendChild(activityStatus);
             
             activityFeed.appendChild(activityItem);
-        }
-    }
-    
-    generateCurrentWeekActivity() {
-        const activityFeed = document.getElementById('activity-feed');
-        if (!activityFeed) return;
-        
-        activityFeed.innerHTML = '';
-        
-        const today = new Date();
-        
-        // Get the start of the current week (Sunday)
-        const startOfWeek = new Date(today);
-        const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-        startOfWeek.setDate(today.getDate() - dayOfWeek);
-        startOfWeek.setHours(0, 0, 0, 0);
-        
-        // Show all 7 days of the current week (Saturday to Sunday, inverted)
-        for (let i = 6; i >= 0; i--) {
-            const calendarDate = new Date(startOfWeek);
-            calendarDate.setDate(startOfWeek.getDate() + i);
-            calendarDate.setHours(0, 0, 0, 0);
-            
-            // Get all days completed on this calendar date
-            const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
-            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = 'activity-item';
-            
-            const activityDay = document.createElement('div');
-            activityDay.className = 'activity-day';
-            
-            const dayDate = document.createElement('div');
-            dayDate.className = 'activity-day-number';
-            dayDate.textContent = calendarDate.toLocaleDateString('en-US', { 
-                weekday: 'short',
-                month: 'short', 
-                day: 'numeric' 
-            });
-            
-            const dayNumber = document.createElement('div');
-            dayNumber.className = 'activity-day-date';
-            
-            // Handle dates before start date
-            if (readingDay === null) {
-                dayNumber.textContent = '';
-            } else {
-                // Only show day numbers if readings were completed on this date
-                if (daysCompletedOnDate.length > 1) {
-                    const minDay = Math.min(...daysCompletedOnDate);
-                    const maxDay = Math.max(...daysCompletedOnDate);
-                    dayNumber.textContent = `Days ${minDay}-${maxDay} (${daysCompletedOnDate.length} days)`;
-                } else if (daysCompletedOnDate.length === 1) {
-                    dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
-                } else {
-                    // No readings completed on this date - don't show day number
-                    dayNumber.textContent = '';
-                }
-            }
-            
-            activityDay.appendChild(dayDate);
-            activityDay.appendChild(dayNumber);
-            
-            const activityStatus = document.createElement('div');
-            activityStatus.className = 'activity-status';
-            
-            const todayDate = new Date();
-            todayDate.setHours(0, 0, 0, 0);
-            
-            if (readingDay === null) {
-                // Dates before start date
-                activityStatus.classList.add('not-available');
-                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
-            } else if (daysCompletedOnDate.length > 0) {
-                activityStatus.classList.add('completed');
-                if (daysCompletedOnDate.length > 1) {
-                    activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
-                } else {
-                    activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
-                }
-            } else if (calendarDate.getTime() === todayDate.getTime()) {
-                activityStatus.classList.add('current');
-                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
-            } else if (calendarDate > todayDate) {
-                activityStatus.classList.add('upcoming');
-                activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
-            } else {
-                // Check if start date is before today to determine N/A vs Missed logic
-                const startDate = new Date(this.startDate);
-                startDate.setHours(0, 0, 0, 0);
-                const isStartDateBeforeToday = startDate < todayDate;
-                
-                if (isStartDateBeforeToday && calendarDate >= startDate && calendarDate < todayDate) {
-                    // Days between start date and today when start date is in the past - show as N/A
-                    activityStatus.classList.add('not-available');
-                    activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
-                } else {
-                    activityStatus.classList.add('missed');
-                    activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
-                }
-            }
-            
-            activityItem.appendChild(activityDay);
-            activityItem.appendChild(activityStatus);
-            
-            activityFeed.appendChild(activityItem);
-        }
-    }
-    
-    updateRecentActivityDisplay() {
-        if (this.settings.recentActivityView === 'current-week') {
-            this.generateCurrentWeekActivity();
-        } else {
-            this.generateRecentActivity();
         }
     }
     
@@ -1501,7 +1366,7 @@ class Bible300App {
             this.startDate = newDate;
             this.saveProgress();
             this.updateDateInfo();
-            this.updateRecentActivityDisplay();
+            this.generateRecentActivity();
             this.closeStartDateModal();
             this.showToast('Start date updated successfully!');
         } else {
@@ -1695,26 +1560,12 @@ class Bible300App {
         this.setupOverviewEventListeners();
         this.generateDaysOverview();
         
-        // Reset to "All Days" filter and clear search when switching to overview
+        // Apply any existing filter after generating days
         setTimeout(() => {
-            // Clear search input
             const searchInput = document.getElementById('book-search-input');
-            const clearBtn = document.getElementById('clear-search-btn');
-            const searchResultsText = document.getElementById('search-results-text');
-            
-            if (searchInput) {
-                searchInput.value = '';
+            if (searchInput && searchInput.value.trim()) {
+                this.filterDays();
             }
-            if (clearBtn) {
-                clearBtn.style.display = 'none';
-            }
-            if (searchResultsText) {
-                searchResultsText.style.display = 'none';
-            }
-            
-            // Reset to "All Days" filter
-            this.updateActiveFilterButton('all');
-            this.applyQuickFilter('all');
         }, 0);
     }
 
@@ -2144,13 +1995,6 @@ class Bible300App {
             this.applySettings();
         });
 
-        // Recent Activity View setting
-        document.getElementById('recent-activity-view').addEventListener('change', (e) => {
-            this.settings.recentActivityView = e.target.value;
-            this.saveSettings();
-            this.updateRecentActivityDisplay();
-        });
-
         // Dark Mode toggle
         document.getElementById('dark-mode').addEventListener('change', (e) => {
             this.settings.darkMode = e.target.checked;
@@ -2190,7 +2034,6 @@ class Bible300App {
         document.getElementById('font-size-setting').value = this.settings.fontSize;
         document.getElementById('tab-layout-setting').value = this.settings.tabLayout;
         document.getElementById('show-floating-arrows').checked = this.settings.showFloatingArrows;
-        document.getElementById('recent-activity-view').value = this.settings.recentActivityView;
         document.getElementById('dark-mode').checked = this.settings.darkMode;
     }
 
