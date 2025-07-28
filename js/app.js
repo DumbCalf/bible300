@@ -1135,33 +1135,38 @@ class Bible300App {
     
     updateProgressTab() {
         // Update stats
-        const daysCompleted = this.completedDays.size;
-        document.getElementById('days-completed').textContent = daysCompleted;
+        document.getElementById('days-completed').textContent = this.completedDays.size;
         document.getElementById('completion-percent').textContent = 
-            `${(daysCompleted / 300 * 100).toFixed(1)}%`;
+            `${(this.completedDays.size / 300 * 100).toFixed(1)}%`;
             
         // Calculate days missed based on actual calendar dates
         const daysMissed = this.calculateDaysMissed();
         document.getElementById('days-missed').textContent = daysMissed;
-        
-        // Update labels to be singular when count is 1
-        const completedLabel = document.querySelector('.days-completed-icon + .stat-content-horizontal .stat-label-stacked');
-        const missedLabel = document.querySelector('.days-missed-icon + .stat-content-horizontal .stat-label-stacked');
-        
-        if (completedLabel) {
-            completedLabel.textContent = daysCompleted === 1 ? 'Day\nComplete' : 'Days\nComplete';
-        }
-        if (missedLabel) {
-            missedLabel.textContent = daysMissed === 1 ? 'Day\nMissed' : 'Days\nMissed';
-        }
             
-        // Calculate streak (simplified)
+        // Calculate streak based on consecutive calendar days with at least one reading
         let streak = 0;
-        for (let i = this.currentDay - 1; i >= 1; i--) {
-            if (this.completedDays.has(i)) {
+        const today = new Date();
+        
+        // Start from today and work backwards
+        for (let daysBack = 0; daysBack < 365; daysBack++) {
+            const checkDate = new Date(today);
+            checkDate.setDate(today.getDate() - daysBack);
+            
+            // Check if any reading was completed on this calendar date
+            let foundReadingOnDate = false;
+            for (const [day, timestampStr] of Object.entries(this.dayCompletionTimestamps)) {
+                const completionDate = new Date(timestampStr);
+                // Check if completion was on the same calendar date (ignore time)
+                if (completionDate.toDateString() === checkDate.toDateString()) {
+                    foundReadingOnDate = true;
+                    break;
+                }
+            }
+            
+            if (foundReadingOnDate) {
                 streak++;
             } else {
-                break;
+                break; // Streak is broken
             }
         }
         document.getElementById('streak-days').textContent = streak;
