@@ -359,7 +359,7 @@ body {
 
 .header-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+    background: var(--success);
     border-radius: var(--radius-sm);
     transition: width var(--transition-slow);
 }
@@ -646,7 +646,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+    background: var(--success);
     border-radius: var(--radius-sm);
     transition: width var(--transition-slow);
 }
