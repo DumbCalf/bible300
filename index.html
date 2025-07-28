@@ -195,61 +195,65 @@
                     <h2>Reading Progress</h2>
                 </div>
                 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-check"></i>
+                <div class="progress-top-row">
+                    <div class="condensed-stats-grid">
+                        <div class="stat-card condensed">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="days-completed">1</div>
+                                <div class="stat-label">Days Completed</div>
+                            </div>
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="days-completed">1</div>
-                            <div class="stat-label">Days Completed</div>
+                        
+                        <div class="stat-card condensed">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="days-missed">0</div>
+                                <div class="stat-label">Days Missed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card condensed">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="completion-percent">0.33%</div>
+                                <div class="stat-label">Complete</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card condensed">
+                            <div class="stat-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="streak-days">1</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-times"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="days-missed">0</div>
-                            <div class="stat-label">Days Missed</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="completion-percent">0.33%</div>
-                            <div class="stat-label">Complete</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="streak-days">1</div>
-                            <div class="stat-label">Day Streak</div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="date-info-container">
-                    <h3>Reading Schedule</h3>
-                    <div class="date-info-grid">
-                        <div class="date-info-item">
-                            <div class="date-info-label">Start Date</div>
-                            <div class="date-info-value" id="start-date">Jan 1, 2025</div>
-                            <button class="change-date-btn" id="change-start-date-btn">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
-                        <div class="date-info-item">
-                            <div class="date-info-label">Expected Finish</div>
-                            <div class="date-info-value" id="expected-finish">Oct 27, 2025</div>
+                    <div class="condensed-schedule-card">
+                        <h3>Reading Schedule</h3>
+                        <div class="schedule-content">
+                            <div class="schedule-item">
+                                <div class="schedule-label">Start Date</div>
+                                <div class="schedule-value-container">
+                                    <div class="schedule-value" id="start-date">Jan 1, 2025</div>
+                                    <button class="change-date-btn" id="change-start-date-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-label">Expected Finish</div>
+                                <div class="schedule-value" id="expected-finish">Oct 27, 2025</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -303,7 +307,7 @@
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Font Family</label>
-                                <p class="setting-description">Choose your preferred font for reading</p>
+                                <p class="setting-description">Choose a different font</p>
                             </div>
                             <div class="setting-control">
                                 <select id="font-family-setting" class="setting-select">
@@ -317,7 +321,7 @@
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Font Size</label>
-                                <p class="setting-description">Adjust text size for comfortable reading</p>
+                                <p class="setting-description">Adjust text size</p>
                             </div>
                             <div class="setting-control">
                                 <select id="font-size-setting" class="setting-select">
@@ -329,6 +333,22 @@
                             </div>
                         </div>
 
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label class="setting-label">Dark Mode</label>
+                                <p class="setting-description">Use dark theme for comfortable reading in low light</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="dark-mode" checked />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Navigation</h3>
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Tab Layout</label>
@@ -367,28 +387,14 @@
                                 </label>
                             </div>
                         </div>
-
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <label class="setting-label">Dark Mode</label>
-                                <p class="setting-description">Use dark theme for comfortable reading in low light</p>
-                            </div>
-                            <div class="setting-control">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="dark-mode" checked />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
-
                     <div class="settings-section">
-                        <h3>Data Management</h3>
+                        <h3>Reading Progress</h3>
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Recent Activity View</label>
-                                <p class="setting-description">Choose how recent activity is displayed</p>
+                                <p class="setting-description">Choose display type for recent activity</p>
                             </div>
                             <div class="setting-control">
                                 <select id="recent-activity-view" class="setting-select">
@@ -400,8 +406,8 @@
 
                         <div class="setting-item">
                             <div class="setting-info">
-                                <label class="setting-label">Show Activity Graph</label>
-                                <p class="setting-description">Display visual activity status</p>
+                                <label class="setting-label">Show Recent Activity Table</label>
+                                <p class="setting-description">Display a visual of the recent activity</p>
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
@@ -410,7 +416,10 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="settings-section">
+                        <h3>Data Management</h3>
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Export Progress</label>

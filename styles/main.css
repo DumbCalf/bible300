@@ -60,7 +60,7 @@
     --gray-900: #ffffff;
     
     /* Semantic colors */
-    --success: #10b981;
+    --success: #059669;
     --warning: #f59e0b;
     --error: #ef4444;
     --danger: #dc2626;
@@ -772,11 +772,26 @@ body {
 }
 
 /* Stats Grid */
+/* Original stats grid (keeping for backward compatibility) */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--space-4);
     margin-bottom: var(--space-8);
+}
+
+/* New condensed layout styles */
+.progress-top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.condensed-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
 }
 
 .stat-card {
@@ -787,6 +802,22 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-4);
+}
+
+/* Condensed stat card styling */
+.stat-card.condensed {
+    padding: var(--space-4);
+    gap: var(--space-3);
+}
+
+.stat-card.condensed .stat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-size-lg);
+}
+
+.stat-card.condensed .stat-number {
+    font-size: var(--font-size-2xl);
 }
 
 .stat-icon {
@@ -812,6 +843,65 @@ body {
     color: var(--gray-500);
     font-size: var(--font-size-sm);
     font-weight: 500;
+}
+
+/* Condensed Schedule Card */
+.condensed-schedule-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.condensed-schedule-card h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--space-3);
+}
+
+.schedule-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.schedule-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.schedule-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.schedule-value-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.schedule-value {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.condensed-schedule-card .change-date-btn {
+    position: static;
+    padding: var(--space-1);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
 }
 
 /* Recent Activity Feed */
@@ -1501,6 +1591,17 @@ body {
         grid-template-columns: 1fr;
     }
     
+    /* Mobile responsive for condensed layout */
+    .progress-top-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+    
+    .condensed-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+    }
+    
     .books-container {
         gap: var(--space-6);
     }
@@ -2025,6 +2126,7 @@ body {
 .light-mode .stat-card,
 .light-mode .recent-activity-container,
 .light-mode .date-info-container,
+.light-mode .condensed-schedule-card,
 .light-mode .progress-overview,
 .light-mode .book-category {
     background: #ffffff;
