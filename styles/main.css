@@ -845,6 +845,19 @@ body {
     font-weight: 500;
 }
 
+/* Custom stat icon colors */
+.days-completed-icon {
+    background: var(--success) !important;
+}
+
+.days-missed-icon {
+    background: var(--danger) !important;
+}
+
+.streak-icon {
+    background: var(--warning) !important;
+}
+
 /* Condensed Schedule Card */
 .condensed-schedule-card {
     background: var(--white);
@@ -853,14 +866,15 @@ body {
     box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: fit-content;
+    align-self: start;
 }
 
 .condensed-schedule-card h3 {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--gray-900);
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
 }
 
 .schedule-content {
@@ -869,10 +883,16 @@ body {
     gap: var(--space-3);
 }
 
+.schedule-content.horizontal {
+    flex-direction: row;
+    gap: var(--space-4);
+}
+
 .schedule-item {
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
+    flex: 1;
 }
 
 .schedule-label {
