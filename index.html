@@ -195,7 +195,18 @@
                     <h2>Reading Progress</h2>
                 </div>
                 
-                <div class="progress-top-row">
+                <div class="progress-container">
+                    <div class="schedule-cards-container">
+                        <div class="schedule-card">
+                            <div class="schedule-label">Start Date</div>
+                            <div class="schedule-value" id="start-date">Jan 1, 2025</div>
+                        </div>
+                        <div class="schedule-card">
+                            <div class="schedule-label">Expected Finish</div>
+                            <div class="schedule-value" id="expected-finish">Oct 27, 2025</div>
+                        </div>
+                    </div>
+
                     <div class="condensed-stats-grid">
                         <div class="stat-card condensed">
                             <div class="stat-icon days-completed-icon">
@@ -203,7 +214,7 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-number" id="days-completed">1</div>
-                                <div class="stat-label">Days Completed</div>
+                                <div class="stat-label">Days Complete</div>
                             </div>
                         </div>
                         
@@ -234,25 +245,6 @@
                             <div class="stat-content">
                                 <div class="stat-number" id="streak-days">1</div>
                                 <div class="stat-label">Day Streak</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="condensed-schedule-card">
-                        <h3>Reading Schedule</h3>
-                        <div class="schedule-content horizontal">
-                            <div class="schedule-item">
-                                <div class="schedule-label">Start Date</div>
-                                <div class="schedule-value-container">
-                                    <div class="schedule-value" id="start-date">Jan 1, 2025</div>
-                                    <button class="change-date-btn" id="change-start-date-btn">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="schedule-item">
-                                <div class="schedule-label">Expected Finish</div>
-                                <div class="schedule-value" id="expected-finish">Oct 27, 2025</div>
                             </div>
                         </div>
                     </div>
@@ -391,6 +383,19 @@
 
                     <div class="settings-section">
                         <h3>Reading Progress</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label class="setting-label">Start Date</label>
+                                <p class="setting-description">Set the start date for your 300-day reading plan</p>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn secondary" id="change-start-date-settings-btn">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Change Date
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="setting-item">
                             <div class="setting-info">
                                 <label class="setting-label">Recent Activity View</label>

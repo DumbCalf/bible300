@@ -62,8 +62,8 @@
     /* Semantic colors */
     --success: #059669;
     --warning: #f59e0b;
-    --error: #ef4444;
-    --danger: #dc2626;
+    --error: #b91c1c;
+    --danger: #b91c1c;
     --red-700: #b91c1c;
     --info: #3b82f6;
     
@@ -781,17 +781,29 @@ body {
 }
 
 /* New condensed layout styles */
-.progress-top-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
+.progress-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
     margin-bottom: var(--space-6);
 }
 
 .condensed-stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
+}
+
+/* Responsive breakpoints for stats grid */
+@media (max-width: 1023px) {
+    .condensed-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .schedule-cards-container {
+        gap: var(--space-2);
+    }
 }
 
 .stat-card {
@@ -858,41 +870,22 @@ body {
     background: var(--warning) !important;
 }
 
-/* Condensed Schedule Card */
-.condensed-schedule-card {
+/* Schedule Cards Container */
+.schedule-cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.schedule-card {
     background: var(--white);
     border-radius: var(--radius-xl);
     padding: var(--space-4);
     box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
-    height: fit-content;
-    align-self: start;
-}
-
-.condensed-schedule-card h3 {
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: var(--space-2);
-}
-
-.schedule-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-}
-
-.schedule-content.horizontal {
-    flex-direction: row;
-    gap: var(--space-4);
-}
-
-.schedule-item {
-    display: flex;
-    flex-direction: column;
     gap: var(--space-1);
-    flex: 1;
 }
 
 .schedule-label {
@@ -903,25 +896,10 @@ body {
     letter-spacing: 0.5px;
 }
 
-.schedule-value-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
 .schedule-value {
     font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--gray-900);
-}
-
-.condensed-schedule-card .change-date-btn {
-    position: static;
-    padding: var(--space-1);
-    width: 28px;
-    height: 28px;
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-sm);
 }
 
 /* Recent Activity Feed */
@@ -1151,6 +1129,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    padding-top: var(--space-2);
 }
 
 .start-date-form label {
@@ -1216,6 +1195,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    padding-top: var(--space-2);
 }
 
 .reset-warning {
@@ -1356,6 +1336,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    padding-top: var(--space-2);
 }
 
 .day-jump-form label {
@@ -1612,13 +1593,12 @@ body {
     }
     
     /* Mobile responsive for condensed layout */
-    .progress-top-row {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
-    }
-    
     .condensed-stats-grid {
         grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+    }
+    
+    .schedule-cards-container {
         gap: var(--space-2);
     }
     
@@ -2146,7 +2126,7 @@ body {
 .light-mode .stat-card,
 .light-mode .recent-activity-container,
 .light-mode .date-info-container,
-.light-mode .condensed-schedule-card,
+.light-mode .schedule-card,
 .light-mode .progress-overview,
 .light-mode .book-category {
     background: #ffffff;
@@ -2184,7 +2164,7 @@ body {
 
 /* Words of Christ in Red - only when setting is enabled for current book */
 .words-of-christ-enabled .words-of-christ {
-    color: #dc2626;
+    color: #b91c1c;
     font-weight: 500;
 }
 

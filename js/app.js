@@ -168,7 +168,7 @@ class Bible300App {
         });
         
         // Start date modal events
-        document.getElementById('change-start-date-btn').addEventListener('click', () => {
+        document.getElementById('change-start-date-settings-btn').addEventListener('click', () => {
             this.showStartDateModal();
         });
         
@@ -1506,7 +1506,7 @@ class Bible300App {
         // Update header text based on selected view
         const headerElement = document.getElementById('recent-activity-header');
         if (headerElement) {
-            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Current Week' : 'Last 7 Days';
+            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Recent Activity (Current Week)' : 'Recent Activity (Last 7 Days)';
         }
         
         // Generate activity data and render both list and graph
@@ -1687,7 +1687,7 @@ class Bible300App {
         let backgroundColor;
         switch(type) {
             case 'error':
-                backgroundColor = '#ef4444';
+                backgroundColor = '#b91c1c';
                 break;
             case 'orange':
                 backgroundColor = '#f59e0b';
@@ -1697,16 +1697,19 @@ class Bible300App {
                 break;
             case 'success':
             default:
-                backgroundColor = '#10b981';
+                backgroundColor = '#059669';
                 break;
         }
+        
+        const isLightMode = document.documentElement.classList.contains('light-mode');
+        const textColor = isLightMode ? 'white' : 'black';
         
         toast.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
             background: ${backgroundColor};
-            color: white;
+            color: ${textColor} !important;
             padding: 12px 24px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
