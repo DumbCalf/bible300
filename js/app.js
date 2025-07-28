@@ -1066,7 +1066,7 @@ class Bible300App {
         const completeBtn = document.getElementById('mark-complete');
         
         if (this.completedDays.has(this.viewingDay)) {
-            completeBtn.innerHTML = '<i class="fas fa-check-double"></i> Day Completed';
+            completeBtn.innerHTML = '<i class="fas fa-check"></i> Day Completed';
             completeBtn.disabled = true;
         } else if (completedCategories === 5) {
             // This shouldn't normally be reached due to auto-complete, but just in case
@@ -1136,8 +1136,9 @@ class Bible300App {
     updateProgressTab() {
         // Update stats
         document.getElementById('days-completed').textContent = this.completedDays.size;
-        document.getElementById('completion-percent').textContent = 
-            `${(this.completedDays.size / 300 * 100).toFixed(1)}%`;
+        // Calculate days remaining
+        const daysRemaining = 300 - this.completedDays.size;
+        document.getElementById('days-remaining').textContent = daysRemaining;
             
         // Calculate days missed based on actual calendar dates
         const daysMissed = this.calculateDaysMissed();

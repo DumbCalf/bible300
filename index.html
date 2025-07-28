@@ -198,53 +198,53 @@
                 <div class="progress-container">
                     <div class="schedule-cards-container">
                         <div class="schedule-card">
-                            <div class="schedule-label">Start Date</div>
+                            <div class="stat-label">Start Date</div>
                             <div class="schedule-value" id="start-date">Jan 1, 2025</div>
                         </div>
                         <div class="schedule-card">
-                            <div class="schedule-label">Expected Finish</div>
+                            <div class="stat-label">Expected Finish</div>
                             <div class="schedule-value" id="expected-finish">Oct 27, 2025</div>
                         </div>
                     </div>
 
                     <div class="condensed-stats-grid">
                         <div class="stat-card condensed">
-                            <div class="stat-icon days-completed-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-content">
+                            <div class="stat-label">Days Completed</div>
+                            <div class="stat-main">
+                                <div class="stat-icon days-completed-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
                                 <div class="stat-number" id="days-completed">1</div>
-                                <div class="stat-label">Days Complete</div>
                             </div>
                         </div>
                         
                         <div class="stat-card condensed">
-                            <div class="stat-icon days-missed-icon">
-                                <i class="fas fa-calendar-times"></i>
+                            <div class="stat-label">Days Remaining</div>
+                            <div class="stat-main">
+                                <div class="stat-icon days-remaining-icon">
+                                    <i class="fas fa-calendar-minus"></i>
+                                </div>
+                                <div class="stat-number" id="days-remaining">299</div>
                             </div>
-                            <div class="stat-content">
+                        </div>
+                        
+                        <div class="stat-card condensed">
+                            <div class="stat-label">Days Missed</div>
+                            <div class="stat-main">
+                                <div class="stat-icon days-missed-icon">
+                                    <i class="fas fa-calendar-times"></i>
+                                </div>
                                 <div class="stat-number" id="days-missed">0</div>
-                                <div class="stat-label">Days Missed</div>
                             </div>
                         </div>
                         
                         <div class="stat-card condensed">
-                            <div class="stat-icon completion-icon">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-number" id="completion-percent">0.33%</div>
-                                <div class="stat-label">Complete</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card condensed">
-                            <div class="stat-icon streak-icon">
-                                <i class="fas fa-fire"></i>
-                            </div>
-                            <div class="stat-content">
+                            <div class="stat-label">Current Streak</div>
+                            <div class="stat-main">
+                                <div class="stat-icon streak-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
                                 <div class="stat-number" id="streak-days">1</div>
-                                <div class="stat-label">Day Streak</div>
                             </div>
                         </div>
                     </div>
