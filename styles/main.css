@@ -857,6 +857,26 @@ body {
     font-weight: 500;
 }
 
+/* Horizontal layout for stacked labels */
+.stat-content-horizontal {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.stat-card.condensed .stat-content-horizontal .stat-number {
+    font-size: var(--font-size-3xl);
+}
+
+.stat-label-stacked {
+    color: var(--gray-500);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    white-space: pre-line;
+    text-align: left;
+    line-height: 1.2;
+}
+
 /* Custom stat icon colors */
 .days-completed-icon {
     background: var(--success) !important;

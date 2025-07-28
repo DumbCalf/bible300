@@ -1135,13 +1135,25 @@ class Bible300App {
     
     updateProgressTab() {
         // Update stats
-        document.getElementById('days-completed').textContent = this.completedDays.size;
+        const daysCompleted = this.completedDays.size;
+        document.getElementById('days-completed').textContent = daysCompleted;
         document.getElementById('completion-percent').textContent = 
-            `${(this.completedDays.size / 300 * 100).toFixed(1)}%`;
+            `${(daysCompleted / 300 * 100).toFixed(1)}%`;
             
         // Calculate days missed based on actual calendar dates
         const daysMissed = this.calculateDaysMissed();
         document.getElementById('days-missed').textContent = daysMissed;
+        
+        // Update labels to be singular when count is 1
+        const completedLabel = document.querySelector('.days-completed-icon + .stat-content-horizontal .stat-label-stacked');
+        const missedLabel = document.querySelector('.days-missed-icon + .stat-content-horizontal .stat-label-stacked');
+        
+        if (completedLabel) {
+            completedLabel.textContent = daysCompleted === 1 ? 'Day\nComplete' : 'Days\nComplete';
+        }
+        if (missedLabel) {
+            missedLabel.textContent = daysMissed === 1 ? 'Day\nMissed' : 'Days\nMissed';
+        }
             
         // Calculate streak (simplified)
         let streak = 0;
