@@ -844,11 +844,19 @@ class Bible300App {
         this.updateNavigationButtons();
         
         // Update progress
-        const completionPercent = (this.completedDays.size / 300 * 100).toFixed(2);
+        const completionPercent = (this.completedDays.size / 300 * 100).toFixed(1);
         document.querySelector('.progress-fill').style.width = `${completionPercent}%`;
         document.querySelector('.progress-text span:last-child').textContent = `${completionPercent}%`;
         document.querySelector('.progress-text span:first-child').textContent = 
             `${this.completedDays.size} of 300 days completed`;
+        
+        // Update header progress bar
+        const headerProgressFill = document.querySelector('.header-progress-fill');
+        const headerProgressPercentage = document.querySelector('.header-progress-percentage');
+        if (headerProgressFill && headerProgressPercentage) {
+            headerProgressFill.style.width = `${completionPercent}%`;
+            headerProgressPercentage.textContent = `${completionPercent}%`;
+        }
         
         // Update reading date
         const today = new Date();
