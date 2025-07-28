@@ -43,8 +43,8 @@
     --primary-blue: #2563eb;
     --primary-blue-dark: #1d4ed8;
     --primary-blue-light: #3b82f6;
-    --secondary-gold: #f59e0b;
-    --secondary-gold-dark: #d97706;
+    --secondary-gold: #d97706;
+    --secondary-gold-dark: #b45309;
     
     /* Default colors - original dark theme */
     --white: #111827;
@@ -61,7 +61,7 @@
     
     /* Semantic colors */
     --success: #059669;
-    --warning: #f59e0b;
+    --warning: #d97706;
     --error: #b91c1c;
     --danger: #b91c1c;
     --red-700: #b91c1c;

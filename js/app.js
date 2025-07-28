@@ -1690,7 +1690,7 @@ class Bible300App {
                 backgroundColor = '#b91c1c';
                 break;
             case 'orange':
-                backgroundColor = '#f59e0b';
+                backgroundColor = '#d97706';
                 break;
             case 'gray':
                 backgroundColor = '#6b7280';
