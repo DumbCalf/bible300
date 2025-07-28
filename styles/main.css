@@ -868,6 +868,15 @@ body {
     font-size: var(--font-size-3xl);
 }
 
+/* Responsive layout for percentage stat */
+@media (max-width: 1023px) {
+    .completion-icon + .stat-content-horizontal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+}
+
 .stat-label-stacked {
     color: var(--gray-500);
     font-size: var(--font-size-sm);
