@@ -1249,12 +1249,12 @@ class Bible300App {
         input.value = this.currentDay;
         modal.classList.add('active');
         
-        // Focus and select the input first, then apply scroll prevention
+        // Focus and select the input first (triggers keyboard)
         setTimeout(() => {
             input.focus();
             input.select();
             
-            // Apply scroll prevention after focus to allow keyboard to trigger
+            // Apply scroll prevention after keyboard appears
             document.body.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
             document.body.style.width = '100%';
@@ -1262,12 +1262,14 @@ class Bible300App {
     }
     
     closeDayJumpModal() {
-        // Restore scroll immediately to prevent freeze
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        
         document.getElementById('day-jump-modal').classList.remove('active');
+        
+        // Restore scroll immediately (no delay to prevent freeze)
+        if (!document.querySelector('.modal.active')) {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
     }
     
     jumpToDay() {
@@ -1774,7 +1776,7 @@ class Bible300App {
         
         modal.classList.add('active');
         
-        // Apply scroll prevention after a brief delay to allow focus
+        // Apply scroll prevention after brief delay for focus
         setTimeout(() => {
             document.body.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
@@ -1783,12 +1785,14 @@ class Bible300App {
     }
     
     closeStartDateModal() {
-        // Restore scroll immediately to prevent freeze
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        
         document.getElementById('start-date-modal').classList.remove('active');
+        
+        // Restore scroll immediately (no delay to prevent freeze)
+        if (!document.querySelector('.modal.active')) {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
     }
     
     updateStartDate() {
