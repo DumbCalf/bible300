@@ -44,7 +44,6 @@ class Bible300App {
         this.loadBibleBooks();
         this.updateProgressTab();
         this.switchTab('reading-plan'); // Ensure Today tab is selected on load
-        this.setupModalScrollPrevention();
     }
     
     setupEventListeners() {
@@ -682,7 +681,6 @@ class Bible300App {
         
         // Show the modal
         document.getElementById('bible-reader').classList.add('active');
-        document.body.style.overflow = 'hidden';
         
         // Setup chapter menu and floating arrows
         this.setupChapterMenu(bookName, chapter);
@@ -703,7 +701,6 @@ class Bible300App {
     
     closeBibleReader() {
         document.getElementById('bible-reader').classList.remove('active');
-        document.body.style.overflow = '';
         this.hideFootnotePopup();
         this.hideChapterMenu();
         this.removeSwipeListeners();
@@ -910,26 +907,7 @@ class Bible300App {
             }
             
             // Show completion feedback
-            console.log(`📝 REGULAR DAY ${day} COMPLETED - Debugging scroll prevention...`);
-            const beforeRegularState = this.debugModalScrolling();
-            console.log('Before regular day toast:', beforeRegularState);
-            
             this.showToast(`Day ${day} completed`, 'success');
-            
-            // Debug after regular toast
-            setTimeout(() => {
-                console.log('After regular day toast:');
-                const afterRegularState = this.debugModalScrolling();
-                
-                // Test scrolling after regular completion
-                const scrollY = window.scrollY;
-                window.scrollTo(0, scrollY + 50);
-                setTimeout(() => {
-                    const newScrollY = window.scrollY;
-                    console.log(`🔍 Scroll test after regular completion: ${scrollY} -> ${newScrollY} (${newScrollY === scrollY ? '✅ PREVENTED' : '❌ NOT PREVENTED'})`);
-                    window.scrollTo(0, scrollY); // Reset
-                }, 50);
-            }, 100);
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
@@ -947,79 +925,33 @@ class Bible300App {
         const milestones = [75, 100, 150, 200, 225, 300];
         
         if (milestones.includes(day)) {
-            console.log(`🎯 MILESTONE ${day} ACHIEVED - Debugging scroll prevention...`);
-            
-            // Debug state before milestone actions
-            const beforeState = this.debugModalScrolling();
-            console.log('Before milestone toast/modal:', beforeState);
-            
             const percentage = Math.round((day / 300) * 100);
             const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
             
             if (day === 300) {
                 // Show both toast and modal for Day 300
                 this.showToast(message, 'success');
-                
-                // Debug state after toast but before modal
-                setTimeout(() => {
-                    console.log('After toast, before modal:');
-                    this.debugModalScrolling();
-                    
-                    this.showCompletionModal();
-                    
-                    // Debug state after modal
-                    setTimeout(() => {
-                        console.log('After completion modal opened:');
-                        const afterState = this.debugModalScrolling();
-                        
-                        // Test if scrolling actually works
-                        const scrollY = window.scrollY;
-                        window.scrollTo(0, scrollY + 50);
-                        setTimeout(() => {
-                            const newScrollY = window.scrollY;
-                            console.log(`🔍 Scroll test for completion modal: ${scrollY} -> ${newScrollY} (${newScrollY === scrollY ? '✅ PREVENTED' : '❌ NOT PREVENTED'})`);
-                            window.scrollTo(0, scrollY); // Reset
-                        }, 50);
-                    }, 100);
-                }, 50);
+                this.showCompletionModal();
             } else {
                 this.showToast(message, 'success');
-                
-                // For non-300 milestones, test if toast affects scrolling
-                setTimeout(() => {
-                    console.log('After milestone toast (no modal):');
-                    const toastOnlyState = this.debugModalScrolling();
-                    
-                    const scrollY = window.scrollY;
-                    window.scrollTo(0, scrollY + 50);
-                    setTimeout(() => {
-                        const newScrollY = window.scrollY;
-                        console.log(`🔍 Scroll test with toast only: ${scrollY} -> ${newScrollY} (${newScrollY === scrollY ? '✅ PREVENTED' : '❌ NOT PREVENTED'})`);
-                        window.scrollTo(0, scrollY); // Reset
-                    }, 50);
-                }, 100);
             }
         }
     }
     
     showCompletionModal() {
         document.getElementById('completion-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
     
     closeCompletionModal() {
         document.getElementById('completion-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     showReadingInfoModal() {
         document.getElementById('reading-info-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
     
     closeReadingInfoModal() {
         document.getElementById('reading-info-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     updateUI() {
@@ -1315,7 +1247,6 @@ class Bible300App {
         
         input.value = this.currentDay;
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
         
         // Focus and select the input
         setTimeout(() => {
@@ -1326,7 +1257,6 @@ class Bible300App {
     
     closeDayJumpModal() {
         document.getElementById('day-jump-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     jumpToDay() {
@@ -1832,12 +1762,10 @@ class Bible300App {
         input.value = dateString;
         
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
     
     closeStartDateModal() {
         document.getElementById('start-date-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     updateStartDate() {
@@ -1864,12 +1792,10 @@ class Bible300App {
     
     showResetDataModal() {
         document.getElementById('reset-data-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
     
     closeResetDataModal() {
         document.getElementById('reset-data-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     resetAllData() {
@@ -1915,14 +1841,12 @@ class Bible300App {
         this.updateCalendarView();
         this.setupCalendarSwipeNavigation();
         document.getElementById('calendar-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
     
     closeCalendarModal() {
         document.getElementById('calendar-modal').classList.remove('active');
         this.hideCalendarMonthMenu();
         this.cleanupCalendarSwipeNavigation();
-        document.body.style.overflow = '';
     }
     
     generateAvailableMonths() {
@@ -3437,7 +3361,6 @@ class Bible300App {
 
     // Modal scroll prevention system
     setupModalScrollPrevention() {
-        console.log('🔧 Setting up modal scroll prevention system...');
         
         // Test CSS :has() support
         const hasSupport = CSS.supports('selector(:has(*))');
@@ -3516,47 +3439,6 @@ class Bible300App {
     }
 
     // Debug utilities for modal scrolling issue
-    debugModalScrolling() {
-        console.log('=== MODAL SCROLLING DEBUG ===');
-        
-        // Test CSS :has() support
-        const hasSupport = CSS.supports('selector(:has(*))');
-        console.log('CSS :has() support:', hasSupport);
-        
-        // Check current modal states
-        const allModals = document.querySelectorAll('.modal');
-        console.log('All modals found:', allModals.length);
-        
-        allModals.forEach((modal, index) => {
-            const hasActive = modal.classList.contains('active');
-            console.log(`Modal ${index} (${modal.id}): active=${hasActive}`);
-        });
-        
-        // Check body computed styles
-        const bodyStyle = window.getComputedStyle(document.body);
-        console.log('Body overflow:', bodyStyle.overflow);
-        console.log('Body overflow-y:', bodyStyle.overflowY);
-        
-        // Test the CSS selector manually
-        const modalWithActive = document.querySelector('.modal.active');
-        console.log('Found .modal.active:', modalWithActive ? modalWithActive.id : 'none');
-        
-        // Check if body:has(.modal.active) would match
-        const bodyHasModalActive = document.querySelector('body:has(.modal.active)');
-        console.log('body:has(.modal.active) matches:', bodyHasModalActive !== null);
-        
-        // Test alternative approach
-        if (!hasSupport) {
-            console.log('❌ :has() not supported, need fallback implementation');
-        }
-        
-        return {
-            hasSupport,
-            activeModals: Array.from(allModals).filter(m => m.classList.contains('active')).map(m => m.id),
-            bodyOverflow: bodyStyle.overflow,
-            bodyOverflowY: bodyStyle.overflowY
-        };
-    }
 
     testModalScrollPrevention() {
         console.log('=== TESTING MODAL SCROLL PREVENTION ===');
