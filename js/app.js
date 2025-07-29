@@ -962,11 +962,12 @@ class Bible300App {
         
         // Update reading date
         const today = new Date();
-        const weekday = today.toLocaleDateString('en-US', { weekday: 'short' });
-        const day = today.getDate();
-        const month = today.toLocaleDateString('en-US', { month: 'short' });
-        const year = today.toLocaleDateString('en-US', { year: '2-digit' });
-        document.getElementById('reading-date').textContent = `${weekday}, ${day} ${month} ${year}`;
+        document.getElementById('reading-date').textContent = today.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
         
         // Update today's reading based on current day
         this.updateTodaysReading();
