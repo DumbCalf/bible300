@@ -1052,6 +1052,18 @@ body {
     padding: var(--space-4);
 }
 
+/* Mobile calendar modal */
+@media (max-width: 768px) {
+    #calendar-modal .modal-content {
+        width: 98%; /* More screen width */
+        margin: var(--space-2); /* Less margin */
+    }
+    
+    .calendar-content {
+        padding: var(--space-2); /* Less padding */
+    }
+}
+
 .calendar-grid {
     max-width: 400px;
     width: 100%;
@@ -1064,8 +1076,9 @@ body {
 /* Mobile responsive calendar */
 @media (max-width: 768px) {
     .calendar-grid {
-        max-width: calc(100vw - 2rem); /* Account for modal padding */
-        gap: 2px; /* Smaller gap on mobile */
+        max-width: calc(100vw - 1rem); /* More aggressive sizing */
+        width: calc(100vw - 1rem); /* Force smaller width */
+        gap: 1px; /* Minimal gap on mobile */
     }
     
     .calendar-day {
