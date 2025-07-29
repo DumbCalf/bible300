@@ -909,6 +909,13 @@ class Bible300App {
             // Show completion feedback
             this.showToast(`Day ${day} completed`, 'success');
             
+            // Show additional notification for previous days if any were marked complete
+            if (previousDaysMarked > 0) {
+                setTimeout(() => {
+                    this.showPreviousDaysToast(previousDaysMarked);
+                }, 1000);
+            }
+            
             // Check for milestone achievements (only for the specific day being completed)
             this.checkMilestoneAchievement(day);
         }
@@ -1159,6 +1166,13 @@ class Bible300App {
             }
             
             this.showToast(`Day ${day} completed`, 'success');
+            
+            // Show additional notification for previous days if any were marked complete
+            if (previousDaysMarked > 0) {
+                setTimeout(() => {
+                    this.showPreviousDaysToast(previousDaysMarked);
+                }, 1000);
+            }
             
             // Check for milestone achievements (only for the specific day being completed)
             this.checkMilestoneAchievement(day);
@@ -2278,18 +2292,24 @@ class Bible300App {
             animation: slideIn 0.3s ease-out;
         `;
         
+        // Create dismiss function
+        const dismissToast = () => {
+            if (toast.parentNode) {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }
+        };
+        
         // Add click to dismiss functionality
         toast.style.cursor = 'pointer';
-        toast.addEventListener('click', () => {
-            toast.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    document.body.removeChild(toast);
-                    // Reposition remaining toasts
-                    this.repositionToasts();
-                }
-            }, 300);
-        });
+        toast.addEventListener('click', dismissToast);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(dismissToast, 5000);
         
         document.body.appendChild(toast);
     }
@@ -2298,15 +2318,11 @@ class Bible300App {
         this.showToast(`Progress ${action} successfully!`);
     }
     
-    repositionToasts() {
-        const toasts = document.querySelectorAll('.toast');
-        let topOffset = 20;
-        
-        toasts.forEach(toast => {
-            toast.style.top = `${topOffset}px`;
-            topOffset += toast.offsetHeight + 10; // Add toast height + 10px gap
-        });
+    showPreviousDaysToast(count) {
+        const dayWord = count === 1 ? 'day' : 'days';
+        this.showToast(`${count} previous ${dayWord} also completed`, 'success');
     }
+    
     
     saveProgress() {
         const data = {
