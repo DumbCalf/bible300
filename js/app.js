@@ -1249,6 +1249,11 @@ class Bible300App {
         input.value = this.currentDay;
         modal.classList.add('active');
         
+        // Explicit scroll prevention for PWA mode
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        
         // Focus and select the input
         setTimeout(() => {
             input.focus();
@@ -1258,6 +1263,15 @@ class Bible300App {
     
     closeDayJumpModal() {
         document.getElementById('day-jump-modal').classList.remove('active');
+        
+        // Explicit scroll restoration for PWA mode
+        setTimeout(() => {
+            if (!document.querySelector('.modal.active')) {
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
+        }, 50);
     }
     
     jumpToDay() {
@@ -1763,10 +1777,24 @@ class Bible300App {
         input.value = dateString;
         
         modal.classList.add('active');
+        
+        // Explicit scroll prevention for PWA mode
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
     }
     
     closeStartDateModal() {
         document.getElementById('start-date-modal').classList.remove('active');
+        
+        // Explicit scroll restoration for PWA mode
+        setTimeout(() => {
+            if (!document.querySelector('.modal.active')) {
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
+        }, 50);
     }
     
     updateStartDate() {
@@ -3361,11 +3389,18 @@ class Bible300App {
     }
 
     setupUniversalScrollPrevention() {
-        // Universal modal scroll prevention using MutationObserver
-        // Replaces problematic CSS :has() selector that breaks with mobile keyboards
+        // Hybrid approach: MutationObserver + explicit management for PWA compatibility
         const updateScrollPrevention = () => {
             const hasActiveModal = document.querySelector('.modal.active');
-            document.body.style.overflow = hasActiveModal ? 'hidden' : '';
+            if (hasActiveModal) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            } else {
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
         };
 
         // Watch all modals for class changes
@@ -3377,7 +3412,7 @@ class Bible300App {
             });
         });
 
-        // Initial check in case any modal is already active
+        // Initial check
         updateScrollPrevention();
     }
 }
