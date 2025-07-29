@@ -3390,12 +3390,26 @@ class Bible300App {
     }
 
     setupUniversalScrollPrevention() {
-        // JavaScript equivalent of CSS: body:has(.modal.active) { overflow: hidden; }
+        // Enhanced scroll prevention for iOS PWA mode compatibility
         const updateScrollPrevention = () => {
             const hasActiveModal = document.querySelector('.modal.active');
-            document.body.style.overflow = hasActiveModal ? 'hidden' : '';
+            if (hasActiveModal) {
+                // Multiple layers of scroll prevention for iOS PWA
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+                document.documentElement.style.overflow = 'hidden';
+            } else {
+                // Restore normal scrolling
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                document.documentElement.style.overflow = '';
+            }
         };
-
+        
         // Watch all modals for class changes
         document.querySelectorAll('.modal').forEach(modal => {
             const observer = new MutationObserver(updateScrollPrevention);
@@ -3404,7 +3418,20 @@ class Bible300App {
                 attributeFilter: ['class'] 
             });
         });
-
+        
+        // Additional listeners for iOS PWA keyboard interactions
+        window.addEventListener('resize', updateScrollPrevention);
+        window.addEventListener('orientationchange', updateScrollPrevention);
+        
+        // Listen for focus events on input fields within modals
+        document.addEventListener('focusin', (e) => {
+            const isInsideModal = e.target.closest('.modal.active');
+            if (isInsideModal) {
+                // Force scroll prevention when keyboard appears
+                setTimeout(updateScrollPrevention, 100);
+            }
+        });
+        
         // Initial check in case any modal is already active
         updateScrollPrevention();
     }
