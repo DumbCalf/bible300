@@ -29,7 +29,7 @@
                 </h1>
                 <nav class="main-nav">
                     <button class="nav-btn" data-tab="reading-plan">
-                        <i class="fas fa-calendar-alt"></i>
+                        <i class="fas fa-calendar-day"></i>
                         Today
                     </button>
                     <button class="nav-btn" data-tab="overview">
@@ -53,13 +53,13 @@
                 <!-- Dropdown Navigation (hidden by default) -->
                 <div class="nav-dropdown" id="nav-dropdown">
                     <button class="nav-dropdown-toggle" id="nav-dropdown-toggle">
-                        <i class="fas fa-calendar-alt" id="nav-dropdown-icon"></i>
+                        <i class="fas fa-calendar-day" id="nav-dropdown-icon"></i>
                         <span id="nav-dropdown-text">Today</span>
                         <i class="fas fa-chevron-down nav-dropdown-arrow"></i>
                     </button>
                     <div class="nav-dropdown-menu" id="nav-dropdown-menu">
                         <button class="nav-dropdown-item" data-tab="reading-plan">
-                            <i class="fas fa-calendar-alt"></i>
+                            <i class="fas fa-calendar-day"></i>
                             Today
                         </button>
                         <button class="nav-dropdown-item" data-tab="overview">
@@ -613,6 +613,26 @@
                         <div class="reset-data-actions">
                             <button class="cancel-btn" id="cancel-reset-data-btn">Cancel</button>
                             <button class="danger-btn" id="confirm-reset-data-btn">Reset All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 300 Completion Modal -->
+        <div id="completion-modal" class="modal">
+            <div class="modal-content small-modal">
+                <div class="modal-header">
+                    <h3>Reset Start Date to Tomorrow?</h3>
+                    <button class="close-btn" id="close-completion">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="completion-message">
+                        <p>From Homily 19 on the Acts of the Apostles:<br><br>"For it is not possible, I say not possible, ever to exhaust the mind of the Scriptures. It is a well which has no bottom." - St. John Chrysostom</p>
+                        <div class="completion-actions">
+                            <button class="jump-btn" id="close-completion-btn">Continue</button>
                         </div>
                     </div>
                 </div>

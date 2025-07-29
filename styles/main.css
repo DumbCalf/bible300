@@ -58,11 +58,11 @@ body:has(.modal.active) {
     --gray-200: #4b5563;
     --gray-300: #6b7280;
     --gray-400: #9ca3af;
-    --gray-500: #d1d5db;
-    --gray-600: #e5e7eb;
+    --gray-500: #9ca3af;
+    --gray-600: #d1d5db;
     --gray-700: #f3f4f6;
     --gray-800: #f9fafb;
-    --gray-900: #ffffff;
+    --gray-900: #e5e7eb;
     
     /* Semantic colors */
     --success: #059669;
@@ -1598,6 +1598,21 @@ body {
     overflow-y: auto;
 }
 
+#completion-modal .modal-body,
+#start-date-modal .modal-body,
+#reset-data-modal .modal-body,
+#day-jump-modal .modal-body {
+    padding-bottom: var(--space-6);
+}
+
+.completion-message {
+    padding-top: var(--space-2);
+}
+
+.completion-actions {
+    margin-top: var(--space-10);
+}
+
 /* Reader Controls */
 .reader-controls {
     display: none;
@@ -1857,11 +1872,11 @@ body {
         --gray-200: #4b5563;
         --gray-300: #6b7280;
         --gray-400: #9ca3af;
-        --gray-500: #d1d5db;
-        --gray-600: #e5e7eb;
+        --gray-500: #9ca3af;
+        --gray-600: #d1d5db;
         --gray-700: #f3f4f6;
         --gray-800: #f9fafb;
-        --gray-900: #ffffff;
+        --gray-900: #e5e7eb;
     }
 }
 
@@ -2654,61 +2669,6 @@ body {
     box-shadow: 0 0 3px rgba(37, 99, 235, 0.3);
 }
 
-/* Bottom Navigation in Bible Reader */
-.bottom-navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 2rem 0 1rem 0;
-    padding: 1rem 0;
-    border-top: 1px solid var(--gray-200);
-}
-
-.bottom-nav-btn {
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.bottom-nav-btn:hover {
-    background: var(--primary-blue-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-}
-
-.bottom-nav-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(37, 99, 235, 0.3);
-}
-
-.nav-spacer {
-    width: 1px;
-    height: 1px;
-}
-
-/* Dark mode adjustments for bottom navigation */
-.light-mode .bottom-navigation {
-    border-top-color: var(--gray-200);
-}
-
-.light-mode .bottom-nav-btn {
-    background: var(--primary-blue);
-    color: white;
-}
-
-.light-mode .bottom-nav-btn:hover {
-    background: var(--primary-blue-light);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-}
 
 /* Chapter Selector Header */
 .chapter-selector-header {
@@ -2913,13 +2873,6 @@ body {
     color: var(--gray-900);
 }
 
-/* Hide traditional navigation buttons when floating nav is available */
-#bible-reader.active .reader-controls {
-    display: none;
-}
 
-#bible-reader.active .bottom-navigation {
-    display: none;
-}
 
 /* Show floating nav for all devices */

@@ -200,6 +200,15 @@ class Bible300App {
             this.closeResetDataModal();
         });
         
+        // Completion modal events
+        document.getElementById('close-completion').addEventListener('click', () => {
+            this.closeCompletionModal();
+        });
+        
+        document.getElementById('close-completion-btn').addEventListener('click', () => {
+            this.closeCompletionModal();
+        });
+        
         document.getElementById('confirm-reset-data-btn').addEventListener('click', () => {
             this.resetAllData();
         });
@@ -323,7 +332,7 @@ class Bible300App {
     updateDropdownNavigation(tabName) {
         // Map tab names to display info
         const tabInfo = {
-            'reading-plan': { icon: 'fas fa-calendar-alt', text: 'Today' },
+            'reading-plan': { icon: 'fas fa-calendar-day', text: 'Today' },
             'overview': { icon: 'fas fa-list-alt', text: 'Overview' },
             'bible-nav': { icon: 'fas fa-book', text: 'Bible' },
             'progress': { icon: 'fas fa-chart-line', text: 'Statistics' },
@@ -886,7 +895,39 @@ class Bible300App {
             } else {
                 this.showToast('Day marked complete!');
             }
+            
+            // Check for milestone achievements (only for the specific day being completed)
+            this.checkMilestoneAchievement(day);
         }
+    }
+    
+    checkMilestoneAchievement(day) {
+        const milestones = {
+            75: "1/4 Completed!",
+            100: "1/3 Completed!",
+            150: "1/2 Completed!",
+            200: "2/3 Completed!",
+            225: "3/4 Completed!",
+            300: "Congratulations! You've completed all 300 Days!"
+        };
+        
+        if (milestones.hasOwnProperty(day)) {
+            if (day === 300) {
+                // Show both toast and modal for Day 300
+                this.showToast(milestones[day], 'success');
+                this.showCompletionModal();
+            } else {
+                this.showToast(milestones[day], 'success');
+            }
+        }
+    }
+    
+    showCompletionModal() {
+        document.getElementById('completion-modal').classList.add('active');
+    }
+    
+    closeCompletionModal() {
+        document.getElementById('completion-modal').classList.remove('active');
     }
     
     updateUI() {
@@ -1104,6 +1145,9 @@ class Bible300App {
             } else {
                 this.showToast('Day completed!', 'success');
             }
+            
+            // Check for milestone achievements (only for the specific day being completed)
+            this.checkMilestoneAchievement(day);
         } else if (!allCompleted && this.completedDays.has(day)) {
             // Not all categories completed but day was marked complete - undo completion
             this.completedDays.delete(day);
@@ -2078,6 +2122,7 @@ class Bible300App {
             this.closeStartDateModal();
             this.closeResetDataModal();
             this.closeCalendarModal();
+            this.closeCompletionModal();
         }
         
         // Arrow keys for chapter navigation when Bible reader is open
@@ -2134,9 +2179,13 @@ class Bible300App {
         const isLightMode = document.documentElement.classList.contains('light-mode');
         const textColor = isLightMode ? 'white' : 'black';
         
+        // Calculate position based on existing toasts
+        const existingToasts = document.querySelectorAll('.toast');
+        const topOffset = 20 + (existingToasts.length * 70); // 70px spacing between toasts
+        
         toast.style.cssText = `
             position: fixed;
-            top: 20px;
+            top: ${topOffset}px;
             right: 20px;
             background: ${backgroundColor};
             color: ${textColor} !important;
@@ -2147,16 +2196,18 @@ class Bible300App {
             animation: slideIn 0.3s ease-out;
         `;
         
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
+        // Add click to dismiss functionality
+        toast.style.cursor = 'pointer';
+        toast.addEventListener('click', () => {
             toast.style.animation = 'slideOut 0.3s ease-out';
             setTimeout(() => {
                 if (toast.parentNode) {
                     document.body.removeChild(toast);
                 }
             }, 300);
-        }, 3000);
+        });
+        
+        document.body.appendChild(toast);
     }
     
     saveProgress() {

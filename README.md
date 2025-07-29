@@ -20,6 +20,8 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
   - New Testament
 - Individual category completion tracking
 - **Enhanced progress tracking** with condensed layout and color-coded statistics
+- **Milestone notifications** - Celebration popups at 25%, 33%, 50%, 67%, 75%, and 100% completion
+- **Special Day 300 completion** - Modal popup with inspirational St. John Chrysostom quote
 - Jump to any day functionality
 - Reading streak counter
 - Start date management through settings
@@ -41,11 +43,11 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Condensed progress layout** with reading schedule above stats
 - **Color-coded statistics** - Green (days complete), Dark red (days missed), Blue (completion %), Orange (streak)
 - **Responsive stats display** - 1x4 grid on desktop, 2x2 grid on mobile
-- **Calendar overview modal** - Visual monthly calendar showing completion status for entire reading plan
+- **Calendar overview modal** - Fully responsive monthly calendar showing completion status for entire reading plan
 - **Current Week view** (default) showing Saturday to Sunday
 - Last 7 Days view option
 - **Visual activity graph** displaying status symbols above day names
-- Dynamic section headers that reflect selected view
+- **Simplified section headers** - Shows "Current Week" or "Last 7 Days" based on selected view
 - Completion timestamps with local timezone support
 - Export/import progress functionality
 - Reading statistics and analytics
@@ -67,10 +69,12 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Paragraph symbols (¶) preserved from original text
 - Consistent local timezone handling throughout app
 - Auto-completion when all categories are finished
-- **Calendar overview** - Monthly view with status symbols (✅ completed, ▶️ current, 🕐 upcoming, ❌ missed, ➖ N/A)
+- **Calendar overview** - Fully responsive monthly view with status symbols (✅ completed, ▶️ current, 🕐 upcoming, ❌ missed, ➖ N/A)
 - **Double checkmarks** for multiple readings completed on same day
 - **Smart calendar navigation** - Opens to current month, keyboard/swipe/arrow navigation
-- **Theme-adaptive toast notifications** with improved contrast
+- **Universal modal scroll prevention** - Background scrolling disabled when any modal is open
+- **Persistent toast notifications** - Click-to-dismiss notifications with smart stacking
+- **Achievement celebrations** - Progress milestone notifications and completion ceremonies
 - **Enhanced modal spacing** for better readability
 - **Responsive UI components** that adapt to screen size
 
