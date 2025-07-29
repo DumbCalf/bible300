@@ -1052,52 +1052,12 @@ body {
     padding: var(--space-4);
 }
 
-/* Mobile calendar modal */
-@media (max-width: 768px) {
-    #calendar-modal .modal-content {
-        width: 98%; /* More screen width */
-        margin: var(--space-2); /* Less margin */
-    }
-    
-    .calendar-content {
-        padding: var(--space-2); /* Less padding */
-    }
-}
-
 .calendar-grid {
     max-width: 400px;
-    width: 100%;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: var(--space-1);
-}
-
-/* Mobile responsive calendar */
-@media (max-width: 768px) {
-    .calendar-grid {
-        max-width: calc(100vw - 1rem); /* More aggressive sizing */
-        width: calc(100vw - 1rem); /* Force smaller width */
-        gap: 1px; /* Minimal gap on mobile */
-    }
-    
-    .calendar-day {
-        min-height: 40px; /* Ensure minimum readable size */
-    }
-    
-    .calendar-day-number {
-        font-size: var(--font-size-xs); /* Slightly smaller but readable */
-    }
-    
-    .calendar-day-status {
-        font-size: 10px; /* Keep icons visible */
-    }
-    
-    .calendar-weekday {
-        padding: var(--space-1); /* Less padding on mobile */
-        font-size: var(--font-size-xs);
-        margin-bottom: var(--space-1);
-    }
 }
 
 .calendar-weekday {
