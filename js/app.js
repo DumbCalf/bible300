@@ -44,6 +44,7 @@ class Bible300App {
         this.loadBibleBooks();
         this.updateProgressTab();
         this.switchTab('reading-plan'); // Ensure Today tab is selected on load
+        this.setupUniversalScrollPrevention();
     }
     
     setupEventListeners() {
@@ -1247,7 +1248,6 @@ class Bible300App {
         
         input.value = this.currentDay;
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
         
         // Focus and select the input
         setTimeout(() => {
@@ -1258,7 +1258,6 @@ class Bible300App {
     
     closeDayJumpModal() {
         document.getElementById('day-jump-modal').classList.remove('active');
-        document.body.style.overflow = '';
     }
     
     jumpToDay() {
@@ -3359,6 +3358,27 @@ class Bible300App {
         readerContent.removeEventListener('touchend', this.swipeListeners.onTouchEnd);
         
         this.swipeListeners = null;
+    }
+
+    setupUniversalScrollPrevention() {
+        // Universal modal scroll prevention using MutationObserver
+        // Replaces problematic CSS :has() selector that breaks with mobile keyboards
+        const updateScrollPrevention = () => {
+            const hasActiveModal = document.querySelector('.modal.active');
+            document.body.style.overflow = hasActiveModal ? 'hidden' : '';
+        };
+
+        // Watch all modals for class changes
+        document.querySelectorAll('.modal').forEach(modal => {
+            const observer = new MutationObserver(updateScrollPrevention);
+            observer.observe(modal, { 
+                attributes: true, 
+                attributeFilter: ['class'] 
+            });
+        });
+
+        // Initial check in case any modal is already active
+        updateScrollPrevention();
     }
 }
 
