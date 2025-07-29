@@ -479,7 +479,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-2);
 }
 
 .reading-header h3 {
@@ -491,6 +491,7 @@ body {
 .reading-date {
     color: var(--gray-500);
     font-size: var(--font-size-sm);
+    margin-bottom: var(--space-4);
 }
 
 .reading-categories {
