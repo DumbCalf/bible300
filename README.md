@@ -86,8 +86,8 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
   - **Correct current day handling** - Proper icon colors (green checkmarks vs blue current day)
 - **Smart calendar navigation** - Opens to current month, keyboard/swipe/arrow navigation
 - **Real-time calendar updates** - Calendar range and status update automatically with progress
-- **Universal modal scroll prevention** - Background scrolling disabled when any modal is open
-- **Enhanced toast notifications** - Auto-dismiss after 5 seconds with click-to-dismiss option, intelligent stacking, and streamlined messaging
+- **Universal modal scroll prevention** - JavaScript-based background scrolling prevention, compatible with PWA mode and mobile keyboards
+- **Enhanced toast notifications** - Auto-dismiss after 5 seconds with click-to-dismiss option, queued delivery system (500ms stagger), and streamlined messaging
 - **Achievement celebrations** - Progress milestone notifications and completion ceremonies
 - **Enhanced modal spacing** for better readability
 - **Responsive UI components** that adapt to screen size

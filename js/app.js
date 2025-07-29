@@ -912,9 +912,7 @@ class Bible300App {
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
-                setTimeout(() => {
-                    this.showPreviousDaysToast(previousDaysMarked);
-                }, 1000);
+                this.showPreviousDaysToast(previousDaysMarked);
             }
             
             // Check for milestone achievements (only for the specific day being completed)
@@ -1170,9 +1168,7 @@ class Bible300App {
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
-                setTimeout(() => {
-                    this.showPreviousDaysToast(previousDaysMarked);
-                }, 1000);
+                this.showPreviousDaysToast(previousDaysMarked);
             }
             
             // Check for milestone achievements (only for the specific day being completed)
@@ -1249,27 +1245,15 @@ class Bible300App {
         input.value = this.currentDay;
         modal.classList.add('active');
         
-        // Focus and select the input first (triggers keyboard)
+        // Focus and select the input
         setTimeout(() => {
             input.focus();
             input.select();
-            
-            // Apply scroll prevention after keyboard appears
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
         }, 100);
     }
     
     closeDayJumpModal() {
         document.getElementById('day-jump-modal').classList.remove('active');
-        
-        // Restore scroll immediately (no delay to prevent freeze)
-        if (!document.querySelector('.modal.active')) {
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-        }
     }
     
     jumpToDay() {
@@ -1775,24 +1759,10 @@ class Bible300App {
         input.value = dateString;
         
         modal.classList.add('active');
-        
-        // Apply scroll prevention after brief delay for focus
-        setTimeout(() => {
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-        }, 50);
     }
     
     closeStartDateModal() {
         document.getElementById('start-date-modal').classList.remove('active');
-        
-        // Restore scroll immediately (no delay to prevent freeze)
-        if (!document.querySelector('.modal.active')) {
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-        }
     }
     
     updateStartDate() {
@@ -2272,6 +2242,39 @@ class Bible300App {
     }
     
     showToast(message, type = 'success') {
+        // Initialize toast queue if it doesn't exist
+        if (!this.toastQueue) {
+            this.toastQueue = [];
+            this.isProcessingToasts = false;
+        }
+        
+        // Add to queue
+        this.toastQueue.push({ message, type });
+        
+        // Process queue if not already processing
+        if (!this.isProcessingToasts) {
+            this.processToastQueue();
+        }
+    }
+    
+    processToastQueue() {
+        if (this.toastQueue.length === 0) {
+            this.isProcessingToasts = false;
+            return;
+        }
+        
+        this.isProcessingToasts = true;
+        const { message, type } = this.toastQueue.shift();
+        
+        this.displayToast(message, type);
+        
+        // Process next toast after 500ms delay
+        setTimeout(() => {
+            this.processToastQueue();
+        }, 500);
+    }
+    
+    displayToast(message, type = 'success') {
         // Create toast notification
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -3387,18 +3390,10 @@ class Bible300App {
     }
 
     setupUniversalScrollPrevention() {
-        // Hybrid approach: MutationObserver + explicit management for PWA compatibility
+        // JavaScript equivalent of CSS: body:has(.modal.active) { overflow: hidden; }
         const updateScrollPrevention = () => {
             const hasActiveModal = document.querySelector('.modal.active');
-            if (hasActiveModal) {
-                document.body.style.overflow = 'hidden';
-                document.body.style.position = 'fixed';
-                document.body.style.width = '100%';
-            } else {
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-            }
+            document.body.style.overflow = hasActiveModal ? 'hidden' : '';
         };
 
         // Watch all modals for class changes
@@ -3410,7 +3405,7 @@ class Bible300App {
             });
         });
 
-        // Initial check
+        // Initial check in case any modal is already active
         updateScrollPrevention();
     }
 }
