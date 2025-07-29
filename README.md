@@ -45,13 +45,19 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Condensed progress layout** with reading schedule above stats
 - **Color-coded statistics** - Green (days complete), Dark red (days missed), Blue (completion %), Orange (streak)
 - **Responsive stats display** - 1x4 grid on desktop, 2x2 grid on mobile
-- **Calendar overview modal** - Fully responsive monthly calendar showing completion status for entire reading plan
-- **Current Week view** (default) showing Saturday to Sunday
-- Last 7 Days view option
-- **Visual activity graph** displaying status symbols above day names
-- **Enhanced status indicators** - Calendar-day icon for current day, clock for upcoming, improved color contrast
+- **Smart calendar overview modal** - Fully responsive monthly calendar with intelligent range calculation
+  - **Dynamic month range** - Shows only months from start date to expected finish date
+  - **Accurate status tracking** - Proper handling of multiple readings per day
+  - **Intelligent expected finish calculation** - Based on actual progress (today + remaining days)
+  - **Real-time updates** - Calendar refreshes automatically when progress changes
+  - **Proper N/A logic** - Days before start date or between start date and when it was set show correctly
+- **Enhanced current week view** (default) showing complete Sunday-Saturday week
+- Last 7 Days view option with improved date range handling
+- **Visual activity graph** displaying accurate status symbols above day names
+- **Enhanced status indicators** - Calendar-day icon for current day, proper checkmark colors, improved contrast
 - **Simplified section headers** - Shows "Current Week" or "Last 7 Days" based on selected view
 - Completion timestamps with local timezone support
+- **Performance optimized** - Cached calculations for smooth calendar rendering
 - Export/import progress functionality
 - Reading statistics and analytics
 
@@ -72,9 +78,14 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Paragraph symbols (¶) preserved from original text
 - Consistent local timezone handling throughout app
 - Auto-completion when all categories are finished
-- **Calendar overview** - Fully responsive monthly view with status symbols (✅ completed, ▶️ current, 🕐 upcoming, ❌ missed, ➖ N/A)
-- **Double checkmarks** for multiple readings completed on same day
+- **Intelligent calendar overview** - Fully responsive monthly view with accurate status tracking
+  - **Dynamic date range** - Only shows relevant months (start date to expected finish)
+  - **Accurate status symbols** - ✅ completed, ▶️ current, 🕐 upcoming, ❌ missed, ➖ N/A
+  - **Smart expected finish** - Recalculates based on actual reading pace, not original schedule
+  - **Multiple readings support** - Double checkmarks for multiple readings per day
+  - **Correct current day handling** - Proper icon colors (green checkmarks vs blue current day)
 - **Smart calendar navigation** - Opens to current month, keyboard/swipe/arrow navigation
+- **Real-time calendar updates** - Calendar range and status update automatically with progress
 - **Universal modal scroll prevention** - Background scrolling disabled when any modal is open
 - **Enhanced toast notifications** - Click-to-dismiss with intelligent stacking, dynamic spacing, and auto-repositioning
 - **Achievement celebrations** - Progress milestone notifications and completion ceremonies
@@ -130,14 +141,16 @@ Each day includes readings from:
 
 ### Settings & Customization
 - **Start Date Management**: Set reading plan start date from Settings > Statistics
-- **Recent Activity View**: Current Week (default) or Last 7 Days
+  - **Smart tracking** - App remembers when start date was set for accurate N/A day calculation
+  - **Dynamic calendar range** - Calendar automatically adjusts to show relevant months
+- **Recent Activity View**: Current Week (default) showing complete Sunday-Saturday or Last 7 Days
 - **Activity Graph**: Toggle visual activity status display (enabled by default)
 - **Tab Layout**: Dropdown (default) or Horizontal
 - **Navigation**: Configurable swipe gestures for mobile chapter navigation
 - **Font Options**: Size and family customization with full italic support
 - **Words of Christ**: Red text with scope options
 - **Dark/Light Mode**: Dark mode enabled by default
-- **Data Management**: Export, import, and reset functionality
+- **Data Management**: Export, import, and reset functionality with proper cache invalidation
 
 ## Technical Details
 
@@ -149,7 +162,12 @@ Each day includes readings from:
 - **Responsive**: Works on phones, tablets, and desktop
 - **Browser Support**: Modern browsers with PWA capabilities
 - **Timezone Handling**: All dates use device local timezone
-- **Performance**: Optimized loading and smooth navigation
+- **Performance Optimizations**:
+  - **Intelligent caching** - Expected finish date and completion data cached with smart invalidation
+  - **Efficient calendar rendering** - Only updates when necessary, reduced DOM manipulation
+  - **Optimized date parsing** - Completion dates parsed once and cached
+  - **Smart refresh logic** - Calendar only fully refreshes when month range changes
+  - **Memory efficient** - No memory leaks, proper event listener cleanup
 
 ## Installation
 

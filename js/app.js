@@ -9,6 +9,9 @@ class Bible300App {
         this.currentTab = 'reading-plan';
         this.currentTestament = 'old';
         this.startDate = new Date(); // Default to today
+        this.startDateSetOn = new Date(); // When the start date was set
+        this._cachedExpectedFinish = null; // Cache for expected finish date
+        this._cacheInvalidated = true; // Flag to invalidate cache
         this.settings = {
             wordsOfChristRed: false,
             wordsOfChristScope: 'earthly', // 'all' or 'earthly' (Gospels + Acts 1 only)
@@ -865,6 +868,8 @@ class Bible300App {
             // Mark current day as complete
             this.completedDays.add(day);
             this.dayCompletionTimestamps[day] = new Date().toLocaleString();
+            this._cacheInvalidated = true; // Invalidate expected finish cache
+            this._parsedCompletionDates = null; // Invalidate completion dates cache
             
             // Mark all categories complete for current day
             const categories = ['psalm', 'gospel', 'wisdom', 'old-testament', 'new-testament'];
@@ -1137,6 +1142,8 @@ class Bible300App {
             // All categories completed - mark day as complete
             this.completedDays.add(day);
             this.dayCompletionTimestamps[day] = new Date().toLocaleString();
+            this._cacheInvalidated = true; // Invalidate expected finish cache
+            this._parsedCompletionDates = null; // Invalidate completion dates cache
             
             // Mark all previous days as complete too
             let previousDaysMarked = 0;
@@ -1173,6 +1180,8 @@ class Bible300App {
             // Not all categories completed but day was marked complete - undo completion
             this.completedDays.delete(day);
             delete this.dayCompletionTimestamps[day];
+            this._cacheInvalidated = true; // Invalidate expected finish cache
+            this._parsedCompletionDates = null; // Invalidate completion dates cache
             this.saveProgress();
             this.updateUI();
             this.updateProgressTab();
@@ -1268,6 +1277,9 @@ class Bible300App {
     updateProgressTab() {
         // Update stats
         document.getElementById('days-completed').textContent = this.completedDays.size;
+        
+        // Refresh calendar if it's open (since expected finish date may have changed)
+        this.refreshCalendarIfOpen();
         // Calculate days remaining
         const daysRemaining = 300 - this.completedDays.size;
         document.getElementById('days-remaining').textContent = daysRemaining;
@@ -1381,9 +1393,7 @@ class Bible300App {
             
             // Get all days completed on this calendar date
             const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
-            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
-            
-            if (readingDay === null) continue; // Skip dates before start date
+            if (!this.isDateInReadingPlanRange(calendarDate)) continue; // Skip dates outside reading plan range
             
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
@@ -1507,7 +1517,6 @@ class Bible300App {
             
             // Get all days completed on this calendar date
             const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
-            const readingDay = this.getReadingDayForDate(new Date(calendarDate));
             
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
@@ -1535,30 +1544,25 @@ class Bible300App {
             const dayNumber = document.createElement('div');
             dayNumber.className = 'activity-day-date';
             
-            // Handle dates before start date
-            if (readingDay === null) {
-                dayNumber.textContent = '';
+            // Only show day numbers if readings were completed on this date
+            if (daysCompletedOnDate.length > 1) {
+                const minDay = Math.min(...daysCompletedOnDate);
+                const maxDay = Math.max(...daysCompletedOnDate);
+                
+                // Create column layout for multiple days
+                const dayRange = document.createElement('div');
+                dayRange.textContent = `Days ${minDay}-${maxDay}`;
+                const dayCount = document.createElement('div');
+                dayCount.textContent = `(${daysCompletedOnDate.length}\u00A0days)`;
+                dayCount.style.textAlign = 'center';
+                
+                dayNumber.appendChild(dayRange);
+                dayNumber.appendChild(dayCount);
+            } else if (daysCompletedOnDate.length === 1) {
+                dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
             } else {
-                // Only show day numbers if readings were completed on this date
-                if (daysCompletedOnDate.length > 1) {
-                    const minDay = Math.min(...daysCompletedOnDate);
-                    const maxDay = Math.max(...daysCompletedOnDate);
-                    
-                    // Create column layout for multiple days
-                    const dayRange = document.createElement('div');
-                    dayRange.textContent = `Days ${minDay}-${maxDay}`;
-                    const dayCount = document.createElement('div');
-                    dayCount.textContent = `(${daysCompletedOnDate.length}\u00A0days)`;
-                    dayCount.style.textAlign = 'center';
-                    
-                    dayNumber.appendChild(dayRange);
-                    dayNumber.appendChild(dayCount);
-                } else if (daysCompletedOnDate.length === 1) {
-                    dayNumber.textContent = `Day ${daysCompletedOnDate[0]}`;
-                } else {
-                    // No readings completed on this date - don't show day number
-                    dayNumber.textContent = '';
-                }
+                // No readings completed on this date - don't show day number
+                dayNumber.textContent = '';
             }
             
             activityDay.appendChild(dayDate);
@@ -1571,11 +1575,7 @@ class Bible300App {
             const currentDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
             const calendarDay = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), calendarDate.getDate());
             
-            if (readingDay === null) {
-                // Dates before start date
-                activityStatus.classList.add('not-available');
-                activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
-            } else if (daysCompletedOnDate.length > 0) {
+            if (daysCompletedOnDate.length > 0) {
                 activityStatus.classList.add('completed');
                 if (daysCompletedOnDate.length > 1) {
                     activityStatus.innerHTML = '<i class="fas fa-check-double"></i> Completed';
@@ -1589,15 +1589,20 @@ class Bible300App {
                 activityStatus.classList.add('upcoming');
                 activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
             } else {
-                // Check if start date is before today to determine N/A vs Missed logic (use local dates)
+                // Past dates - check if they're within the reading plan range
                 const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
-                const isStartDateBeforeToday = startDay < currentDay;
+                const startDateSetOnDay = new Date(this.startDateSetOn.getFullYear(), this.startDateSetOn.getMonth(), this.startDateSetOn.getDate());
                 
-                if (isStartDateBeforeToday && calendarDay >= startDay && calendarDay < currentDay) {
-                    // Days between start date and today when start date is in the past - show as N/A
+                if (calendarDay < startDay) {
+                    // Days before start date - show as N/A (not in reading plan)
+                    activityStatus.classList.add('not-available');
+                    activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
+                } else if (startDay < startDateSetOnDay && calendarDay >= startDay && calendarDay < startDateSetOnDay) {
+                    // Days between start date and when start date was set - show as N/A
                     activityStatus.classList.add('not-available');
                     activityStatus.innerHTML = '<i class="fas fa-minus-circle"></i> NA';
                 } else {
+                    // Days within reading plan range that weren't completed - show as missed
                     activityStatus.classList.add('missed');
                     activityStatus.innerHTML = '<i class="fas fa-times-circle"></i> Missed';
                 }
@@ -1726,16 +1731,26 @@ class Bible300App {
     }
 
     calculateExpectedFinishDate() {
-        // Original plan: start date + 299 days (300-day plan) using local dates
-        const originalFinish = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + 299);
+        // Return cached result if valid
+        if (this._cachedExpectedFinish && !this._cacheInvalidated) {
+            return this._cachedExpectedFinish;
+        }
         
-        // Calculate missed days based on actual calendar dates
-        const daysMissed = this.calculateDaysMissed();
+        const today = new Date();
+        const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         
-        // Expected finish = original finish + missed days
-        const expectedFinish = new Date(originalFinish.getFullYear(), originalFinish.getMonth(), originalFinish.getDate() + daysMissed);
+        const daysRemaining = 300 - this.completedDays.size;
         
-        return expectedFinish;
+        // If no days remaining, return today
+        if (daysRemaining <= 0) {
+            this._cachedExpectedFinish = currentDay;
+        } else {
+            // Expected finish = today + days remaining - 1
+            this._cachedExpectedFinish = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate() + daysRemaining - 1);
+        }
+        
+        this._cacheInvalidated = false;
+        return this._cachedExpectedFinish;
     }
     
     showStartDateModal() {
@@ -1763,6 +1778,8 @@ class Bible300App {
             const newDate = new Date(year, month - 1, day); // month is 0-indexed
             
             this.startDate = newDate;
+            this.startDateSetOn = new Date(); // Track when this change was made
+            this._cacheInvalidated = true; // Invalidate expected finish cache
             this.saveProgress();
             this.updateDateInfo();
             this.updateRecentActivityDisplay();
@@ -1792,6 +1809,9 @@ class Bible300App {
         this.dayCompletionTimestamps = {};
         this.categoryCompletions = {};
         this.startDate = new Date();
+        this.startDateSetOn = new Date();
+        this._cacheInvalidated = true; // Invalidate expected finish cache
+        this._parsedCompletionDates = null; // Invalidate completion dates cache
         
         // Update UI
         this.updateUI();
@@ -1831,12 +1851,11 @@ class Bible300App {
     
     generateAvailableMonths() {
         const startDate = new Date(this.startDate);
-        const finishDate = new Date(startDate);
-        finishDate.setDate(finishDate.getDate() + 299); // 300 days total, so +299
+        const expectedFinish = this.calculateExpectedFinishDate();
         
         this.availableMonths = [];
         const current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-        const end = new Date(finishDate.getFullYear(), finishDate.getMonth(), 1);
+        const end = new Date(expectedFinish.getFullYear(), expectedFinish.getMonth(), 1);
         
         while (current <= end) {
             this.availableMonths.push(new Date(current));
@@ -1860,6 +1879,40 @@ class Bible300App {
         
         // Update month dropdown
         this.updateCalendarMonthDropdown();
+    }
+
+    refreshCalendarIfOpen() {
+        // Check if calendar modal is open
+        const calendarModal = document.getElementById('calendar-modal');
+        if (calendarModal && calendarModal.classList.contains('active')) {
+            // Store current available months for comparison
+            const oldAvailableMonths = this.availableMonths ? [...this.availableMonths] : [];
+            
+            // Regenerate available months with new expected finish date
+            this.generateAvailableMonths();
+            
+            // Check if available months actually changed
+            const monthsChanged = !oldAvailableMonths || 
+                oldAvailableMonths.length !== this.availableMonths.length ||
+                !oldAvailableMonths.every((month, index) => month.getTime() === this.availableMonths[index].getTime());
+            
+            // Only update if months changed or current month is out of range
+            const currentMonthTime = this.currentCalendarMonth.getTime();
+            const isInRange = this.availableMonths.some(month => month.getTime() === currentMonthTime);
+            
+            if (monthsChanged || !isInRange) {
+                // If current month is now out of range, default to first available month
+                if (!isInRange && this.availableMonths.length > 0) {
+                    this.currentCalendarMonth = new Date(this.availableMonths[0]);
+                }
+                
+                // Update the calendar view
+                this.updateCalendarView();
+            } else {
+                // Just refresh the calendar grid to update day statuses
+                this.generateCalendarGrid();
+            }
+        }
     }
     
     updateCalendarNavigation() {
@@ -1924,19 +1977,18 @@ class Bible300App {
             const dayStatus = document.createElement('div');
             dayStatus.className = 'calendar-day-status';
             
-            // Calculate reading plan day and status
+            // Calculate status for this calendar date
             const currentDate = new Date(year, month, day);
-            const readingDay = this.getReadingDayForDate(currentDate);
-            const status = this.getStatusForDay(currentDate, readingDay);
+            const status = this.getCalendarDayStatus(currentDate);
             
             if (status) {
                 dayStatus.className += ` ${status.class}`;
                 dayStatus.innerHTML = `<i class="${status.icon}"></i>`;
-            }
-            
-            // Style days outside reading plan range
-            if (readingDay === null) {
-                dayElement.classList.add('not-in-range');
+                
+                // Style days outside reading plan range
+                if (status.class === 'not-in-range') {
+                    dayElement.classList.add('not-in-range');
+                }
             }
             
             dayElement.appendChild(dayNumber);
@@ -1944,40 +1996,38 @@ class Bible300App {
             calendarGrid.appendChild(dayElement);
         }
     }
-    
-    getReadingDayForDate(date) {
-        const startDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
-        const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
-        if (targetDate < startDate) return null;
-        
-        const diffTime = targetDate.getTime() - startDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const readingDay = diffDays + 1;
-        
-        return readingDay <= 300 ? readingDay : null;
-    }
-    
-    getStatusForDay(date, readingDay) {
-        if (readingDay === null) return null;
-        
+
+    getCalendarDayStatus(date) {
         const today = new Date();
         const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         
-        // First check the calendar date status, not the reading day completion
+        const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+        const expectedFinish = this.calculateExpectedFinishDate();
+        const startDateSetOnDay = new Date(this.startDateSetOn.getFullYear(), this.startDateSetOn.getMonth(), this.startDateSetOn.getDate());
+        
+        // Check if date is outside the reading plan range
+        if (targetDay < startDay || targetDay > expectedFinish) {
+            return {
+                class: 'not-in-range',
+                icon: ''
+            };
+        }
+        
+        // Count readings completed on this date
+        const readingsCompletedOnDate = this.getReadingsCompletedOnDate(targetDay);
+        
         if (targetDay.getTime() === currentDay.getTime()) {
-            // Today: check how many readings were completed today
-            const completedTodayCount = Object.keys(this.dayCompletionTimestamps).filter(day => {
-                const completionDate = new Date(this.dayCompletionTimestamps[day]);
-                const completionDay = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
-                return completionDay.getTime() === currentDay.getTime();
-            }).length;
-            
-            if (completedTodayCount > 0) {
+            // Today
+            if (readingsCompletedOnDate > 1) {
                 return {
                     class: 'completed',
-                    icon: completedTodayCount > 1 ? 'fas fa-check-double' : 'fas fa-check-circle'
+                    icon: 'fas fa-check-double'
+                };
+            } else if (readingsCompletedOnDate === 1) {
+                return {
+                    class: 'completed',
+                    icon: 'fas fa-check-circle'
                 };
             } else {
                 return {
@@ -1986,29 +2036,27 @@ class Bible300App {
                 };
             }
         } else if (targetDay > currentDay) {
+            // Future dates
             return {
                 class: 'upcoming',
                 icon: 'fas fa-clock'
             };
         } else {
-            // Past dates: check how many readings were completed on that specific date
-            const completedOnDateCount = Object.keys(this.dayCompletionTimestamps).filter(day => {
-                const completionDate = new Date(this.dayCompletionTimestamps[day]);
-                const completionDay = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
-                return completionDay.getTime() === targetDay.getTime();
-            }).length;
-            
-            if (completedOnDateCount > 0) {
+            // Past dates
+            if (readingsCompletedOnDate > 1) {
                 return {
                     class: 'completed',
-                    icon: completedOnDateCount > 1 ? 'fas fa-check-double' : 'fas fa-check-circle'
+                    icon: 'fas fa-check-double'
+                };
+            } else if (readingsCompletedOnDate === 1) {
+                return {
+                    class: 'completed',
+                    icon: 'fas fa-check-circle'
                 };
             } else {
-                // Check if start date is before today to determine N/A vs Missed
-                const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
-                const isStartDateBeforeToday = startDay < currentDay;
-                
-                if (isStartDateBeforeToday && targetDay >= startDay && targetDay < currentDay) {
+                // Check if this date is between start date and when start date was set
+                // (for NA logic when start date was set in the past)
+                if (startDay < startDateSetOnDay && targetDay >= startDay && targetDay < startDateSetOnDay) {
                     return {
                         class: 'not-available',
                         icon: 'fas fa-minus-circle'
@@ -2021,6 +2069,30 @@ class Bible300App {
                 }
             }
         }
+    }
+
+    getReadingsCompletedOnDate(targetDate) {
+        // Cache parsed completion dates to avoid repeated parsing
+        if (!this._parsedCompletionDates) {
+            this._parsedCompletionDates = {};
+            for (const [day, timestamp] of Object.entries(this.dayCompletionTimestamps)) {
+                const completionDate = new Date(timestamp);
+                this._parsedCompletionDates[day] = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
+            }
+        }
+        
+        const targetTime = targetDate.getTime();
+        return Object.keys(this._parsedCompletionDates).filter(day => {
+            return this._parsedCompletionDates[day].getTime() === targetTime;
+        }).length;
+    }
+
+    isDateInReadingPlanRange(date) {
+        const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+        const expectedFinish = this.calculateExpectedFinishDate();
+        const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        return targetDay >= startDay && targetDay <= expectedFinish;
     }
     
     toggleCalendarMonthMenu() {
@@ -2253,6 +2325,7 @@ class Bible300App {
             dayCompletionTimestamps: this.dayCompletionTimestamps,
             categoryCompletions: this.categoryCompletions,
             startDate: this.startDate.toLocaleDateString('en-CA'),
+            startDateSetOn: this.startDateSetOn.toLocaleString(),
             lastUpdated: new Date().toLocaleString()
         };
         
@@ -2275,6 +2348,15 @@ class Bible300App {
                 } else {
                     this.startDate = new Date();
                 }
+                // Load when start date was set
+                if (data.startDateSetOn) {
+                    this.startDateSetOn = new Date(data.startDateSetOn);
+                } else {
+                    this.startDateSetOn = new Date(); // Default to now if not saved
+                }
+                // Invalidate caches after loading new data
+                this._cacheInvalidated = true;
+                this._parsedCompletionDates = null;
             }
         } catch (error) {
             console.error('Error loading progress:', error);
