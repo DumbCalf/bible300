@@ -2298,7 +2298,7 @@ class Bible300App {
                 toast.style.animation = 'slideOut 0.3s ease-out';
                 setTimeout(() => {
                     if (toast.parentNode) {
-                        document.body.removeChild(toast);
+                        document.getElementById('toast-container').removeChild(toast);
                     }
                 }, 300);
             }
@@ -2311,7 +2311,7 @@ class Bible300App {
         // Auto-dismiss after 5 seconds
         setTimeout(dismissToast, 5000);
         
-        document.body.appendChild(toast);
+        document.getElementById('toast-container').appendChild(toast);
     }
     
     showProgressToast(action) {
