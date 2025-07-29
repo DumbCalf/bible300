@@ -908,7 +908,7 @@ class Bible300App {
             150: "1/2 Completed!",
             200: "2/3 Completed!",
             225: "3/4 Completed!",
-            300: "Congratulations! You've completed all 300 Days!"
+            300: "Congratulations! You've completed all 300 Days"
         };
         
         if (milestones.hasOwnProperty(day)) {
@@ -962,12 +962,11 @@ class Bible300App {
         
         // Update reading date
         const today = new Date();
-        document.getElementById('reading-date').textContent = today.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        const weekday = today.toLocaleDateString('en-US', { weekday: 'short' });
+        const day = today.getDate();
+        const month = today.toLocaleDateString('en-US', { month: 'short' });
+        const year = today.toLocaleDateString('en-US', { year: '2-digit' });
+        document.getElementById('reading-date').textContent = `${weekday} ${day} ${month} ${year}`;
         
         // Update today's reading based on current day
         this.updateTodaysReading();
@@ -1242,8 +1241,6 @@ class Bible300App {
         this.closeDayJumpModal();
         this.updateUI();
         this.updateProgressTab();
-        
-        this.showToast(`Jumped to Day ${day}`);
     }
     
     updateProgressTab() {
