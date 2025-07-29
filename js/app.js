@@ -1249,29 +1249,25 @@ class Bible300App {
         input.value = this.currentDay;
         modal.classList.add('active');
         
-        // Explicit scroll prevention for PWA mode
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        
-        // Focus and select the input
+        // Focus and select the input first, then apply scroll prevention
         setTimeout(() => {
             input.focus();
             input.select();
+            
+            // Apply scroll prevention after focus to allow keyboard to trigger
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
         }, 100);
     }
     
     closeDayJumpModal() {
-        document.getElementById('day-jump-modal').classList.remove('active');
+        // Restore scroll immediately to prevent freeze
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
         
-        // Explicit scroll restoration for PWA mode
-        setTimeout(() => {
-            if (!document.querySelector('.modal.active')) {
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-            }
-        }, 50);
+        document.getElementById('day-jump-modal').classList.remove('active');
     }
     
     jumpToDay() {
@@ -1778,23 +1774,21 @@ class Bible300App {
         
         modal.classList.add('active');
         
-        // Explicit scroll prevention for PWA mode
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
+        // Apply scroll prevention after a brief delay to allow focus
+        setTimeout(() => {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        }, 50);
     }
     
     closeStartDateModal() {
-        document.getElementById('start-date-modal').classList.remove('active');
+        // Restore scroll immediately to prevent freeze
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
         
-        // Explicit scroll restoration for PWA mode
-        setTimeout(() => {
-            if (!document.querySelector('.modal.active')) {
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-            }
-        }, 50);
+        document.getElementById('start-date-modal').classList.remove('active');
     }
     
     updateStartDate() {
