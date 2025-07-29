@@ -966,7 +966,7 @@ class Bible300App {
         const day = today.getDate();
         const month = today.toLocaleDateString('en-US', { month: 'short' });
         const year = today.toLocaleDateString('en-US', { year: '2-digit' });
-        document.getElementById('reading-date').textContent = `${weekday} ${day} ${month} ${year}`;
+        document.getElementById('reading-date').textContent = `${weekday}, ${day} ${month} ${year}`;
         
         // Update today's reading based on current day
         this.updateTodaysReading();
