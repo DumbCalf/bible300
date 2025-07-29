@@ -1173,7 +1173,7 @@ const READING_PLAN = [
     {
         day: 147,
         psalm: { book: "Psalm", chapter: "147" },
-        gospel: { book: "Isaiah", chapter: "53" },
+        gospel: { book: "Isaiah", chapter: "52-53" },
         wisdom: { book: "Sirach", chapter: "48" },
         oldTestament: { book: "Hosea", chapter: "1-4" },
         newTestament: { book: "Deuteronomy", chapter: "10" }
@@ -1197,7 +1197,7 @@ const READING_PLAN = [
     {
         day: 150,
         psalm: { book: "Psalm", chapter: "150" },
-        gospel: { book: "Malachi", chapter: "3" },
+        gospel: { book: "Malachi", chapter: "3-4" },
         wisdom: { book: "Sirach", chapter: "51" },
         oldTestament: { book: "Amos", chapter: "1-5" },
         newTestament: { book: "Baruch", chapter: "4" }
@@ -2373,7 +2373,7 @@ const READING_PLAN = [
     {
         day: 297,
         psalm: { book: "Psalm", chapter: "147" },
-        gospel: { book: "Isaiah", chapter: "53" },
+        gospel: { book: "Isaiah", chapter: "52-53" },
         wisdom: { book: "Sirach", chapter: "48" },
         oldTestament: { book: "2 Maccabees", chapter: "8-9" },
         newTestament: { book: "Deuteronomy", chapter: "10" }
@@ -2397,7 +2397,7 @@ const READING_PLAN = [
     {
         day: 300,
         psalm: { book: "Psalm", chapter: "150" },
-        gospel: { book: "Malachi", chapter: "3" },
+        gospel: { book: "Malachi", chapter: "3-4" },
         wisdom: { book: "Sirach", chapter: "51" },
         oldTestament: { book: "2 Maccabees", chapter: "14-15" },
         newTestament: { book: "Baruch", chapter: "4" }

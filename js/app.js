@@ -209,6 +209,19 @@ class Bible300App {
             this.closeCompletionModal();
         });
         
+        // Reading info modal events
+        document.getElementById('reading-info-btn').addEventListener('click', () => {
+            this.showReadingInfoModal();
+        });
+        
+        document.getElementById('close-reading-info').addEventListener('click', () => {
+            this.closeReadingInfoModal();
+        });
+        
+        document.getElementById('close-reading-info-btn').addEventListener('click', () => {
+            this.closeReadingInfoModal();
+        });
+        
         document.getElementById('confirm-reset-data-btn').addEventListener('click', () => {
             this.resetAllData();
         });
@@ -930,6 +943,14 @@ class Bible300App {
         document.getElementById('completion-modal').classList.remove('active');
     }
     
+    showReadingInfoModal() {
+        document.getElementById('reading-info-modal').classList.add('active');
+    }
+    
+    closeReadingInfoModal() {
+        document.getElementById('reading-info-modal').classList.remove('active');
+    }
+    
     updateUI() {
         // Update day counter
         document.getElementById('current-day').textContent = this.viewingDay;
@@ -1434,7 +1455,7 @@ class Bible300App {
                 }
             } else if (calendarDay.getTime() === currentDay.getTime()) {
                 activityStatus.classList.add('current');
-                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
+                activityStatus.innerHTML = '<i class="fas fa-calendar-day"></i> Current';
             } else if (calendarDay > currentDay) {
                 activityStatus.classList.add('upcoming');
                 activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
@@ -1563,7 +1584,7 @@ class Bible300App {
                 }
             } else if (calendarDay.getTime() === currentDay.getTime()) {
                 activityStatus.classList.add('current');
-                activityStatus.innerHTML = '<i class="fas fa-play-circle"></i> Current';
+                activityStatus.innerHTML = '<i class="fas fa-calendar-day"></i> Current';
             } else if (calendarDay > currentDay) {
                 activityStatus.classList.add('upcoming');
                 activityStatus.innerHTML = '<i class="fas fa-clock"></i> Upcoming';
@@ -1961,7 +1982,7 @@ class Bible300App {
             } else {
                 return {
                     class: 'current',
-                    icon: 'fas fa-play-circle'
+                    icon: 'fas fa-calendar-day'
                 };
             }
         } else if (targetDay > currentDay) {

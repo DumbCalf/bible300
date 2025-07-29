@@ -22,20 +22,22 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Enhanced progress tracking** with condensed layout and color-coded statistics
 - **Milestone notifications** - Celebration popups at 25%, 33%, 50%, 67%, 75%, and 100% completion
 - **Special Day 300 completion** - Modal popup with inspirational St. John Chrysostom quote
+- **Reading inspiration modal** - James 1:21-22 quote accessible from Today's Reading header
 - Jump to any day functionality
 - Reading streak counter
 - Start date management through settings
 - Recent activity tracking with two view modes
 - **Visual activity graph** showing weekly status at a glance
-- **Compact date display** with stacked weekday/date format for mobile optimization
+- **Compact date display** with improved spacing and formatting
 
 ### 🎨 Reading Experience
 - Clean, distraction-free interface
-- **Dark mode enabled by default**
+- **Dark mode enabled by default** with optimized text color hierarchy
 - Light and dark mode support
 - Adjustable font size (Small, Medium, Large, Extra Large)
 - Multiple font family options (Inter, Noto Sans, Noto Serif)
 - Words of Christ displayed in red (configurable scope)
+- **Improved date formatting** with flexible display options
 - Responsive design for all devices
 - Auto-scroll to top when switching sections
 
@@ -47,6 +49,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Current Week view** (default) showing Saturday to Sunday
 - Last 7 Days view option
 - **Visual activity graph** displaying status symbols above day names
+- **Enhanced status indicators** - Calendar-day icon for current day, clock for upcoming, improved color contrast
 - **Simplified section headers** - Shows "Current Week" or "Last 7 Days" based on selected view
 - Completion timestamps with local timezone support
 - Export/import progress functionality
