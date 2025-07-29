@@ -1593,7 +1593,7 @@ class Bible300App {
         // Update header text based on selected view
         const headerElement = document.getElementById('recent-activity-header');
         if (headerElement) {
-            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Recent Activity (Current Week)' : 'Recent Activity (Last 7 Days)';
+            headerElement.textContent = this.settings.recentActivityView === 'current-week' ? 'Current Week' : 'Last 7 Days';
         }
         
         // Generate activity data and render both list and graph
