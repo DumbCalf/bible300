@@ -2181,7 +2181,12 @@ class Bible300App {
         
         // Calculate position based on existing toasts
         const existingToasts = document.querySelectorAll('.toast');
-        const topOffset = 20 + (existingToasts.length * 70); // 70px spacing between toasts
+        let topOffset = 20;
+        
+        // Calculate cumulative height of existing toasts
+        existingToasts.forEach(existingToast => {
+            topOffset += existingToast.offsetHeight + 10; // Add toast height + 10px gap
+        });
         
         toast.style.cssText = `
             position: fixed;
@@ -2203,11 +2208,23 @@ class Bible300App {
             setTimeout(() => {
                 if (toast.parentNode) {
                     document.body.removeChild(toast);
+                    // Reposition remaining toasts
+                    this.repositionToasts();
                 }
             }, 300);
         });
         
         document.body.appendChild(toast);
+    }
+    
+    repositionToasts() {
+        const toasts = document.querySelectorAll('.toast');
+        let topOffset = 20;
+        
+        toasts.forEach(toast => {
+            toast.style.top = `${topOffset}px`;
+            topOffset += toast.offsetHeight + 10; // Add toast height + 10px gap
+        });
     }
     
     saveProgress() {
