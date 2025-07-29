@@ -1,7 +1,4 @@
-/* Universal Modal Background Scroll Prevention */
-body:has(.modal.active) {
-    overflow: hidden;
-}
+/* Universal Modal Background Scroll Prevention - Handled by JavaScript */
 
 /* Test: Simpler @font-face declarations */
 @font-face {
