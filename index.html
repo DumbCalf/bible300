@@ -257,7 +257,12 @@
                 </div>
 
                 <div class="recent-activity-container">
-                    <h3 id="recent-activity-header">Recent Activity</h3>
+                    <div class="recent-activity-header">
+                        <h3 id="recent-activity-header">Recent Activity</h3>
+                        <button class="calendar-view-btn" id="calendar-view-btn">
+                            <i class="fas fa-calendar-alt"></i>
+                        </button>
+                    </div>
                     <div class="activity-graph" id="activity-graph">
                         <!-- Activity graph will be populated here -->
                     </div>
@@ -610,6 +615,56 @@
                             <button class="danger-btn" id="confirm-reset-data-btn">Reset All Data</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar View Modal -->
+        <div id="calendar-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="chapter-selector-header" id="calendar-month-selector">
+                        <span id="calendar-month-title">January 2025</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <button class="close-btn" id="close-calendar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="calendar-content" class="calendar-content">
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Weekday headers -->
+                            <div class="calendar-weekday">S</div>
+                            <div class="calendar-weekday">M</div>
+                            <div class="calendar-weekday">T</div>
+                            <div class="calendar-weekday">W</div>
+                            <div class="calendar-weekday">T</div>
+                            <div class="calendar-weekday">F</div>
+                            <div class="calendar-weekday">S</div>
+                            <!-- Calendar days will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Navigation Arrows -->
+                <div id="calendar-arrows" class="floating-arrows">
+                    <button id="calendar-prev" class="floating-arrow-btn prev-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button id="calendar-next" class="floating-arrow-btn next-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Month Selection Menu -->
+            <div id="calendar-month-menu" class="chapter-menu">
+                <div class="chapter-menu-header">
+                    <span id="calendar-month-menu-title">Select Month</span>
+                </div>
+                <div id="calendar-month-grid" class="chapter-grid">
+                    <!-- Month buttons will be populated here -->
                 </div>
             </div>
         </div>

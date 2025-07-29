@@ -1019,6 +1019,118 @@ body {
     text-align: center;
 }
 
+/* Recent Activity Header */
+.recent-activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.recent-activity-header h3 {
+    margin-bottom: 0;
+}
+
+.calendar-view-btn {
+    background: none;
+    border: none;
+    color: var(--gray-600);
+    font-size: var(--font-size-lg);
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-view-btn:hover {
+    background: var(--gray-100);
+    color: var(--primary-blue);
+}
+
+/* Calendar Modal */
+.calendar-content {
+    padding: var(--space-4);
+}
+
+.calendar-grid {
+    max-width: 400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-1);
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--gray-600);
+    padding: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    position: relative;
+    min-height: 60px;
+}
+
+
+.calendar-day.empty {
+    border: none;
+    background: transparent;
+}
+
+.calendar-day-number {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--gray-900);
+    margin-bottom: var(--space-1);
+}
+
+.calendar-day-status {
+    font-size: var(--font-size-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-day-status.completed {
+    color: var(--success);
+}
+
+.calendar-day-status.missed {
+    color: var(--danger);
+}
+
+.calendar-day-status.current {
+    color: var(--primary-blue);
+}
+
+.calendar-day-status.upcoming {
+    color: var(--gray-500);
+}
+
+.calendar-day-status.not-available {
+    color: var(--gray-400);
+}
+
+.calendar-day.not-in-range {
+    background: var(--gray-50);
+    color: var(--gray-400);
+}
+
+.calendar-day.not-in-range .calendar-day-number {
+    color: var(--gray-400);
+}
+
 .activity-item {
     display: flex;
     align-items: center;
@@ -2709,7 +2821,8 @@ body {
     pointer-events: none; /* Allow clicks to pass through the container */
 }
 
-#bible-reader.active .floating-arrows {
+#bible-reader.active .floating-arrows,
+#calendar-modal.active .floating-arrows {
     display: block;
 }
 

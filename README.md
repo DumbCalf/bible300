@@ -37,10 +37,11 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Responsive design for all devices
 - Auto-scroll to top when switching sections
 
-### 📊 Progress & Activity Tracking
+### 📊 Statistics & Activity Tracking
 - **Condensed progress layout** with reading schedule above stats
 - **Color-coded statistics** - Green (days complete), Dark red (days missed), Blue (completion %), Orange (streak)
 - **Responsive stats display** - 1x4 grid on desktop, 2x2 grid on mobile
+- **Calendar overview modal** - Visual monthly calendar showing completion status for entire reading plan
 - **Current Week view** (default) showing Saturday to Sunday
 - Last 7 Days view option
 - **Visual activity graph** displaying status symbols above day names
@@ -66,6 +67,9 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Paragraph symbols (¶) preserved from original text
 - Consistent local timezone handling throughout app
 - Auto-completion when all categories are finished
+- **Calendar overview** - Monthly view with status symbols (✅ completed, ▶️ current, 🕐 upcoming, ❌ missed, ➖ N/A)
+- **Double checkmarks** for multiple readings completed on same day
+- **Smart calendar navigation** - Opens to current month, keyboard/swipe/arrow navigation
 - **Theme-adaptive toast notifications** with improved contrast
 - **Enhanced modal spacing** for better readability
 - **Responsive UI components** that adapt to screen size
@@ -105,7 +109,8 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
    - **Today**: Current day's reading plan with category checkboxes
    - **Overview**: All 300 days with search and filtering
    - **Bible**: Full Bible navigation (defaults to Old Testament)
-   - **Progress**: Enhanced reading statistics with condensed layout and color-coded metrics
+   - **Statistics**: Enhanced reading statistics with condensed layout and color-coded metrics
+   - **Statistics**: Enhanced reading statistics with condensed layout and color-coded metrics
    - **Settings**: Customize your reading experience and manage start date
 
 ### Reading Plan Structure
@@ -117,7 +122,7 @@ Each day includes readings from:
 - **New Testament**: Epistles, Acts, Revelation
 
 ### Settings & Customization
-- **Start Date Management**: Set reading plan start date from Settings > Reading Progress
+- **Start Date Management**: Set reading plan start date from Settings > Statistics
 - **Recent Activity View**: Current Week (default) or Last 7 Days
 - **Activity Graph**: Toggle visual activity status display (enabled by default)
 - **Tab Layout**: Dropdown (default) or Horizontal

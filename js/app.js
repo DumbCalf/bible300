@@ -204,6 +204,43 @@ class Bible300App {
             this.resetAllData();
         });
         
+        // Calendar modal events
+        document.getElementById('calendar-view-btn').addEventListener('click', () => {
+            this.openCalendarModal();
+        });
+        
+        document.getElementById('close-calendar').addEventListener('click', () => {
+            this.closeCalendarModal();
+        });
+        
+        document.getElementById('calendar-month-selector').addEventListener('click', () => {
+            this.toggleCalendarMonthMenu();
+        });
+        
+        document.getElementById('calendar-prev').addEventListener('click', () => {
+            this.navigateCalendarMonth(-1);
+        });
+        
+        document.getElementById('calendar-next').addEventListener('click', () => {
+            this.navigateCalendarMonth(1);
+        });
+        
+        // Close calendar modal on background click
+        document.getElementById('calendar-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'calendar-modal') {
+                this.closeCalendarModal();
+            }
+        });
+        
+        // Close calendar month menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const monthSelector = document.getElementById('calendar-month-selector');
+            const monthMenu = document.getElementById('calendar-month-menu');
+            if (!monthSelector.contains(e.target) && !monthMenu.contains(e.target) && monthMenu.classList.contains('active')) {
+                this.hideCalendarMonthMenu();
+            }
+        });
+        
         document.getElementById('reset-data-modal').addEventListener('click', (e) => {
             if (e.target.id === 'reset-data-modal') {
                 this.closeResetDataModal();
@@ -642,22 +679,46 @@ class Bible300App {
         this.hideFootnotePopup();
         this.hideChapterMenu();
         this.removeSwipeListeners();
+        this.cleanupFootnoteHandlers();
     }
     
     setupFootnoteHandlers() {
+        // Clean up any existing footnote handlers first
+        this.cleanupFootnoteHandlers();
+        
+        // Store footnote handlers for cleanup later
+        this.footnoteHandlers = [];
+        
         // Add click handlers to footnote markers
         const footnoteMarkers = document.querySelectorAll('.footnote-marker[data-footnote]');
         footnoteMarkers.forEach(marker => {
-            marker.addEventListener('click', (e) => {
+            const clickHandler = (e) => {
                 const footnoteId = marker.getAttribute('data-footnote');
                 this.showFootnotePopup(e, footnoteId);
+            };
+            
+            // Store reference for cleanup
+            this.footnoteHandlers.push({
+                element: marker,
+                handler: clickHandler
             });
+            
+            marker.addEventListener('click', clickHandler);
             
             // Add hover effect
             marker.style.cursor = 'pointer';
             marker.style.color = '#007bff';
             marker.style.textDecoration = 'underline';
         });
+    }
+    
+    cleanupFootnoteHandlers() {
+        if (this.footnoteHandlers) {
+            this.footnoteHandlers.forEach(({ element, handler }) => {
+                element.removeEventListener('click', handler);
+            });
+            this.footnoteHandlers = null;
+        }
     }
     
     showFootnotePopup(event, footnoteId) {
@@ -1677,6 +1738,337 @@ class Bible300App {
         this.closeResetDataModal();
         this.showToast('All data has been reset successfully!');
     }
+    
+    // Calendar Modal Methods
+    openCalendarModal() {
+        // Always open to current month
+        const today = new Date();
+        this.currentCalendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        this.generateAvailableMonths();
+        
+        // If current month is outside the available range, default to start month
+        const currentMonthTime = this.currentCalendarMonth.getTime();
+        const isInRange = this.availableMonths.some(month => month.getTime() === currentMonthTime);
+        
+        if (!isInRange) {
+            this.currentCalendarMonth = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), 1);
+        }
+        
+        this.updateCalendarView();
+        this.setupCalendarSwipeNavigation();
+        document.getElementById('calendar-modal').classList.add('active');
+    }
+    
+    closeCalendarModal() {
+        document.getElementById('calendar-modal').classList.remove('active');
+        this.hideCalendarMonthMenu();
+        this.cleanupCalendarSwipeNavigation();
+    }
+    
+    generateAvailableMonths() {
+        const startDate = new Date(this.startDate);
+        const finishDate = new Date(startDate);
+        finishDate.setDate(finishDate.getDate() + 299); // 300 days total, so +299
+        
+        this.availableMonths = [];
+        const current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        const end = new Date(finishDate.getFullYear(), finishDate.getMonth(), 1);
+        
+        while (current <= end) {
+            this.availableMonths.push(new Date(current));
+            current.setMonth(current.getMonth() + 1);
+        }
+    }
+    
+    updateCalendarView() {
+        // Update month title
+        const monthTitle = document.getElementById('calendar-month-title');
+        monthTitle.textContent = this.currentCalendarMonth.toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+        });
+        
+        // Update navigation arrows
+        this.updateCalendarNavigation();
+        
+        // Generate calendar grid
+        this.generateCalendarGrid();
+        
+        // Update month dropdown
+        this.updateCalendarMonthDropdown();
+    }
+    
+    updateCalendarNavigation() {
+        const prevBtn = document.getElementById('calendar-prev');
+        const nextBtn = document.getElementById('calendar-next');
+        
+        // Disable prev if at first available month
+        const isFirstMonth = this.currentCalendarMonth.getTime() === this.availableMonths[0].getTime();
+        prevBtn.disabled = isFirstMonth;
+        prevBtn.style.opacity = isFirstMonth ? '0.5' : '1';
+        
+        // Disable next if at last available month
+        const lastMonth = this.availableMonths[this.availableMonths.length - 1];
+        const isLastMonth = this.currentCalendarMonth.getTime() === lastMonth.getTime();
+        nextBtn.disabled = isLastMonth;
+        nextBtn.style.opacity = isLastMonth ? '0.5' : '1';
+    }
+    
+    navigateCalendarMonth(direction) {
+        const currentIndex = this.availableMonths.findIndex(month => 
+            month.getTime() === this.currentCalendarMonth.getTime()
+        );
+        
+        const newIndex = currentIndex + direction;
+        if (newIndex >= 0 && newIndex < this.availableMonths.length) {
+            this.currentCalendarMonth = new Date(this.availableMonths[newIndex]);
+            this.updateCalendarView();
+        }
+    }
+    
+    generateCalendarGrid() {
+        const calendarGrid = document.getElementById('calendar-grid');
+        // Remove existing calendar days (keep weekday headers)
+        const existingDays = calendarGrid.querySelectorAll('.calendar-day, .calendar-day.empty');
+        existingDays.forEach(day => day.remove());
+        
+        const year = this.currentCalendarMonth.getFullYear();
+        const month = this.currentCalendarMonth.getMonth();
+        
+        // Get first day of month and how many days in month
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay(); // 0 = Sunday
+        
+        // Add empty cells for days before month starts
+        for (let i = 0; i < startingDayOfWeek; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day empty';
+            calendarGrid.appendChild(emptyDay);
+        }
+        
+        // Add days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'calendar-day-number';
+            dayNumber.textContent = day;
+            
+            const dayStatus = document.createElement('div');
+            dayStatus.className = 'calendar-day-status';
+            
+            // Calculate reading plan day and status
+            const currentDate = new Date(year, month, day);
+            const readingDay = this.getReadingDayForDate(currentDate);
+            const status = this.getStatusForDay(currentDate, readingDay);
+            
+            if (status) {
+                dayStatus.className += ` ${status.class}`;
+                dayStatus.innerHTML = `<i class="${status.icon}"></i>`;
+            }
+            
+            // Style days outside reading plan range
+            if (readingDay === null) {
+                dayElement.classList.add('not-in-range');
+            }
+            
+            dayElement.appendChild(dayNumber);
+            dayElement.appendChild(dayStatus);
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    getReadingDayForDate(date) {
+        const startDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+        const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        if (targetDate < startDate) return null;
+        
+        const diffTime = targetDate.getTime() - startDate.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const readingDay = diffDays + 1;
+        
+        return readingDay <= 300 ? readingDay : null;
+    }
+    
+    getStatusForDay(date, readingDay) {
+        if (readingDay === null) return null;
+        
+        const today = new Date();
+        const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        // First check the calendar date status, not the reading day completion
+        if (targetDay.getTime() === currentDay.getTime()) {
+            // Today: check how many readings were completed today
+            const completedTodayCount = Object.keys(this.dayCompletionTimestamps).filter(day => {
+                const completionDate = new Date(this.dayCompletionTimestamps[day]);
+                const completionDay = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
+                return completionDay.getTime() === currentDay.getTime();
+            }).length;
+            
+            if (completedTodayCount > 0) {
+                return {
+                    class: 'completed',
+                    icon: completedTodayCount > 1 ? 'fas fa-check-double' : 'fas fa-check-circle'
+                };
+            } else {
+                return {
+                    class: 'current',
+                    icon: 'fas fa-play-circle'
+                };
+            }
+        } else if (targetDay > currentDay) {
+            return {
+                class: 'upcoming',
+                icon: 'fas fa-clock'
+            };
+        } else {
+            // Past dates: check how many readings were completed on that specific date
+            const completedOnDateCount = Object.keys(this.dayCompletionTimestamps).filter(day => {
+                const completionDate = new Date(this.dayCompletionTimestamps[day]);
+                const completionDay = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
+                return completionDay.getTime() === targetDay.getTime();
+            }).length;
+            
+            if (completedOnDateCount > 0) {
+                return {
+                    class: 'completed',
+                    icon: completedOnDateCount > 1 ? 'fas fa-check-double' : 'fas fa-check-circle'
+                };
+            } else {
+                // Check if start date is before today to determine N/A vs Missed
+                const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
+                const isStartDateBeforeToday = startDay < currentDay;
+                
+                if (isStartDateBeforeToday && targetDay >= startDay && targetDay < currentDay) {
+                    return {
+                        class: 'not-available',
+                        icon: 'fas fa-minus-circle'
+                    };
+                } else {
+                    return {
+                        class: 'missed',
+                        icon: 'fas fa-times-circle'
+                    };
+                }
+            }
+        }
+    }
+    
+    toggleCalendarMonthMenu() {
+        const menu = document.getElementById('calendar-month-menu');
+        menu.classList.toggle('active');
+    }
+    
+    hideCalendarMonthMenu() {
+        document.getElementById('calendar-month-menu').classList.remove('active');
+    }
+    
+    updateCalendarMonthDropdown() {
+        const monthGrid = document.getElementById('calendar-month-grid');
+        monthGrid.innerHTML = '';
+        
+        this.availableMonths.forEach(month => {
+            const monthBtn = document.createElement('button');
+            monthBtn.className = 'chapter-btn';
+            monthBtn.textContent = month.toLocaleDateString('en-US', { 
+                month: 'short', 
+                year: 'numeric' 
+            });
+            
+            if (month.getTime() === this.currentCalendarMonth.getTime()) {
+                monthBtn.classList.add('active');
+            }
+            
+            monthBtn.addEventListener('click', () => {
+                this.currentCalendarMonth = new Date(month);
+                this.updateCalendarView();
+                this.hideCalendarMonthMenu();
+            });
+            
+            monthGrid.appendChild(monthBtn);
+        });
+    }
+    
+    
+    setupCalendarSwipeNavigation() {
+        const calendarContent = document.getElementById('calendar-content');
+        if (!calendarContent || !this.settings.enableSwipeNavigation) return;
+        
+        // Clean up any existing listeners first
+        this.cleanupCalendarSwipeNavigation();
+        
+        let startX = 0;
+        let startY = 0;
+        let isSwipeInProgress = false;
+        
+        this.calendarTouchStartHandler = (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isSwipeInProgress = false;
+        };
+        
+        this.calendarTouchMoveHandler = (e) => {
+            if (!startX || !startY) return;
+            
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            const diffX = startX - currentX;
+            const diffY = startY - currentY;
+            
+            // Only trigger if horizontal swipe is more significant than vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && !isSwipeInProgress) {
+                isSwipeInProgress = true;
+                
+                if (diffX > 0) {
+                    // Swipe left - next month
+                    this.navigateCalendarMonth(1);
+                } else {
+                    // Swipe right - previous month
+                    this.navigateCalendarMonth(-1);
+                }
+                
+                // Reset coordinates
+                startX = 0;
+                startY = 0;
+            }
+        };
+        
+        this.calendarTouchEndHandler = () => {
+            startX = 0;
+            startY = 0;
+            isSwipeInProgress = false;
+        };
+        
+        calendarContent.addEventListener('touchstart', this.calendarTouchStartHandler, { passive: true });
+        calendarContent.addEventListener('touchmove', this.calendarTouchMoveHandler, { passive: true });
+        calendarContent.addEventListener('touchend', this.calendarTouchEndHandler, { passive: true });
+    }
+    
+    cleanupCalendarSwipeNavigation() {
+        const calendarContent = document.getElementById('calendar-content');
+        if (!calendarContent) return;
+        
+        if (this.calendarTouchStartHandler) {
+            calendarContent.removeEventListener('touchstart', this.calendarTouchStartHandler);
+        }
+        if (this.calendarTouchMoveHandler) {
+            calendarContent.removeEventListener('touchmove', this.calendarTouchMoveHandler);
+        }
+        if (this.calendarTouchEndHandler) {
+            calendarContent.removeEventListener('touchend', this.calendarTouchEndHandler);
+        }
+        
+        this.calendarTouchStartHandler = null;
+        this.calendarTouchMoveHandler = null;
+        this.calendarTouchEndHandler = null;
+    }
 
     handleKeyboardShortcuts(e) {
         // ESC to close modals
@@ -1685,9 +2077,10 @@ class Bible300App {
             this.closeDayJumpModal();
             this.closeStartDateModal();
             this.closeResetDataModal();
+            this.closeCalendarModal();
         }
         
-        // Arrow keys for chapter navigation when modal is open
+        // Arrow keys for chapter navigation when Bible reader is open
         if (document.getElementById('bible-reader').classList.contains('active')) {
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
@@ -1695,6 +2088,17 @@ class Bible300App {
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 this.navigateChapter(1);
+            }
+        }
+        
+        // Arrow keys for month navigation when calendar modal is open
+        if (document.getElementById('calendar-modal').classList.contains('active')) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.navigateCalendarMonth(-1);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.navigateCalendarMonth(1);
             }
         }
         
@@ -2408,6 +2812,7 @@ class Bible300App {
         } else {
             document.documentElement.classList.add('hide-floating-arrows');
         }
+        
 
         // Apply swipe navigation setting - only if reader is open
         if (document.getElementById('bible-reader').classList.contains('active')) {
