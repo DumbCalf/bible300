@@ -907,12 +907,7 @@ class Bible300App {
             }
             
             // Show completion feedback
-            if (previousDaysMarked > 0) {
-                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
-                this.showToast(`Day ${day} marked complete! (${previousDaysMarked} previous ${dayWord} also completed)`, 'success');
-            } else {
-                this.showToast('Day marked complete!');
-            }
+            this.showToast(`Day ${day} completed`, 'success');
             
             // Check for milestone achievements (only for the specific day being completed)
             this.checkMilestoneAchievement(day);
@@ -920,22 +915,18 @@ class Bible300App {
     }
     
     checkMilestoneAchievement(day) {
-        const milestones = {
-            75: "1/4 Completed!",
-            100: "1/3 Completed!",
-            150: "1/2 Completed!",
-            200: "2/3 Completed!",
-            225: "3/4 Completed!",
-            300: "Congratulations! You've completed all 300 Days"
-        };
+        const milestones = [75, 100, 150, 200, 225, 300];
         
-        if (milestones.hasOwnProperty(day)) {
+        if (milestones.includes(day)) {
+            const percentage = Math.round((day / 300) * 100);
+            const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
+            
             if (day === 300) {
                 // Show both toast and modal for Day 300
-                this.showToast(milestones[day], 'success');
+                this.showToast(message, 'success');
                 this.showCompletionModal();
             } else {
-                this.showToast(milestones[day], 'success');
+                this.showToast(message, 'success');
             }
         }
     }
@@ -1167,12 +1158,7 @@ class Bible300App {
                 this.updateOverviewTab();
             }
             
-            if (previousDaysMarked > 0) {
-                const dayWord = previousDaysMarked === 1 ? 'day' : 'days';
-                this.showToast(`Day ${day} completed! (${previousDaysMarked} previous ${dayWord} also marked complete)`, 'success');
-            } else {
-                this.showToast('Day completed!', 'success');
-            }
+            this.showToast(`Day ${day} completed`, 'success');
             
             // Check for milestone achievements (only for the specific day being completed)
             this.checkMilestoneAchievement(day);
@@ -2308,6 +2294,10 @@ class Bible300App {
         document.body.appendChild(toast);
     }
     
+    showProgressToast(action) {
+        this.showToast(`Progress ${action} successfully!`);
+    }
+    
     repositionToasts() {
         const toasts = document.querySelectorAll('.toast');
         let topOffset = 20;
@@ -2387,7 +2377,7 @@ class Bible300App {
         document.body.removeChild(a);
         
         URL.revokeObjectURL(url);
-        this.showToast('Progress exported successfully!');
+        this.showProgressToast('exported');
     }
     
     async importProgress(file) {
@@ -2403,7 +2393,7 @@ class Bible300App {
                 this.saveProgress();
                 this.updateUI();
                 this.updateProgressTab();
-                this.showToast('Progress imported successfully!');
+                this.showProgressToast('imported');
             } else {
                 throw new Error('Invalid backup file format');
             }
@@ -3169,7 +3159,7 @@ class Bible300App {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        this.showToast('Progress exported successfully!');
+        this.showProgressToast('exported');
     }
 
     importProgress(file) {
@@ -3203,7 +3193,7 @@ class Bible300App {
                     this.updateProgressTab();
                     this.loadSettingsUI();
                     
-                    this.showToast('Progress imported successfully!');
+                    this.showProgressToast('imported');
                 } else {
                     throw new Error('Invalid backup file format');
                 }
