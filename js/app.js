@@ -925,15 +925,16 @@ class Bible300App {
         const milestones = [75, 100, 150, 200, 225, 300];
         
         if (milestones.includes(day)) {
-            // TEMPORARILY DISABLED - Testing background scroll issue
-            // const percentage = Math.round((day / 300) * 100);
-            // const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
+            const percentage = Math.round((day / 300) * 100);
+            const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
             
             if (day === 300) {
-                // Only show completion modal for Day 300, no toast
+                // Show both toast and modal for Day 300
+                this.showToast(message, 'success');
                 this.showCompletionModal();
+            } else {
+                this.showToast(message, 'success');
             }
-            // All other milestone toasts disabled for testing
         }
     }
     
@@ -1246,6 +1247,7 @@ class Bible300App {
         
         input.value = this.currentDay;
         modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
         
         // Focus and select the input
         setTimeout(() => {
@@ -1256,6 +1258,7 @@ class Bible300App {
     
     closeDayJumpModal() {
         document.getElementById('day-jump-modal').classList.remove('active');
+        document.body.style.overflow = '';
     }
     
     jumpToDay() {
