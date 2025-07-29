@@ -925,16 +925,15 @@ class Bible300App {
         const milestones = [75, 100, 150, 200, 225, 300];
         
         if (milestones.includes(day)) {
-            const percentage = Math.round((day / 300) * 100);
-            const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
+            // TEMPORARILY DISABLED - Testing background scroll issue
+            // const percentage = Math.round((day / 300) * 100);
+            // const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
             
             if (day === 300) {
-                // Show both toast and modal for Day 300
-                this.showToast(message, 'success');
+                // Only show completion modal for Day 300, no toast
                 this.showCompletionModal();
-            } else {
-                this.showToast(message, 'success');
             }
+            // All other milestone toasts disabled for testing
         }
     }
     
@@ -3357,121 +3356,6 @@ class Bible300App {
         readerContent.removeEventListener('touchend', this.swipeListeners.onTouchEnd);
         
         this.swipeListeners = null;
-    }
-
-    // Modal scroll prevention system
-    setupModalScrollPrevention() {
-        
-        // Test CSS :has() support
-        const hasSupport = CSS.supports('selector(:has(*))');
-        console.log('CSS :has() support:', hasSupport);
-        
-        if (!hasSupport) {
-            console.log('⚠️ :has() not supported, implementing JavaScript fallback');
-            this.implementScrollPreventionFallback();
-        } else {
-            console.log('✅ :has() supported, but adding JavaScript backup anyway');
-            this.implementScrollPreventionBackup();
-        }
-    }
-
-    implementScrollPreventionFallback() {
-        // Remove the CSS rule since :has() isn't supported
-        const style = document.createElement('style');
-        style.textContent = `
-            body.modal-open {
-                overflow: hidden !important;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Monitor for modal changes
-        this.observeModalChanges();
-    }
-
-    implementScrollPreventionBackup() {
-        // Add backup class-based approach alongside CSS :has()
-        const style = document.createElement('style');
-        style.textContent = `
-            body.modal-open {
-                overflow: hidden !important;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Monitor for modal changes
-        this.observeModalChanges();
-    }
-
-    observeModalChanges() {
-        // Use MutationObserver to watch for modal class changes
-        const observer = new MutationObserver((mutations) => {
-            let hasActiveModal = false;
-            
-            // Check if any modal has the 'active' class
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (modal.classList.contains('active')) {
-                    hasActiveModal = true;
-                }
-            });
-            
-            // Update body class based on modal state
-            if (hasActiveModal) {
-                document.body.classList.add('modal-open');
-                console.log('🔒 Modal opened - preventing background scroll');
-            } else {
-                document.body.classList.remove('modal-open');
-                console.log('🔓 Modal closed - allowing background scroll');
-            }
-        });
-        
-        // Observe all modals for class changes
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            observer.observe(modal, {
-                attributes: true,
-                attributeFilter: ['class']
-            });
-        });
-        
-        console.log(`👀 Observing ${modals.length} modals for class changes`);
-    }
-
-    // Debug utilities for modal scrolling issue
-
-    testModalScrollPrevention() {
-        console.log('=== TESTING MODAL SCROLL PREVENTION ===');
-        
-        // Store original state
-        const originalDebugInfo = this.debugModalScrolling();
-        console.log('Before modal open:', originalDebugInfo);
-        
-        // Open completion modal to test
-        const completionModal = document.getElementById('completion-modal');
-        console.log('Opening completion modal for test...');
-        completionModal.classList.add('active');
-        
-        // Small delay to let CSS apply
-        setTimeout(() => {
-            const afterDebugInfo = this.debugModalScrolling();
-            console.log('After modal open:', afterDebugInfo);
-            
-            // Test scrolling behavior
-            const scrollY = window.scrollY;
-            window.scrollTo(0, 100);
-            
-            setTimeout(() => {
-                const newScrollY = window.scrollY;
-                console.log(`Scroll test: ${scrollY} -> ${newScrollY} (should stay same if working)`);
-                
-                // Clean up
-                completionModal.classList.remove('active');
-                window.scrollTo(0, scrollY);
-                
-                console.log('Test completed. Check results above.');
-            }, 100);
-        }, 100);
     }
 }
 
