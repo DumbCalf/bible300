@@ -1757,6 +1757,10 @@ class Bible300App {
         
         this.updateCalendarView();
         this.setupCalendarSwipeNavigation();
+        
+        // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
+        
         document.getElementById('calendar-modal').classList.add('active');
     }
     
@@ -1764,6 +1768,9 @@ class Bible300App {
         document.getElementById('calendar-modal').classList.remove('active');
         this.hideCalendarMonthMenu();
         this.cleanupCalendarSwipeNavigation();
+        
+        // Re-enable background scrolling
+        document.body.style.overflow = '';
     }
     
     generateAvailableMonths() {
