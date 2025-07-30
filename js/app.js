@@ -2557,7 +2557,7 @@ class Bible300App {
     
     showPreviousDaysToast(count) {
         const dayWord = count === 1 ? 'day' : 'days';
-        this.showToast(`${count} previous ${dayWord} also completed`, 'success');
+        this.showToast(`${count} previous ${dayWord} also marked completed`, 'success');
     }
     
     
