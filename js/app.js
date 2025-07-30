@@ -28,6 +28,40 @@ class Bible300App {
         // Store current activity data for graph rendering
         this.currentActivityData = [];
         
+        // Store document-level listeners for cleanup
+        this.documentListeners = [];
+        
+        // Cache frequently accessed DOM elements
+        this.domCache = {};
+        
+        // Cache frequently calculated dates
+        this.dateCache = {
+            today: null,
+            todayStart: null,
+            lastUpdate: 0
+        };
+        
+        // Cache JSON operations results
+        this.jsonCache = {
+            completionEntries: null,
+            completionKeys: null,
+            lastCompletionUpdate: 0
+        };
+        
+        // Cache date validations
+        this.dateValidationCache = new Map();
+        
+        // Constants
+        this.CONSTANTS = {
+            TOTAL_DAYS: 300,
+            MS_PER_DAY: 24 * 60 * 60 * 1000,
+            DATE_CACHE_DURATION: 60000, // 1 minute
+            TOAST_DURATION: 5000, // 5 seconds
+            ANIMATION_DELAY: 300, // 0.3 seconds
+            QUEUE_DELAY: 500, // 0.5 seconds
+            MILESTONES: [75, 100, 150, 200, 225, 300]
+        };
+        
         // Load saved data
         this.loadProgress();
         this.loadSettings();
@@ -38,6 +72,7 @@ class Bible300App {
     
     init() {
         this.viewingDay = this.getCurrentDay(); // Initialize viewing day to actual current day
+        this.initDomCache(); // Cache frequently used DOM elements
         this.setupEventListeners();
         this.applySettings(); // Apply saved settings
         this.updateUI();
@@ -47,9 +82,153 @@ class Bible300App {
         this.setupUniversalScrollPrevention();
     }
     
+    // Cache frequently accessed DOM elements for performance
+    initDomCache() {
+        this.domCache = {
+            // Main containers
+            todayReading: document.getElementById('today-reading'),
+            activityFeed: document.getElementById('activity-feed'),
+            activityGraph: document.getElementById('activity-graph'),
+            daysContainer: document.getElementById('days-container'),
+            calendarGrid: document.getElementById('calendar-grid'),
+            readerContent: document.getElementById('reader-content'),
+            
+            // Progress elements
+            currentDay: document.getElementById('current-day'),
+            daysCompleted: document.getElementById('days-completed'),
+            daysRemaining: document.getElementById('days-remaining'),
+            daysMissed: document.getElementById('days-missed'),
+            streakDays: document.getElementById('streak-days'),
+            
+            // Date displays
+            readingDate: document.getElementById('reading-date'),
+            startDate: document.getElementById('start-date'),
+            expectedFinish: document.getElementById('expected-finish'),
+            
+            // Navigation
+            navDropdown: document.getElementById('nav-dropdown'),
+            chapterMenu: document.getElementById('chapter-menu'),
+            calendarMonthMenu: document.getElementById('calendar-month-menu'),
+            
+            // Frequently queried elements
+            navButtons: document.querySelectorAll('.nav-btn'),
+            navDropdownItems: document.querySelectorAll('.nav-dropdown-item'),
+            testamentButtons: document.querySelectorAll('.testament-btn'),
+            tabContents: document.querySelectorAll('.tab-content'),
+            progressFill: document.querySelector('.progress-fill'),
+            dayCounter: document.querySelector('.day-counter'),
+            logo: document.querySelector('.logo')
+        };
+    }
+    
+    // Helper method to get cached DOM element or query if not cached
+    getElement(id) {
+        if (!this.domCache[id]) {
+            this.domCache[id] = document.getElementById(id);
+        }
+        return this.domCache[id];
+    }
+    
+    // Date caching methods for performance
+    getTodayDate() {
+        const now = Date.now();
+        if (!this.dateCache.today || now - this.dateCache.lastUpdate > this.CONSTANTS.DATE_CACHE_DURATION) {
+            this.dateCache.today = new Date();
+            this.dateCache.todayStart = new Date(this.dateCache.today.getFullYear(), this.dateCache.today.getMonth(), this.dateCache.today.getDate());
+            this.dateCache.lastUpdate = now;
+        }
+        return this.dateCache.today;
+    }
+    
+    getTodayStartDate() {
+        this.getTodayDate(); // Ensure cache is updated
+        return this.dateCache.todayStart;
+    }
+    
+    // Optimized date calculation methods
+    getDateDaysAgo(days) {
+        const todayStart = this.getTodayStartDate();
+        return new Date(todayStart.getTime() - (days * this.CONSTANTS.MS_PER_DAY));
+    }
+    
+    getDateDaysFromNow(days) {
+        const todayStart = this.getTodayStartDate();
+        return new Date(todayStart.getTime() + (days * this.CONSTANTS.MS_PER_DAY));
+    }
+    
+    // Optimized method to get min and max in single pass
+    getMinMax(array) {
+        if (array.length === 0) return { min: null, max: null };
+        let min = array[0];
+        let max = array[0];
+        for (let i = 1; i < array.length; i++) {
+            if (array[i] < min) min = array[i];
+            if (array[i] > max) max = array[i];
+        }
+        return { min, max };
+    }
+    
+    // JSON operations caching methods
+    getCachedCompletionEntries() {
+        const currentTimestamp = JSON.stringify(this.dayCompletionTimestamps);
+        const currentHash = this.simpleHash(currentTimestamp);
+        
+        if (!this.jsonCache.completionEntries || currentHash !== this.jsonCache.lastCompletionUpdate) {
+            this.jsonCache.completionEntries = Object.entries(this.dayCompletionTimestamps);
+            this.jsonCache.completionKeys = Object.keys(this.dayCompletionTimestamps);
+            this.jsonCache.lastCompletionUpdate = currentHash;
+        }
+        
+        return this.jsonCache.completionEntries;
+    }
+    
+    getCachedCompletionKeys() {
+        this.getCachedCompletionEntries(); // Ensure cache is updated
+        return this.jsonCache.completionKeys;
+    }
+    
+    // Simple hash function for cache invalidation
+    simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return hash;
+    }
+    
+    // Optimized date comparison methods
+    isSameDate(date1, date2) {
+        return date1.getTime() === date2.getTime();
+    }
+    
+    isSameDateString(date1, date2) {
+        return date1.toDateString() === date2.toDateString();
+    }
+    
+    // Cached date range validation
+    isDateInReadingPlanRangeCached(date) {
+        const dateKey = date.getTime();
+        
+        if (this.dateValidationCache.has(dateKey)) {
+            return this.dateValidationCache.get(dateKey);
+        }
+        
+        const result = this.isDateInReadingPlanRange(date);
+        this.dateValidationCache.set(dateKey, result);
+        
+        // Clear cache if it gets too large (prevent memory leaks)
+        if (this.dateValidationCache.size > 1000) {
+            this.dateValidationCache.clear();
+        }
+        
+        return result;
+    }
+    
     setupEventListeners() {
         // Tab navigation
-        document.querySelectorAll('.nav-btn').forEach(btn => {
+        this.domCache.navButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tab = e.currentTarget.dataset.tab;
                 this.switchTab(tab);
@@ -61,7 +240,7 @@ class Bible300App {
             this.toggleNavDropdown();
         });
         
-        document.querySelectorAll('.nav-dropdown-item').forEach(btn => {
+        this.domCache.navDropdownItems.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tab = e.currentTarget.dataset.tab;
                 this.switchTab(tab);
@@ -70,20 +249,22 @@ class Bible300App {
         });
         
         // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
+        const dropdownClickHandler = (e) => {
             const dropdown = document.getElementById('nav-dropdown');
             if (!dropdown.contains(e.target)) {
                 this.closeNavDropdown();
             }
-        });
+        };
+        document.addEventListener('click', dropdownClickHandler);
+        this.documentListeners.push({ event: 'click', handler: dropdownClickHandler });
         
         // Logo click to go to Today tab
-        document.querySelector('.logo').addEventListener('click', () => {
+        this.domCache.logo.addEventListener('click', () => {
             this.switchTab('reading-plan');
         });
         
         // Testament tabs
-        document.querySelectorAll('.testament-btn').forEach(btn => {
+        this.domCache.testamentButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const testament = e.currentTarget.dataset.testament;
                 this.switchTestament(testament);
@@ -117,13 +298,15 @@ class Bible300App {
         });
         
         // Close chapter menu when clicking outside
-        document.addEventListener('click', (e) => {
+        const chapterMenuClickHandler = (e) => {
             const chapterHeader = document.getElementById('chapter-selector-header');
             const chapterMenu = document.getElementById('chapter-menu');
             if (!chapterHeader.contains(e.target) && !chapterMenu.contains(e.target) && chapterMenu.classList.contains('active')) {
                 this.hideChapterMenu();
             }
-        });
+        };
+        document.addEventListener('click', chapterMenuClickHandler);
+        this.documentListeners.push({ event: 'click', handler: chapterMenuClickHandler });
         
         // Close modal on background click
         document.getElementById('bible-reader').addEventListener('click', (e) => {
@@ -259,13 +442,15 @@ class Bible300App {
         });
         
         // Close calendar month menu when clicking outside
-        document.addEventListener('click', (e) => {
+        const calendarMenuClickHandler = (e) => {
             const monthSelector = document.getElementById('calendar-month-selector');
             const monthMenu = document.getElementById('calendar-month-menu');
             if (!monthSelector.contains(e.target) && !monthMenu.contains(e.target) && monthMenu.classList.contains('active')) {
                 this.hideCalendarMonthMenu();
             }
-        });
+        };
+        document.addEventListener('click', calendarMenuClickHandler);
+        this.documentListeners.push({ event: 'click', handler: calendarMenuClickHandler });
         
         document.getElementById('reset-data-modal').addEventListener('click', (e) => {
             if (e.target.id === 'reset-data-modal') {
@@ -292,25 +477,27 @@ class Bible300App {
         });
         
         // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
+        const keydownHandler = (e) => {
             this.handleKeyboardShortcuts(e);
-        });
+        };
+        document.addEventListener('keydown', keydownHandler);
+        this.documentListeners.push({ event: 'keydown', handler: keydownHandler });
     }
     
     getCurrentDay() {
         // Find the first day that hasn't been completed
-        for (let day = 1; day <= 300; day++) {
+        for (let day = 1; day <= this.CONSTANTS.TOTAL_DAYS; day++) {
             if (!this.completedDays.has(day)) {
                 return day;
             }
         }
         // If all days are completed, return 300
-        return 300;
+        return this.CONSTANTS.TOTAL_DAYS;
     }
     
     switchTab(tabName) {
         // Update nav buttons
-        document.querySelectorAll('.nav-btn').forEach(btn => {
+        this.domCache.navButtons.forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
@@ -319,7 +506,7 @@ class Bible300App {
         this.updateDropdownNavigation(tabName);
         
         // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
+        this.domCache.tabContents.forEach(content => {
             content.classList.remove('active');
         });
         document.getElementById(tabName).classList.add('active');
@@ -921,13 +1108,13 @@ class Bible300App {
     }
     
     checkMilestoneAchievement(day) {
-        const milestones = [75, 100, 150, 200, 225, 300];
+        const milestones = [...this.CONSTANTS.MILESTONES];
         
         if (milestones.includes(day)) {
-            const percentage = Math.round((day / 300) * 100);
-            const message = day === 300 ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
+            const percentage = Math.round((day / this.CONSTANTS.TOTAL_DAYS) * 100);
+            const message = day === this.CONSTANTS.TOTAL_DAYS ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
             
-            if (day === 300) {
+            if (day === this.CONSTANTS.TOTAL_DAYS) {
                 // Show both toast and modal for Day 300
                 this.showToast(message, 'success');
                 this.showCompletionModal();
@@ -955,10 +1142,10 @@ class Bible300App {
     
     updateUI() {
         // Update day counter
-        document.getElementById('current-day').textContent = this.viewingDay;
+        this.domCache.currentDay.textContent = this.viewingDay;
         
         // Update day counter color based on completion
-        const dayCounter = document.querySelector('.day-counter');
+        const dayCounter = this.domCache.dayCounter;
         if (this.completedDays.has(this.viewingDay)) {
             dayCounter.classList.add('completed');
         } else {
@@ -969,11 +1156,11 @@ class Bible300App {
         this.updateNavigationButtons();
         
         // Update progress
-        const completionPercent = (this.completedDays.size / 300 * 100).toFixed(1);
-        document.querySelector('.progress-fill').style.width = `${completionPercent}%`;
+        const completionPercent = (this.completedDays.size / this.CONSTANTS.TOTAL_DAYS * 100).toFixed(1);
+        this.domCache.progressFill.style.width = `${completionPercent}%`;
         document.querySelector('.progress-text span:last-child').textContent = `${completionPercent}%`;
         document.querySelector('.progress-text span:first-child').textContent = 
-            `${this.completedDays.size} of 300 days completed`;
+            `${this.completedDays.size} of ${this.CONSTANTS.TOTAL_DAYS} days completed`;
         
         // Update header progress bar
         const headerProgressFill = document.querySelector('.header-progress-fill');
@@ -984,8 +1171,8 @@ class Bible300App {
         }
         
         // Update reading date
-        const today = new Date();
-        document.getElementById('reading-date').textContent = today.toLocaleDateString('en-US', {
+        const today = this.getTodayDate();
+        this.domCache.readingDate.textContent = today.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -999,7 +1186,7 @@ class Bible300App {
     
     updateTodaysReading() {
         const readingPlan = this.getReadingForDay(this.viewingDay);
-        const todayReading = document.getElementById('today-reading');
+        const todayReading = this.domCache.todayReading;
         
         todayReading.innerHTML = readingPlan.map(category => {
             const isCompleted = this.isCategoryCompleted(this.viewingDay, category.id);
@@ -1273,17 +1460,17 @@ class Bible300App {
     
     updateProgressTab() {
         // Update stats
-        document.getElementById('days-completed').textContent = this.completedDays.size;
+        this.domCache.daysCompleted.textContent = this.completedDays.size;
         
         // Refresh calendar if it's open (since expected finish date may have changed)
         this.refreshCalendarIfOpen();
         // Calculate days remaining
         const daysRemaining = 300 - this.completedDays.size;
-        document.getElementById('days-remaining').textContent = daysRemaining;
+        this.domCache.daysRemaining.textContent = daysRemaining;
             
         // Calculate days missed based on actual calendar dates
         const daysMissed = this.calculateDaysMissed();
-        document.getElementById('days-missed').textContent = daysMissed;
+        this.domCache.daysMissed.textContent = daysMissed;
             
         // Calculate streak based on consecutive calendar days with at least one reading
         let streak = 0;
@@ -1296,10 +1483,10 @@ class Bible300App {
             
             // Check if any reading was completed on this calendar date
             let foundReadingOnDate = false;
-            for (const [day, timestampStr] of Object.entries(this.dayCompletionTimestamps)) {
+            for (const [day, timestampStr] of this.getCachedCompletionEntries()) {
                 const completionDate = new Date(timestampStr);
                 // Check if completion was on the same calendar date (ignore time)
-                if (completionDate.toDateString() === checkDate.toDateString()) {
+                if (this.isSameDateString(completionDate, checkDate)) {
                     foundReadingOnDate = true;
                     break;
                 }
@@ -1311,7 +1498,7 @@ class Bible300App {
                 break; // Streak is broken
             }
         }
-        document.getElementById('streak-days').textContent = streak;
+        this.domCache.streakDays.textContent = streak;
         
         // Update recent activity feed
         this.updateRecentActivityDisplay();
@@ -1376,21 +1563,21 @@ class Bible300App {
     }
 
     generateRecentActivity() {
-        const activityFeed = document.getElementById('activity-feed');
+        const activityFeed = this.domCache.activityFeed;
         if (!activityFeed) return;
         
         activityFeed.innerHTML = '';
         this.currentActivityData = []; // Reset activity data
         
-        const today = new Date();
+        const today = this.getTodayDate();
         
         // Show last 7 calendar days (most recent first)
         for (let i = 0; i <= 6; i++) {
-            const calendarDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+            const calendarDate = this.getDateDaysAgo(i);
             
             // Get all days completed on this calendar date
             const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
-            if (!this.isDateInReadingPlanRange(calendarDate)) continue; // Skip dates outside reading plan range
+            if (!this.isDateInReadingPlanRangeCached(calendarDate)) continue; // Skip dates outside reading plan range
             
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
@@ -1420,8 +1607,7 @@ class Bible300App {
             
             // Only show day numbers if readings were completed on this date
             if (daysCompletedOnDate.length > 1) {
-                const minDay = Math.min(...daysCompletedOnDate);
-                const maxDay = Math.max(...daysCompletedOnDate);
+                const { min: minDay, max: maxDay } = this.getMinMax(daysCompletedOnDate);
                 
                 // Create column layout for multiple days
                 const dayRange = document.createElement('div');
@@ -1460,7 +1646,7 @@ class Bible300App {
                 } else {
                     activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
                 }
-            } else if (calendarDay.getTime() === currentDay.getTime()) {
+            } else if (this.isSameDate(calendarDay, currentDay)) {
                 activityStatus.classList.add('current');
                 activityStatus.innerHTML = '<i class="fas fa-calendar-day"></i> Current';
             } else if (calendarDay > currentDay) {
@@ -1496,21 +1682,21 @@ class Bible300App {
     }
     
     generateCurrentWeekActivity() {
-        const activityFeed = document.getElementById('activity-feed');
+        const activityFeed = this.domCache.activityFeed;
         if (!activityFeed) return;
         
         activityFeed.innerHTML = '';
         this.currentActivityData = []; // Reset activity data
         
-        const today = new Date();
+        const today = this.getTodayDate();
         
         // Get the start of the current week (Sunday) using local dates
         const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-        const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+        const startOfWeek = this.getDateDaysAgo(dayOfWeek);
         
         // Show all 7 days of the current week (Saturday to Sunday, inverted)
         for (let i = 6; i >= 0; i--) {
-            const calendarDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+            const calendarDate = new Date(startOfWeek.getTime() + (i * this.CONSTANTS.MS_PER_DAY));
             
             // Get all days completed on this calendar date
             const daysCompletedOnDate = this.getDaysCompletedOnDate(calendarDate);
@@ -1543,8 +1729,7 @@ class Bible300App {
             
             // Only show day numbers if readings were completed on this date
             if (daysCompletedOnDate.length > 1) {
-                const minDay = Math.min(...daysCompletedOnDate);
-                const maxDay = Math.max(...daysCompletedOnDate);
+                const { min: minDay, max: maxDay } = this.getMinMax(daysCompletedOnDate);
                 
                 // Create column layout for multiple days
                 const dayRange = document.createElement('div');
@@ -1579,7 +1764,7 @@ class Bible300App {
                 } else {
                     activityStatus.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
                 }
-            } else if (calendarDay.getTime() === currentDay.getTime()) {
+            } else if (this.isSameDate(calendarDay, currentDay)) {
                 activityStatus.classList.add('current');
                 activityStatus.innerHTML = '<i class="fas fa-calendar-day"></i> Current';
             } else if (calendarDay > currentDay) {
@@ -1626,12 +1811,15 @@ class Bible300App {
     }
     
     renderActivityGraph() {
-        const activityGraph = document.getElementById('activity-graph');
+        const activityGraph = this.domCache.activityGraph;
         if (!activityGraph) return;
         
         // Show the graph
         activityGraph.style.display = 'flex';
         activityGraph.innerHTML = '';
+        
+        // Use DocumentFragment for better performance
+        const fragment = document.createDocumentFragment();
         
         // Render each day from the extracted activity data (reverse to show oldest first)
         this.currentActivityData.slice().reverse().forEach(dayData => {
@@ -1650,8 +1838,11 @@ class Bible300App {
             
             dayElement.appendChild(symbolElement);
             dayElement.appendChild(labelElement);
-            activityGraph.appendChild(dayElement);
+            fragment.appendChild(dayElement);
         });
+        
+        // Single DOM operation
+        activityGraph.appendChild(fragment);
     }
     
     updateRecentActivityDisplay() {
@@ -1710,7 +1901,7 @@ class Bible300App {
         let missedDays = 0;
         
         // Check each day from start date to today (use local dates)
-        for (let day = 1; day <= 300; day++) {
+        for (let day = 1; day <= this.CONSTANTS.TOTAL_DAYS; day++) {
             const dayDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + (day - 1));
             
             // If this day's date has passed and it's not completed, it's missed
@@ -1828,8 +2019,7 @@ class Bible300App {
         this.generateAvailableMonths();
         
         // If current month is outside the available range, default to start month
-        const currentMonthTime = this.currentCalendarMonth.getTime();
-        const isInRange = this.availableMonths.some(month => month.getTime() === currentMonthTime);
+        const isInRange = this.availableMonths.some(month => this.isSameDate(month, this.currentCalendarMonth));
         
         if (!isInRange) {
             this.currentCalendarMonth = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), 1);
@@ -1917,13 +2107,13 @@ class Bible300App {
         const nextBtn = document.getElementById('calendar-next');
         
         // Disable prev if at first available month
-        const isFirstMonth = this.currentCalendarMonth.getTime() === this.availableMonths[0].getTime();
+        const isFirstMonth = this.isSameDate(this.currentCalendarMonth, this.availableMonths[0]);
         prevBtn.disabled = isFirstMonth;
         prevBtn.style.opacity = isFirstMonth ? '0.5' : '1';
         
         // Disable next if at last available month
         const lastMonth = this.availableMonths[this.availableMonths.length - 1];
-        const isLastMonth = this.currentCalendarMonth.getTime() === lastMonth.getTime();
+        const isLastMonth = this.isSameDate(this.currentCalendarMonth, lastMonth);
         nextBtn.disabled = isLastMonth;
         nextBtn.style.opacity = isLastMonth ? '0.5' : '1';
     }
@@ -1941,7 +2131,7 @@ class Bible300App {
     }
     
     generateCalendarGrid() {
-        const calendarGrid = document.getElementById('calendar-grid');
+        const calendarGrid = this.domCache.calendarGrid;
         // Remove existing calendar days (keep weekday headers)
         const existingDays = calendarGrid.querySelectorAll('.calendar-day, .calendar-day.empty');
         existingDays.forEach(day => day.remove());
@@ -1955,11 +2145,21 @@ class Bible300App {
         const daysInMonth = lastDay.getDate();
         const startingDayOfWeek = firstDay.getDay(); // 0 = Sunday
         
+        // Use DocumentFragment for better performance
+        const fragment = document.createDocumentFragment();
+        
         // Add empty cells for days before month starts
         for (let i = 0; i < startingDayOfWeek; i++) {
             const emptyDay = document.createElement('div');
             emptyDay.className = 'calendar-day empty';
-            calendarGrid.appendChild(emptyDay);
+            fragment.appendChild(emptyDay);
+        }
+        
+        // Pre-calculate statuses for all days to avoid repeated calculations
+        const dayStatuses = new Map();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const currentDate = new Date(year, month, day);
+            dayStatuses.set(day, this.getCalendarDayStatus(currentDate));
         }
         
         // Add days of the month
@@ -1974,9 +2174,8 @@ class Bible300App {
             const dayStatus = document.createElement('div');
             dayStatus.className = 'calendar-day-status';
             
-            // Calculate status for this calendar date
-            const currentDate = new Date(year, month, day);
-            const status = this.getCalendarDayStatus(currentDate);
+            // Use pre-calculated status
+            const status = dayStatuses.get(day);
             
             if (status) {
                 dayStatus.className += ` ${status.class}`;
@@ -1990,8 +2189,11 @@ class Bible300App {
             
             dayElement.appendChild(dayNumber);
             dayElement.appendChild(dayStatus);
-            calendarGrid.appendChild(dayElement);
+            fragment.appendChild(dayElement);
         }
+        
+        // Single DOM operation instead of multiple appendChild calls
+        calendarGrid.appendChild(fragment);
     }
 
     getCalendarDayStatus(date) {
@@ -2072,7 +2274,7 @@ class Bible300App {
         // Cache parsed completion dates to avoid repeated parsing
         if (!this._parsedCompletionDates) {
             this._parsedCompletionDates = {};
-            for (const [day, timestamp] of Object.entries(this.dayCompletionTimestamps)) {
+            for (const [day, timestamp] of this.getCachedCompletionEntries()) {
                 const completionDate = new Date(timestamp);
                 this._parsedCompletionDates[day] = new Date(completionDate.getFullYear(), completionDate.getMonth(), completionDate.getDate());
             }
@@ -2268,10 +2470,10 @@ class Bible300App {
         
         this.displayToast(message, type);
         
-        // Process next toast after 500ms delay
+        // Process next toast after queue delay
         setTimeout(() => {
             this.processToastQueue();
-        }, 500);
+        }, this.CONSTANTS.QUEUE_DELAY);
     }
     
     displayToast(message, type = 'success') {
@@ -2322,15 +2524,17 @@ class Bible300App {
             animation: slideIn 0.3s ease-out;
         `;
         
-        // Create dismiss function
+        // Create dismiss function with proper cleanup
         const dismissToast = () => {
             if (toast.parentNode) {
                 toast.style.animation = 'slideOut 0.3s ease-out';
+                // Remove event listener to prevent memory leak
+                toast.removeEventListener('click', dismissToast);
                 setTimeout(() => {
                     if (toast.parentNode) {
                         document.body.removeChild(toast);
                     }
-                }, 300);
+                }, this.CONSTANTS.ANIMATION_DELAY);
             }
         };
         
@@ -2339,7 +2543,10 @@ class Bible300App {
         toast.addEventListener('click', dismissToast);
         
         // Auto-dismiss after 5 seconds
-        setTimeout(dismissToast, 5000);
+        const autoTimer = setTimeout(dismissToast, this.CONSTANTS.TOAST_DURATION);
+        
+        // Store timer reference for potential cleanup
+        toast._autoTimer = autoTimer;
         
         document.body.appendChild(toast);
     }
@@ -2518,7 +2725,7 @@ class Bible300App {
         const container = document.getElementById('days-container');
         let html = '';
 
-        for (let day = 1; day <= 300; day++) {
+        for (let day = 1; day <= this.CONSTANTS.TOTAL_DAYS; day++) {
             const readings = this.getDayReadings(day);
             const isCompleted = this.completedDays.has(day);
 
@@ -3438,6 +3645,25 @@ class Bible300App {
             this.resizeListener = null;
         }
     }
+    
+    // Cleanup method for document listeners
+    cleanupDocumentListeners() {
+        // Remove all document-level event listeners
+        this.documentListeners?.forEach(({ event, handler }) => {
+            document.removeEventListener(event, handler);
+        });
+        this.documentListeners = [];
+    }
+    
+    // Complete cleanup method
+    cleanup() {
+        this.cleanupScrollPrevention();
+        this.cleanupDocumentListeners();
+        this.domCache = {}; // Clear DOM cache
+        this.dateCache = { today: null, todayStart: null, lastUpdate: 0 }; // Clear date cache
+        this.jsonCache = { completionEntries: null, completionKeys: null, lastCompletionUpdate: 0 }; // Clear JSON cache
+        this.dateValidationCache.clear(); // Clear date validation cache
+    }
 }
 
 // Add CSS for toast animations
@@ -3475,12 +3701,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 function showInstallPromotion() {
     // You could show a custom install banner here
-    console.log('PWA install prompt available');
 }
 
 // Handle successful installation
 window.addEventListener('appinstalled', (evt) => {
-    console.log('PWA was installed');
     app.showToast('Bible 300 installed successfully! 📱');
 });
 
