@@ -539,7 +539,7 @@ class Bible300App {
             'reading-plan': { icon: 'fas fa-calendar-day', text: 'Today' },
             'overview': { icon: 'fas fa-list-alt', text: 'Overview' },
             'bible-nav': { icon: 'fas fa-book-bible', text: 'Bible' },
-            'progress': { icon: 'fas fa-chart-line', text: 'Statistics' },
+            'progress': { icon: 'fas fa-chart-line', text: 'Progress' },
             'settings': { icon: 'fas fa-cog', text: 'Settings' }
         };
         
