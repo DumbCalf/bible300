@@ -1095,7 +1095,7 @@ class Bible300App {
             }
             
             // Show completion feedback
-            this.showToast(`Day ${day} Complete`, 'success');
+            this.showToast(`Day ${day} complete!`, 'success');
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
@@ -1112,7 +1112,7 @@ class Bible300App {
         
         if (milestones.includes(day)) {
             const percentage = Math.round((day / this.CONSTANTS.TOTAL_DAYS) * 100);
-            const message = day === this.CONSTANTS.TOTAL_DAYS ? `🎉 Congratulations! ${percentage}% Done! 🎉` : `${percentage}% Done!`;
+            const message = day === this.CONSTANTS.TOTAL_DAYS ? `🎉 Congratulations! ${percentage}% Finished! 🎉` : `${percentage}% Finished!`;
             
             if (day === this.CONSTANTS.TOTAL_DAYS) {
                 // Show both toast and modal for Day 300
@@ -1351,7 +1351,7 @@ class Bible300App {
                 this.updateOverviewTab();
             }
             
-            this.showToast(`Day ${day} Complete`, 'success');
+            this.showToast(`Day ${day} complete!`, 'success');
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
@@ -1972,7 +1972,7 @@ class Bible300App {
             this.updateDateInfo();
             this.updateRecentActivityDisplay();
             this.closeStartDateModal();
-            this.showToast('Start date updated successfully!');
+            this.showToast('Start date updated successfully');
         } else {
             this.showToast('Please select a valid date', 'error');
         }
@@ -2007,7 +2007,7 @@ class Bible300App {
         
         // Close modal and show confirmation
         this.closeResetDataModal();
-        this.showToast('All data has been reset successfully!');
+        this.showToast('All data has been reset successfully');
     }
     
     // Calendar Modal Methods
@@ -2553,7 +2553,7 @@ class Bible300App {
     }
     
     showProgressToast(action) {
-        this.showToast(`Progress ${action} successfully!`);
+        this.showToast(`Progress ${action} successfully`);
     }
     
     showPreviousDaysToast(count) {
@@ -3602,19 +3602,30 @@ class Bible300App {
     setupUniversalScrollPrevention() {
         // Store references for cleanup
         this.scrollPreventionObservers = [];
+        // Store scroll position to restore when modal closes
+        this.savedScrollPosition = 0;
         
         // Enhanced for iOS PWA keyboard viewport changes
         const updateScrollPrevention = () => {
             const hasActiveModal = document.querySelector('.modal.active');
             if (hasActiveModal) {
+                // Save current scroll position before fixing position
+                this.savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                
                 // Use position fixed to prevent scroll during viewport changes
                 document.body.style.overflow = 'hidden';
                 document.body.style.position = 'fixed';
+                document.body.style.top = `-${this.savedScrollPosition}px`;
                 document.body.style.width = '100%';
             } else {
+                // Restore scroll position when modal closes
                 document.body.style.overflow = '';
                 document.body.style.position = '';
+                document.body.style.top = '';
                 document.body.style.width = '';
+                
+                // Restore the scroll position
+                window.scrollTo(0, this.savedScrollPosition);
             }
         };
 
@@ -3708,13 +3719,13 @@ function showInstallPromotion() {
 
 // Handle successful installation
 window.addEventListener('appinstalled', (evt) => {
-    app.showToast('Bible 300 installed successfully! 📱');
+    app.showToast('Bible 300 installed successfully 📱');
 });
 
 // Handle updates
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         // Show update notification
-        app.showToast('App updated! New features available. 🚀');
+        app.showToast('App updated. New features available 🚀');
     });
 }

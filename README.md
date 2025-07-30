@@ -43,9 +43,9 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Words of Christ displayed in red (configurable scope)
 - **Improved date formatting** with flexible display options
 - Responsive design for all devices
-- Auto-scroll to top when switching sections
+- Auto-scroll to top when switching tabs (preserves scroll position for modals)
 
-### 📊 Statistics & Activity Tracking
+### 📊 Progress & Activity Tracking
 - **Condensed progress layout** with reading schedule above stats
 - **Color-coded statistics** - Green (days complete), Dark red (days missed), Blue (completion %), Orange (streak)
 - **Responsive stats display** - 1x4 grid on desktop, 2x2 grid on mobile
@@ -90,7 +90,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
   - **Correct current day handling** - Proper icon colors (green checkmarks vs blue current day)
 - **Smart calendar navigation** - Opens to current month, keyboard/swipe/arrow navigation
 - **Real-time calendar updates** - Calendar range and status update automatically with progress
-- **Advanced modal scroll prevention** - Multi-layer JavaScript solution with iOS PWA keyboard compatibility and proper cleanup
+- **Advanced modal scroll prevention** - Multi-layer JavaScript solution with iOS PWA keyboard compatibility, scroll position preservation, and proper cleanup
 - **Intelligent toast system** - Auto-dismiss with queue management, memory leak prevention, and optimized timing constants
 - **Achievement celebrations** - Progress milestone notifications and completion ceremonies
 - **Enhanced modal spacing** for better readability
@@ -131,8 +131,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
    - **Today**: Current day's reading plan with category checkboxes
    - **Overview**: All 300 days with search and filtering
    - **Bible**: Full Bible navigation (defaults to Old Testament)
-   - **Statistics**: Enhanced reading statistics with condensed layout and color-coded metrics
-   - **Statistics**: Enhanced reading statistics with condensed layout and color-coded metrics
+   - **Progress**: Enhanced reading statistics with condensed layout and color-coded metrics
    - **Settings**: Customize your reading experience and manage start date
 
 ### Reading Plan Structure
@@ -144,7 +143,7 @@ Each day includes readings from:
 - **New Testament**: Epistles, Acts, Revelation
 
 ### Settings & Customization
-- **Start Date Management**: Set reading plan start date from Settings > Statistics
+- **Start Date Management**: Set reading plan start date from Settings > Progress
   - **Smart tracking** - App remembers when start date was set for accurate N/A day calculation
   - **Dynamic calendar range** - Calendar automatically adjusts to show relevant months
 - **Recent Activity View**: Current Week (default) showing complete Sunday-Saturday or Last 7 Days
