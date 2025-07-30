@@ -1095,7 +1095,7 @@ class Bible300App {
             }
             
             // Show completion feedback
-            this.showToast(`Day ${day} completed`, 'success');
+            this.showToast(`Day ${day} Complete`, 'success');
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
@@ -1160,7 +1160,7 @@ class Bible300App {
         this.domCache.progressFill.style.width = `${completionPercent}%`;
         document.querySelector('.progress-text span:last-child').textContent = `${completionPercent}%`;
         document.querySelector('.progress-text span:first-child').textContent = 
-            `${this.completedDays.size} of ${this.CONSTANTS.TOTAL_DAYS} days completed`;
+            `${this.completedDays.size} of ${this.CONSTANTS.TOTAL_DAYS} days complete`;
         
         // Update header progress bar
         const headerProgressFill = document.querySelector('.header-progress-fill');
@@ -1351,7 +1351,7 @@ class Bible300App {
                 this.updateOverviewTab();
             }
             
-            this.showToast(`Day ${day} completed`, 'success');
+            this.showToast(`Day ${day} Complete`, 'success');
             
             // Show additional notification for previous days if any were marked complete
             if (previousDaysMarked > 0) {
@@ -1393,7 +1393,7 @@ class Bible300App {
         const completeBtn = document.getElementById('mark-complete');
         
         if (this.completedDays.has(this.viewingDay)) {
-            completeBtn.innerHTML = '<i class="fas fa-check"></i> Day Completed';
+            completeBtn.innerHTML = '<i class="fas fa-check"></i> Day Complete';
             completeBtn.disabled = true;
         } else if (completedCategories === 5) {
             // This shouldn't normally be reached due to auto-complete, but just in case
@@ -2557,7 +2557,7 @@ class Bible300App {
     
     showPreviousDaysToast(count) {
         const dayWord = count === 1 ? 'day' : 'days';
-        this.showToast(`${count} previous ${dayWord} also marked completed`, 'success');
+        this.showToast(`${count} previous ${dayWord} also marked complete`, 'success');
     }
     
     
