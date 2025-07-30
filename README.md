@@ -30,10 +30,14 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Visual activity graph** showing weekly status at a glance
 - **Compact date display** with improved spacing and formatting
 
-### 🎨 Reading Experience
+### 🎨 Reading Experience & Design System
 - Clean, distraction-free interface
 - **Dark mode enabled by default** with optimized text color hierarchy
-- Light and dark mode support
+- **Industry-standard WCAG AA color system** with 4.5:1 contrast ratios
+- **Semantic CSS variables** - Theme-agnostic naming system (--background-primary, --text-emphasis, etc.)
+- **Unified Tailwind color palette** - Consistent emerald (success), amber (warning), red (error), blue (info)
+- **Fully accessible color system** that works perfectly in both light and dark modes
+- Light and dark mode support with proper semantic variable theming
 - Adjustable font size (Small, Medium, Large, Extra Large)
 - Multiple font family options (Inter, Noto Sans, Noto Serif)
 - Words of Christ displayed in red (configurable scope)
@@ -162,6 +166,12 @@ Each day includes readings from:
 - **Responsive**: Works on phones, tablets, and desktop
 - **Browser Support**: Modern browsers with PWA capabilities
 - **Timezone Handling**: All dates use device local timezone
+- **Design System**: 
+  - **WCAG AA compliant** - All colors meet 4.5:1 contrast ratio standards
+  - **Semantic CSS architecture** - Theme-agnostic variable naming system
+  - **Tailwind color foundation** - Industry-standard color palette
+  - **No hardcoded colors** - Complete semantic variable system
+  - **Unified theming** - Consistent color usage across all UI elements
 - **Performance Optimizations**:
   - **Enterprise-level caching system** - Multi-layer caching for dates, DOM elements, and JSON operations
   - **Date computation optimization** - 86% reduction in Date object creation with intelligent caching
@@ -195,6 +205,37 @@ The app provides platform-optimized experiences:
 - **Responsive** layout that works across all screen sizes
 - **Complete offline parity** - Same features online and offline
 
+## Design System & Accessibility
+
+### 🎨 WCAG AA Compliant Color System
+- **Industry-standard compliance** - All colors meet WCAG AA 4.5:1 contrast ratio requirements
+- **Semantic variable architecture** - Theme-agnostic CSS variables eliminate naming confusion
+- **Tailwind color foundation** - Built on established, accessible color palette
+- **Unified color usage** - Consistent emerald (success), amber (warning), red (error), blue (info) across all elements
+
+### 🌍 Semantic CSS Variables
+**Background Colors:**
+- `--background-primary` - Main app background
+- `--background-secondary` - Card/section backgrounds  
+- `--background-tertiary` - Subtle backgrounds
+
+**Text Colors:**
+- `--text-emphasis` - Maximum contrast text
+- `--text-primary` - Main body text
+- `--text-secondary` - Secondary information
+- `--text-placeholder` - Form placeholders and muted text
+
+**Border & UI:**
+- `--border-subtle` - Light dividers
+- `--border-defined` - Visible borders
+- `--success`, `--warning`, `--error`, `--info` - Semantic status colors
+
+### ♿ Accessibility Features
+- **No hardcoded colors** - Complete semantic variable system
+- **Perfect contrast ratios** - 4.5:1 minimum for all text/background combinations
+- **Theme consistency** - Same visual hierarchy in both light and dark modes
+- **Maintainable architecture** - Clear, descriptive variable names
+
 ## Offline-First Design
 
 This app is built with an **offline-first philosophy**:
@@ -206,4 +247,4 @@ This app is built with an **offline-first philosophy**:
 
 ---
 
-*Bible 300 PWA v2.2.0 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline*
+*Bible 300 PWA v2.3.0 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline, with industry-standard WCAG AA accessibility*

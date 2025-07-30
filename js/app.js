@@ -22,7 +22,7 @@ class Bible300App {
             showFloatingArrows: true, // Show floating navigation arrows
             enableSwipeNavigation: true, // Enable swipe gestures for chapter navigation
             recentActivityView: 'current-week', // 'last-7-days' or 'current-week'
-            showActivityGraph: true // Show visual activity graph
+            showActivityGraph: true, // Show visual activity graph
         };
         
         // Store current activity data for graph rendering
@@ -920,7 +920,7 @@ class Bible300App {
             
             // Add hover effect
             marker.style.cursor = 'pointer';
-            marker.style.color = '#007bff';
+            marker.style.color = 'var(--info)';
             marker.style.textDecoration = 'underline';
         });
     }
@@ -2483,19 +2483,20 @@ class Bible300App {
         toast.textContent = message;
         
         let backgroundColor;
+        const rootStyles = getComputedStyle(document.documentElement);
         switch(type) {
             case 'error':
-                backgroundColor = '#b91c1c';
+                backgroundColor = rootStyles.getPropertyValue('--error').trim();
                 break;
             case 'orange':
-                backgroundColor = '#d97706';
+                backgroundColor = rootStyles.getPropertyValue('--warning').trim();
                 break;
             case 'gray':
-                backgroundColor = '#6b7280';
+                backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--text-placeholder').trim();
                 break;
             case 'success':
             default:
-                backgroundColor = '#059669';
+                backgroundColor = rootStyles.getPropertyValue('--success').trim();
                 break;
         }
         
@@ -2519,7 +2520,7 @@ class Bible300App {
             color: ${textColor} !important;
             padding: 12px 24px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px var(--shadow-color);
             z-index: 3000;
             animation: slideIn 0.3s ease-out;
         `;
@@ -3129,6 +3130,7 @@ class Bible300App {
             this.updateRecentActivityDisplay();
         });
 
+
         // Dark Mode toggle
         document.getElementById('dark-mode').addEventListener('change', (e) => {
             this.settings.darkMode = e.target.checked;
@@ -3231,13 +3233,14 @@ class Bible300App {
             this.setupSwipeGestures();
         }
 
+
         // Apply dark mode setting
         if (this.settings.darkMode) {
             document.documentElement.classList.remove('light-mode');
-            this.updateThemeColor('#1f2937'); // Dark mode background
+            this.updateThemeColor(getComputedStyle(document.documentElement).getPropertyValue('--background-primary').trim());
         } else {
             document.documentElement.classList.add('light-mode');
-            this.updateThemeColor('#fafbfc'); // Light mode background
+            this.updateThemeColor(getComputedStyle(document.documentElement).getPropertyValue('--background-secondary').trim());
         }
 
         // Words of Christ setting is now applied per-book in displayBibleContent
