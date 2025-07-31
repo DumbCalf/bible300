@@ -1119,15 +1119,15 @@ body {
 }
 
 .calendar-day-number {
-    font-size: clamp(0.625rem, 2.5vw, 0.875rem);
+    font-size: clamp(0.875rem, 3.5vw, 1.125rem);
     font-weight: 500;
     color: var(--text-emphasis);
-    margin-bottom: clamp(0.125rem, 0.5vw, 0.25rem);
+    margin-bottom: clamp(0.0625rem, 0.25vw, 0.125rem);
     line-height: 1;
 }
 
 .calendar-day-status {
-    font-size: clamp(0.5rem, 2vw, 0.75rem);
+    font-size: clamp(0.75rem, 3vw, 1rem);
     display: flex;
     align-items: center;
     justify-content: center;
