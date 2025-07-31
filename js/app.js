@@ -1,6 +1,7 @@
 // Bible 300 - Main Application
 class Bible300App {
     constructor() {
+        this.APP_VERSION = '2.3.1'; // Central version definition
         this.currentDay = 1; // The actual current/active day for progression
         this.viewingDay = 1; // The day currently being viewed in the UI
         this.completedDays = new Set();
@@ -81,6 +82,7 @@ class Bible300App {
         this.updateProgressTab();
         this.switchTab('reading-plan'); // Ensure Today tab is selected on load
         this.setupUniversalScrollPrevention();
+        this.updateVersionDisplay(); // Update version display in Settings
     }
     
     // Cache frequently accessed DOM elements for performance
@@ -2617,7 +2619,7 @@ class Bible300App {
             categoryCompletions: this.categoryCompletions,
             startDate: this.startDate.toLocaleDateString('en-CA'),
             exportDate: new Date().toLocaleString(),
-            version: '2.2.0'
+            version: this.APP_VERSION
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -3306,6 +3308,14 @@ class Bible300App {
             themeColorMeta.name = 'theme-color';
             themeColorMeta.content = color;
             document.head.appendChild(themeColorMeta);
+        }
+    }
+    
+    updateVersionDisplay() {
+        // Update the version display in Settings from centralized constant
+        const versionElement = document.getElementById('app-version-display');
+        if (versionElement) {
+            versionElement.textContent = `Bible 300 PWA v${this.APP_VERSION}`;
         }
     }
 
