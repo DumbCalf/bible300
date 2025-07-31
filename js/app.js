@@ -11,6 +11,7 @@ class Bible300App {
         this.startDate = new Date(); // Default to today
         this.startDateSetOn = new Date(); // When the start date was set
         this._cachedExpectedFinish = null; // Cache for expected finish date
+        this.settingsEventListenersSetup = false; // Flag to prevent duplicate event listeners
         this._cacheInvalidated = true; // Flag to invalidate cache
         this.settings = {
             wordsOfChristRed: false,
@@ -2607,15 +2608,16 @@ class Bible300App {
         }
     }
     
-    // Export/Import functionality for backup
+    // Export/Import functionality for reading progress backup
     exportProgress() {
         const data = {
             currentDay: this.currentDay,
             completedDays: Array.from(this.completedDays),
             dayCompletionTimestamps: this.dayCompletionTimestamps,
             categoryCompletions: this.categoryCompletions,
+            startDate: this.startDate.toLocaleDateString('en-CA'),
             exportDate: new Date().toLocaleString(),
-            version: '1.0.0'
+            version: '2.2.0'
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -2634,27 +2636,41 @@ class Bible300App {
         this.showProgressToast('exported');
     }
     
-    async importProgress(file) {
-        try {
-            const text = await file.text();
-            const data = JSON.parse(text);
-            
-            if (data.version && data.currentDay && data.completedDays) {
-                this.currentDay = data.currentDay;
-                this.completedDays = new Set(data.completedDays);
-                this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
-                this.categoryCompletions = data.categoryCompletions || {};
-                this.saveProgress();
-                this.updateUI();
-                this.updateProgressTab();
-                this.showProgressToast('imported');
-            } else {
-                throw new Error('Invalid backup file format');
+    importProgress(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (data.currentDay && data.completedDays && data.categoryCompletions) {
+                    this.currentDay = data.currentDay;
+                    this.viewingDay = this.getCurrentDay();
+                    this.completedDays = new Set(data.completedDays);
+                    this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
+                    this.categoryCompletions = data.categoryCompletions;
+                    
+                    // Parse start date string in YYYY-MM-DD format to avoid timezone issues
+                    if (data.startDate) {
+                        const [year, month, day] = data.startDate.split('-').map(Number);
+                        this.startDate = new Date(year, month - 1, day);
+                    } else {
+                        this.startDate = new Date();
+                    }
+                    
+                    this.saveProgress();
+                    this.updateUI();
+                    this.updateProgressTab();
+                    
+                    this.showProgressToast('imported');
+                } else {
+                    throw new Error('Invalid backup file format');
+                }
+            } catch (error) {
+                console.error('Error importing progress:', error);
+                this.showToast('Failed to import progress. Please check the file format.', 'error');
             }
-        } catch (error) {
-            console.error('Error importing progress:', error);
-            this.showError('Failed to import progress. Please check the file format.');
-        }
+        };
+        reader.readAsText(file);
     }
 
     // Overview Tab Methods
@@ -3068,6 +3084,12 @@ class Bible300App {
     }
 
     setupSettingsEventListeners() {
+        // Prevent multiple event listener attachments
+        if (this.settingsEventListenersSetup) {
+            return;
+        }
+        this.settingsEventListenersSetup = true;
+        
         // Words of Christ in Red toggle
         document.getElementById('words-of-christ-red').addEventListener('change', (e) => {
             this.settings.wordsOfChristRed = e.target.checked;
@@ -3391,75 +3413,6 @@ class Bible300App {
         });
     }
 
-
-    exportProgress() {
-        const data = {
-            currentDay: this.currentDay,
-            completedDays: Array.from(this.completedDays),
-            categoryCompletions: this.categoryCompletions,
-            startDate: this.startDate.toLocaleDateString('en-CA'),
-            settings: this.settings,
-            exportDate: new Date().toLocaleString(),
-            version: '2.1.0'
-        };
-
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const today = new Date();
-        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        a.download = `bible300-backup-${dateStr}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        this.showProgressToast('exported');
-    }
-
-    importProgress(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                
-                if (data.currentDay && data.completedDays && data.categoryCompletions) {
-                    this.currentDay = data.currentDay;
-                    this.viewingDay = this.getCurrentDay();
-                    this.completedDays = new Set(data.completedDays);
-                    this.dayCompletionTimestamps = data.dayCompletionTimestamps || {};
-                    this.categoryCompletions = data.categoryCompletions;
-                    // Parse date string in YYYY-MM-DD format to avoid timezone issues
-                if (data.startDate) {
-                    const [year, month, day] = data.startDate.split('-').map(Number);
-                    this.startDate = new Date(year, month - 1, day);
-                } else {
-                    this.startDate = new Date();
-                }
-                    
-                    if (data.settings) {
-                        this.settings = { ...this.settings, ...data.settings };
-                        this.saveSettings();
-                        this.applySettings();
-                    }
-                    
-                    this.saveProgress();
-                    this.updateUI();
-                    this.updateProgressTab();
-                    this.loadSettingsUI();
-                    
-                    this.showProgressToast('imported');
-                } else {
-                    throw new Error('Invalid backup file format');
-                }
-            } catch (error) {
-                console.error('Error importing progress:', error);
-                this.showToast('Failed to import progress. Please check the file format.', 'error');
-            }
-        };
-        reader.readAsText(file);
-    }
     
     // Chapter Menu Methods  
     setupChapterMenu(bookName, currentChapter) {

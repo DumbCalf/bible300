@@ -62,7 +62,7 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - **Simplified section headers** - Shows "Current Week" or "Last 7 Days" based on selected view
 - Completion timestamps with local timezone support
 - **Performance optimized** - Cached calculations for smooth calendar rendering
-- Export/import progress functionality
+- **Export/import reading progress** - Backup and restore reading progress data (excludes settings)
 - Reading statistics and analytics
 
 ### 📱 Progressive Web App
@@ -153,7 +153,10 @@ Each day includes readings from:
 - **Font Options**: Size and family customization with full italic support
 - **Words of Christ**: Red text with scope options
 - **Dark/Light Mode**: Dark mode enabled by default
-- **Data Management**: Export, import, and reset functionality with proper cache invalidation
+- **Data Management**: 
+  - **Export Progress**: Creates JSON backup of reading progress (days completed, timestamps, categories)
+  - **Import Progress**: Restores reading progress from backup file (settings remain unchanged)
+  - **Reset All Data**: Clear all progress and start over with proper cache invalidation
 
 ## Technical Details
 
@@ -246,4 +249,4 @@ This app is built with an **offline-first philosophy**:
 
 ---
 
-*Bible 300 PWA v2.3.0 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline, with industry-standard WCAG AA accessibility*
+*Bible 300 PWA v2.3.1 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline, with industry-standard WCAG AA accessibility*
