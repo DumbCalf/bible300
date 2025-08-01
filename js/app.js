@@ -3571,8 +3571,10 @@ class Bible300App {
         // Enhanced for iOS PWA keyboard viewport changes
         const updateScrollPrevention = () => {
             const hasActiveModal = document.querySelector('.modal.active');
-            if (hasActiveModal) {
-                // Save current scroll position before fixing position
+            const isCurrentlyFixed = document.body.style.position === 'fixed';
+            
+            if (hasActiveModal && !isCurrentlyFixed) {
+                // Modal is becoming active - save current scroll position
                 this.savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
                 
                 // Use position fixed to prevent scroll during viewport changes
@@ -3580,8 +3582,8 @@ class Bible300App {
                 document.body.style.position = 'fixed';
                 document.body.style.top = `-${this.savedScrollPosition}px`;
                 document.body.style.width = '100%';
-            } else {
-                // Restore scroll position when modal closes
+            } else if (!hasActiveModal && isCurrentlyFixed) {
+                // Modal is closing - restore scroll position
                 document.body.style.overflow = '';
                 document.body.style.position = '';
                 document.body.style.top = '';
@@ -3590,6 +3592,7 @@ class Bible300App {
                 // Restore the scroll position
                 window.scrollTo(0, this.savedScrollPosition);
             }
+            // If modal is already active and body is already fixed, do nothing
         };
 
         // Watch all modals for class changes
