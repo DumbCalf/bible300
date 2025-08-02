@@ -596,6 +596,47 @@ body {
     transform: translateY(-1px);
 }
 
+.read-btn.disabled {
+    background: var(--background-secondary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.read-btn.disabled:hover {
+    transform: none;
+}
+
+/* Parable selection styles */
+.parable-category .category-content {
+    flex: 1;
+}
+
+
+
+.parable-reference {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-3);
+    font-style: italic;
+}
+
+/* Parable account styling for multiple Gospel accounts */
+.parable-account {
+    margin-bottom: var(--space-6);
+}
+
+.parable-account:last-child {
+    margin-bottom: 0;
+}
+
+.account-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border-defined), transparent);
+    margin: var(--space-6) 0;
+    opacity: 0.5;
+}
+
 
 .reading-actions {
     display: flex;
@@ -2792,6 +2833,82 @@ body {
     background: var(--info);
     color: white;
     border-color: var(--info);
+}
+
+/* Parable List Mode Styles */
+.chapter-grid.parable-list-mode {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: var(--space-2);
+}
+
+.parable-list-btn {
+    width: 100%;
+    height: auto;
+    min-height: 44px;
+    border: 1px solid var(--border-subtle);
+    background: var(--background-primary);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    line-height: 1.4;
+}
+
+.parable-list-btn:hover {
+    background: var(--border-defined);
+    border-color: var(--info);
+}
+
+.parable-list-btn.current {
+    background: var(--info);
+    color: white;
+    border-color: var(--info);
+    position: relative;
+}
+
+.parable-list-btn.current::after {
+    content: "✓";
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+}
+
+/* Bible Navigation Parable List Mode */
+.books-grid.parables-list-mode {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: var(--space-2);
+    width: 100%;
+}
+
+.book-card.parable-nav-item {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: 0;
+    border-radius: var(--radius-md);
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.book-card.parable-nav-item:hover {
+    transform: translateY(0);
+    border-color: var(--info);
+    background: var(--border-defined);
+}
+
+.book-card.parable-nav-item .book-title {
+    margin-bottom: 0;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 /* Floating Navigation Arrows */

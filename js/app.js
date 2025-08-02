@@ -1,7 +1,7 @@
 // Bible 300 - Main Application
 class Bible300App {
     constructor() {
-        this.APP_VERSION = '2.3.1'; // Central version definition
+        this.APP_VERSION = '2.4.0'; // Central version definition
         this.currentDay = 1; // The actual current/active day for progression
         this.viewingDay = 1; // The day currently being viewed in the UI
         this.completedDays = new Set();
@@ -9,6 +9,7 @@ class Bible300App {
         this.categoryCompletions = {}; // Track individual category completions
         this.currentTab = 'reading-plan';
         this.currentTestament = 'old';
+        this.currentParable = null; // Track current parable being read { id, accountIndex }
         this.startDate = new Date(); // Default to today
         this.startDateSetOn = new Date(); // When the start date was set
         this._cachedExpectedFinish = null; // Cache for expected finish date
@@ -595,11 +596,13 @@ class Bible300App {
                     </div>
                     ${category.name}
                 </div>
-                <div class="books-grid">
+                <div class="books-grid ${this.currentTestament === 'parables' ? 'parables-list-mode' : ''}">
                     ${category.books.map(book => `
-                        <div class="book-card" onclick="app.openBook('${book.name}')">
+                        <div class="book-card ${this.currentTestament === 'parables' ? 'parable-nav-item' : ''}" onclick="app.openBook('${book.name}')">
                             <div class="book-title">${book.displayName || book.name}</div>
-                            <div class="book-chapters">${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapters'}</div>
+                            ${this.currentTestament === 'parables' ? '' : 
+                                `<div class="book-chapters">${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapters'}</div>`
+                            }
                         </div>
                     `).join('')}
                 </div>
@@ -643,7 +646,7 @@ class Bible300App {
                     books: catholicBible.old['minor-prophets']
                 }
             ];
-        } else {
+        } else if (testament === 'new') {
             return [
                 {
                     id: 'gospels',
@@ -662,6 +665,20 @@ class Bible300App {
                     name: 'Revelation',
                     icon: 'fas fa-eye',
                     books: catholicBible.new.revelation
+                }
+            ];
+        } else if (testament === 'parables') {
+            return [
+                {
+                    id: 'parables',
+                    name: 'The Parables of Jesus',
+                    icon: 'fas fa-seedling',
+                    books: PARABLES_DATA.parables.map(parable => ({
+                        name: `parable-${parable.id}`,
+                        displayName: parable.title,
+                        chapters: parable.accounts.length,
+                        parableId: parable.id
+                    }))
                 }
             ];
         }
@@ -782,6 +799,13 @@ class Bible300App {
     
     async openBook(bookName, chapter = 1) {
         try {
+            // Check if this is a parable
+            if (bookName.startsWith('parable-')) {
+                const parableId = parseInt(bookName.replace('parable-', ''));
+                await this.openParable(parableId, chapter);
+                return;
+            }
+            
             // Use getBibleVerses which handles both regular and Esther section structures
             const verses = getBibleVerses(bookName, chapter.toString());
             const chapterData = getBibleChapter(bookName, chapter.toString());
@@ -800,6 +824,136 @@ class Bible300App {
         } catch (error) {
             console.error('Error loading Bible content:', error);
             this.showError(`Failed to load ${bookName} chapter ${chapter}`);
+        }
+    }
+
+    async openParable(parableId, accountIndex = 1) {
+        try {
+            const parable = PARABLES_DATA.parables.find(p => p.id === parableId);
+            if (!parable) {
+                throw new Error(`Parable not found: ${parableId}`);
+            }
+            
+            // accountIndex is 1-based, convert to 0-based for array access
+            const account = parable.accounts[accountIndex - 1];
+            if (!account) {
+                throw new Error(`Account ${accountIndex} not found for parable: ${parable.title}`);
+            }
+            
+            this.displayParableContent(parable, account, accountIndex);
+        } catch (error) {
+            console.error('Error loading parable content:', error);
+            this.showError(`Failed to load parable: ${error.message}`);
+        }
+    }
+
+    displayParableContent(parable, account, accountIndex) {
+        const title = `${parable.title}`;
+        
+        let contentHtml = `<div class="bible-chapter">`;
+        contentHtml += `<h2>${title}</h2>`;
+        
+        // Display all Gospel accounts in one page
+        parable.accounts.forEach((acc, index) => {
+            const accountTitle = `${acc.book} ${acc.chapter}:${acc.verses}`;
+            contentHtml += `<div class="parable-account">`;
+            contentHtml += `<h3 class="parable-reference">${accountTitle}</h3>`;
+            
+            // Add verses for this account
+            acc.text.forEach(verseData => {
+                const verseClasses = ['verse'];
+                contentHtml += `<div class="${verseClasses.join(' ')}" data-verse="${verseData.verse}">`;
+                contentHtml += `<sup class="verse-number">${verseData.verse}</sup>`;
+                contentHtml += `<span class="verse-text">${verseData.text}</span>`;
+                contentHtml += `</div>`;
+            });
+            
+            contentHtml += `</div>`; // Close parable-account
+            
+            // Add spacing between accounts (except for the last one)
+            if (index < parable.accounts.length - 1) {
+                contentHtml += `<div class="account-separator"></div>`;
+            }
+        });
+        
+        contentHtml += `</div>`;
+        
+        // Track current parable for navigation
+        this.currentParable = { id: parable.id, accountIndex: 1 };
+        this.currentReading = null; // Clear regular Bible reading tracking
+        
+        // Display in the reader (matching the pattern from displayBibleContent)
+        const reader = document.getElementById('bible-reader');
+        const readerContent = document.getElementById('reader-content');
+        
+        // Update reader title - just the parable title
+        document.getElementById('reader-title').textContent = title;
+        
+        // Update navigation to show parable selector instead of chapter selector
+        this.updateParableSelector(parable);
+        
+        readerContent.innerHTML = contentHtml;
+        reader.classList.add('active');
+        
+        // Apply words of Christ styling (parables are Gospel content)
+        if (this.shouldShowWordsOfChrist('Matthew')) {
+            reader.classList.add('words-of-christ-enabled');
+        } else {
+            reader.classList.remove('words-of-christ-enabled');
+        }
+        
+        // Apply settings
+        this.applyReaderFont();
+        this.setupUniversalScrollPrevention();
+    }
+
+    updateParableSelector(currentParable) {
+        // Update chapter menu title to current parable name
+        document.getElementById('chapter-menu-title').textContent = currentParable.title;
+        
+        // Generate parable list (not grid)
+        const grid = document.getElementById('chapter-grid');
+        let html = '';
+        
+        // Show all parables vertically as list items
+        PARABLES_DATA.parables.forEach(parable => {
+            const isCurrentParable = parable.id === currentParable.id;
+            html += `<button class="parable-list-btn ${isCurrentParable ? 'current' : ''}" 
+                     onclick="app.openParable(${parable.id}, 1)">${parable.title}</button>`;
+        });
+        
+        grid.innerHTML = html;
+        grid.classList.add('parable-list-mode');
+        
+        // Update navigation arrows to move between parables
+        this.updateParableArrows(currentParable);
+    }
+
+    updateParableArrows(parable) {
+        const prevArrow = document.getElementById('floating-prev');
+        const nextArrow = document.getElementById('floating-next');
+        
+        // Only update if elements exist
+        if (prevArrow && nextArrow) {
+            // Previous parable
+            const prevParableId = parable.id - 1;
+            if (prevParableId >= 1) {
+                prevArrow.disabled = false;
+                prevArrow.onclick = () => this.openParable(prevParableId, 1);
+            } else {
+                prevArrow.disabled = true;
+                prevArrow.onclick = null;
+            }
+            
+            // Next parable
+            const nextParableId = parable.id + 1;
+            if (nextParableId <= PARABLES_DATA.parables.length) {
+                nextArrow.disabled = false;
+                nextArrow.onclick = () => this.openParable(nextParableId, 1);
+            } else {
+                nextArrow.disabled = true;
+                nextArrow.onclick = null;
+            }
         }
     }
     
@@ -866,6 +1020,7 @@ class Bible300App {
         
         // Store current reading info with footnotes
         this.currentReading = { book: bookName, chapter: chapter, footnotes: footnotes };
+        this.currentParable = null; // Clear parable tracking when reading regular Bible
         
         // Add footnote click handlers
         this.setupFootnoteHandlers();
@@ -896,6 +1051,9 @@ class Bible300App {
         this.hideChapterMenu();
         this.removeSwipeListeners();
         this.cleanupFootnoteHandlers();
+        
+        // Clear parable tracking when closing reader
+        this.currentParable = null;
     }
     
     setupFootnoteHandlers() {
@@ -1024,6 +1182,13 @@ class Bible300App {
     }
     
     navigateChapter(direction) {
+        // Check if we're reading a parable
+        if (this.currentParable) {
+            this.navigateParable(direction);
+            return;
+        }
+        
+        // Regular Bible chapter navigation
         if (!this.currentReading) return;
         
         const { book, chapter } = this.currentReading;
@@ -1041,6 +1206,21 @@ class Bible300App {
         this.hideFootnotePopup();
         
         this.openBook(book, newChapter);
+    }
+
+    navigateParable(direction) {
+        if (!this.currentParable) return;
+        
+        const currentId = this.currentParable.id;
+        const newId = currentId + direction;
+        
+        // Check bounds
+        if (newId < 1 || newId > PARABLES_DATA.parables.length) {
+            return;
+        }
+        
+        // Navigate to the new parable (always start with first account)
+        this.openParable(newId, 1);
     }
     
     findBookInfo(bookName) {
@@ -1193,6 +1373,12 @@ class Bible300App {
         
         todayReading.innerHTML = readingPlan.map(category => {
             const isCompleted = this.isCategoryCompleted(this.viewingDay, category.id);
+            
+            // Special handling for parable days
+            if (category.isParable) {
+                return this.renderParableCategory(category, isCompleted);
+            }
+            
             return `
                 <div class="reading-category" data-category="${category.id}">
                     <div class="category-checkbox ${isCompleted ? 'checked' : ''}" 
@@ -1211,6 +1397,26 @@ class Bible300App {
             `;
         }).join('');
     }
+
+    renderParableCategory(category, isCompleted) {
+        return `
+            <div class="reading-category parable-category" data-category="${category.id}">
+                <div class="category-checkbox ${isCompleted ? 'checked' : ''}" 
+                     data-day="${this.viewingDay}" data-category-id="${category.id}">
+                    ${isCompleted ? '<i class="fas fa-check"></i>' : ''}
+                </div>
+                <div class="category-icon">
+                    <i class="${category.icon}"></i>
+                </div>
+                <div class="category-content">
+                    <div class="category-title">${category.title}</div>
+                    <div class="category-reading">Parable</div>
+                </div>
+                <button class="read-btn" data-reading="Parable">Read</button>
+            </div>
+        `;
+    }
+
     
     getReadingForDay(day) {
         // Find the reading for this day from the READING_PLAN data
@@ -1269,8 +1475,9 @@ class Bible300App {
             {
                 id: 'gospel',
                 title: 'Gospel',
-                reading: `${dayPlan.gospel.book} ${dayPlan.gospel.chapter}`,
-                icon: 'fas fa-cross'
+                reading: this.getGospelReading(dayPlan, day),
+                icon: 'fas fa-cross',
+                isParable: this.isParableDay(day)
             },
             {
                 id: 'wisdom',
@@ -1292,9 +1499,36 @@ class Bible300App {
             }
         ];
     }
+
+    isParableDay(day) {
+        return (day >= 140 && day <= 150) || (day >= 290 && day <= 300);
+    }
+
+    getGospelReading(dayPlan, day) {
+        if (!this.isParableDay(day)) {
+            return `${dayPlan.gospel.book} ${dayPlan.gospel.chapter}`;
+        }
+
+        // This is a parable day - just return "Parable"
+        return 'Parable';
+    }
     
     async openReadingFromPlan(reading) {
-        // Parse the reading (e.g., "Genesis 1-2" or "Genesis 1")
+        // Check if this is a parable reading
+        if (reading === 'Parable') {
+            // Open parable modal with selector (start with first parable)
+            await this.openParable(1);
+            return;
+        }
+
+        // Check if this is a parable title
+        const parable = PARABLES_DATA.parables.find(p => p.title === reading);
+        if (parable) {
+            await this.openParable(parable.id);
+            return;
+        }
+
+        // Parse regular Bible reading (e.g., "Genesis 1-2" or "Genesis 1")
         const match = reading.match(/^(.+?)\s+(\d+)(?:-(\d+))?$/);
         if (match) {
             const [, book, startChapter, endChapter] = match;
@@ -3434,6 +3668,7 @@ class Bible300App {
         
         // Generate chapter grid
         const grid = document.getElementById('chapter-grid');
+        grid.classList.remove('parable-list-mode'); // Remove parable list styling
         let html = '';
         
         for (let chapter = 1; chapter <= bookInfo.chapters; chapter++) {
@@ -3448,8 +3683,21 @@ class Bible300App {
     toggleChapterMenu() {
         const menu = document.getElementById('chapter-menu');
         const header = document.getElementById('chapter-selector-header');
+        const wasActive = menu.classList.contains('active');
+        
         menu.classList.toggle('active');
         header.classList.toggle('active');
+        
+        // If menu is now active (just opened) and we're reading a parable, scroll to current parable
+        if (!wasActive && menu.classList.contains('active') && this.currentParable) {
+            const currentParableBtn = menu.querySelector('.parable-list-btn.current');
+            if (currentParableBtn) {
+                currentParableBtn.scrollIntoView({
+                    behavior: 'instant',
+                    block: 'center'
+                });
+            }
+        }
     }
     
     hideChapterMenu() {

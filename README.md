@@ -11,6 +11,16 @@ A 300-day Bible reading plan progressive web app (PWA) featuring the complete Ki
 - Clickable footnotes with detailed references
 - Floating navigation arrows (optional)
 
+### 📚 Parable Navigation & Selection
+- **Dedicated Parables tab** in Bible navigation with vertical list of all 36 parables
+- **Smart parable selection** for Gospel readings on days 140-150 and 290-300
+- **Consolidated Gospel accounts** - View Matthew, Mark, and Luke versions on one page
+- **Seamless navigation** between parables using arrows and swipe gestures
+- **Intelligent dropdown** - Shows current parable name with full parable list
+- **Auto-scroll positioning** - Current parable instantly centered when dropdown opens
+- **Words of Christ in red** - Full support for red text styling in parables
+- **Unified reading experience** - Same modal interface as Bible chapters
+
 ### 📅 300-Day Reading Plan
 - Structured daily reading schedule with 5 categories per day:
   - Psalm
@@ -249,4 +259,4 @@ This app is built with an **offline-first philosophy**:
 
 ---
 
-*Bible 300 PWA v2.3.1 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline, with industry-standard WCAG AA accessibility*
+*Bible 300 PWA v2.4.0 - A modern, enterprise-optimized way to read through the Bible in 300 days, completely offline, with industry-standard WCAG AA accessibility*
