@@ -902,8 +902,17 @@ class Bible300App {
             reader.classList.remove('words-of-christ-enabled');
         }
         
+        // Scroll to top - use setTimeout to ensure content is rendered
+        setTimeout(() => {
+            const modalBody = document.querySelector('#bible-reader .modal-body');
+            if (modalBody) {
+                modalBody.scrollTop = 0;
+            }
+        }, 0);
+        
         // Apply settings
         this.applyReaderFont();
+        this.setupSwipeGestures();
         this.setupUniversalScrollPrevention();
     }
 

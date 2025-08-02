@@ -2856,8 +2856,11 @@ body {
     font-weight: 500;
     transition: all 0.2s ease;
     padding: var(--space-3) var(--space-4);
-    text-align: left;
+    text-align: left !important;
     line-height: 1.4;
+    word-wrap: break-word;
+    white-space: normal;
+    display: block;
 }
 
 .parable-list-btn:hover {
