@@ -2737,7 +2737,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 6px;
