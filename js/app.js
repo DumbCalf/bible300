@@ -2861,6 +2861,7 @@ class Bible300App {
             dayCompletionTimestamps: this.dayCompletionTimestamps,
             categoryCompletions: this.categoryCompletions,
             startDate: this.startDate.toLocaleDateString('en-CA'),
+            startDateSetOn: this.startDateSetOn.toLocaleString(),
             exportDate: new Date().toLocaleString(),
             version: this.APP_VERSION
         };
@@ -2900,6 +2901,13 @@ class Bible300App {
                         this.startDate = new Date(year, month - 1, day);
                     } else {
                         this.startDate = new Date();
+                    }
+                    
+                    // Import when start date was set to preserve NA vs missed logic
+                    if (data.startDateSetOn) {
+                        this.startDateSetOn = new Date(data.startDateSetOn);
+                    } else {
+                        this.startDateSetOn = new Date(); // Default to now if not in backup
                     }
                     
                     this.saveProgress();
