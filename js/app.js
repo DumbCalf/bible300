@@ -913,7 +913,6 @@ class Bible300App {
         // Apply settings
         this.applyReaderFont();
         this.setupSwipeGestures();
-        this.setupUniversalScrollPrevention();
     }
 
     updateParableSelector(currentParable) {

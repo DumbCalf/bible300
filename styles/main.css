@@ -618,7 +618,6 @@ body {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
     margin-bottom: var(--space-3);
-    font-style: italic;
 }
 
 /* Parable account styling for multiple Gospel accounts */
@@ -631,10 +630,9 @@ body {
 }
 
 .account-separator {
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--border-defined), transparent);
-    margin: var(--space-6) 0;
-    opacity: 0.5;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin-bottom: 1rem;
 }
 
 
