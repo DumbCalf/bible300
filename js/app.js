@@ -1127,38 +1127,57 @@ class Bible300App {
             </div>
         `;
         
-        // Position popup near the clicked element with simple edge detection
-        const rect = event.target.getBoundingClientRect();
+        // Get the clicked element's position relative to the viewport
+        const clickedElement = event.target;
+        const rect = clickedElement.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
+        // Temporarily show popup off-screen to measure its actual dimensions
+        popup.style.visibility = 'hidden';
         popup.style.display = 'block';
+        popup.style.left = '-9999px';
+        popup.style.top = '-9999px';
         
-        // Get actual popup dimensions after showing
+        // Force layout calculation
+        popup.offsetHeight;
+        
+        // Get actual popup dimensions
         const popupRect = popup.getBoundingClientRect();
         const popupWidth = popupRect.width || 300;
         const popupHeight = popupRect.height || 100;
         
-        let left = rect.left + window.scrollX;
-        let top = rect.bottom + window.scrollY + 5;
+        // Calculate initial position - prefer showing below the footnote marker
+        let left = rect.left;
+        let top = rect.bottom + 5;
         
-        // Simple right edge check - shift left if would overflow
-        if (left + popupWidth > viewportWidth - 10) {
-            left = rect.right + window.scrollX - popupWidth;
+        // Adjust horizontal position to prevent overflow
+        if (left + popupWidth > viewportWidth - 15) {
+            // If popup would overflow right edge, align right edge of popup with right edge of clicked element
+            left = rect.right - popupWidth;
         }
         
-        // Simple left edge check
-        if (left < 10) {
-            left = 10;
+        // If still overflowing left edge, move to minimum safe position
+        if (left < 15) {
+            left = 15;
         }
         
-        // Simple bottom edge check - show above if would overflow
-        if (rect.bottom + popupHeight > viewportHeight - 10) {
-            top = rect.top + window.scrollY - popupHeight - 5;
+        // Adjust vertical position to prevent overflow
+        if (top + popupHeight > viewportHeight - 15) {
+            // If popup would overflow bottom, show above the footnote marker instead
+            top = rect.top - popupHeight - 5;
+            
+            // If showing above would put it above viewport, constrain to visible area
+            if (top < 15) {
+                top = 15;
+            }
         }
         
+        // Apply final positioning using fixed positioning (relative to viewport)
+        popup.style.position = 'fixed';
         popup.style.left = `${left}px`;
         popup.style.top = `${top}px`;
+        popup.style.visibility = 'visible';
         
         // Hide popup when clicking outside
         setTimeout(() => {

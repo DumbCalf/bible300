@@ -2644,7 +2644,7 @@ body {
 
 /* Footnote Popup */
 .footnote-popup {
-    position: absolute;
+    position: fixed;
     z-index: 10000;
     display: none;
     max-width: 300px;
