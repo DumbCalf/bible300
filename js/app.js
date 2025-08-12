@@ -2164,16 +2164,16 @@ class Bible300App {
         
         let missedDays = 0;
         
-        // Check each day from start date to today (use local dates)
+        // Check each day from start date to yesterday (use local dates)
         for (let day = 1; day <= this.CONSTANTS.TOTAL_DAYS; day++) {
             const dayDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + (day - 1));
             
-            // If this day's date has passed and it's not completed, it's missed
+            // If this day's date has passed (but is not today) and it's not completed, it's missed
             if (dayDate < currentDay && !this.completedDays.has(day)) {
                 missedDays++;
             }
             
-            // Stop checking if we're past today
+            // Stop checking if we've reached today or beyond
             if (dayDate >= currentDay) {
                 break;
             }
