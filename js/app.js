@@ -1739,6 +1739,7 @@ class Bible300App {
         // Calculate streak based on consecutive calendar days with at least one reading
         let streak = 0;
         const today = new Date();
+        const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         
         // Start from today and work backwards
         for (let daysBack = 0; daysBack < 365; daysBack++) {
@@ -1759,7 +1760,13 @@ class Bible300App {
             if (foundReadingOnDate) {
                 streak++;
             } else {
-                break; // Streak is broken
+                // Don't break streak on current day - it's still ongoing
+                if (this.isSameDate(checkDate, currentDay)) {
+                    // Skip today if no reading completed yet, but don't break streak
+                    continue;
+                } else {
+                    break; // Streak is broken on a past day
+                }
             }
         }
         this.domCache.streakDays.textContent = streak;
@@ -2161,23 +2168,15 @@ class Bible300App {
     calculateDaysMissed() {
         const today = new Date();
         const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const startDay = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate());
         
-        let missedDays = 0;
+        // Calculate how many calendar days have completely passed since start date
+        // Today doesn't count because you have until midnight to complete today's reading
+        const daysPassed = Math.floor((currentDay - startDay) / (1000 * 60 * 60 * 24));
         
-        // Check each day from start date to yesterday (use local dates)
-        for (let day = 1; day <= this.CONSTANTS.TOTAL_DAYS; day++) {
-            const dayDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + (day - 1));
-            
-            // If this day's date has passed (but is not today) and it's not completed, it's missed
-            if (dayDate < currentDay && !this.completedDays.has(day)) {
-                missedDays++;
-            }
-            
-            // Stop checking if we've reached today or beyond
-            if (dayDate >= currentDay) {
-                break;
-            }
-        }
+        // Missed days = days that have passed - readings completed
+        // Use Math.max to prevent negative numbers (when ahead of schedule)
+        const missedDays = Math.max(0, daysPassed - this.completedDays.size);
         
         return missedDays;
     }
