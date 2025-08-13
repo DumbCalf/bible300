@@ -1761,7 +1761,7 @@ class Bible300App {
                 streak++;
             } else {
                 // Don't break streak on current day - it's still ongoing
-                if (this.isSameDate(checkDate, currentDay)) {
+                if (this.isSameDateString(checkDate, currentDay)) {
                     // Skip today if no reading completed yet, but don't break streak
                     continue;
                 } else {
