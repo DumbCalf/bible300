@@ -1175,7 +1175,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "147" },
         gospel: { book: "Parable", chapter: "" },
         wisdom: { book: "Sirach", chapter: "48" },
-        oldTestament: { book: "Hosea", chapter: "1-4" },
+        oldTestament: { book: "1 Chronicles", chapter: "1" },
         newTestament: { book: "Galatians", chapter: "6" }
     },
     {
@@ -1183,7 +1183,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "148" },
         gospel: { book: "Parable", chapter: "" },
         wisdom: { book: "Sirach", chapter: "49" },
-        oldTestament: { book: "Hosea", chapter: "5-9" },
+        oldTestament: { book: "1 Chronicles", chapter: "2-3" },
         newTestament: { book: "Ephesians", chapter: "1" }
     },
     {
@@ -1191,7 +1191,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "149" },
         gospel: { book: "Parable", chapter: "" },
         wisdom: { book: "Sirach", chapter: "50" },
-        oldTestament: { book: "Hosea", chapter: "10-14" },
+        oldTestament: { book: "1 Chronicles", chapter: "4-5" },
         newTestament: { book: "Ephesians", chapter: "2" }
     },
     {
@@ -1199,7 +1199,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "150" },
         gospel: { book: "Parable", chapter: "" },
         wisdom: { book: "Sirach", chapter: "51" },
-        oldTestament: { book: "Amos", chapter: "1-5" },
+        oldTestament: { book: "1 Chronicles", chapter: "6" },
         newTestament: { book: "Ephesians", chapter: "3" }
     },
     {
@@ -1207,7 +1207,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "1" },
         gospel: { book: "John", chapter: "1" },
         wisdom: { book: "Job", chapter: "1-2" },
-        oldTestament: { book: "Amos", chapter: "6-9" },
+        oldTestament: { book: "1 Chronicles", chapter: "7-8" },
         newTestament: { book: "Ephesians", chapter: "4" }
     },
     {
@@ -1215,7 +1215,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "2" },
         gospel: { book: "John", chapter: "2" },
         wisdom: { book: "Job", chapter: "3" },
-        oldTestament: { book: "Isaiah", chapter: "1-2" },
+        oldTestament: { book: "1 Chronicles", chapter: "9-10" },
         newTestament: { book: "Ephesians", chapter: "5" }
     },
     {
@@ -1223,7 +1223,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "3" },
         gospel: { book: "John", chapter: "3" },
         wisdom: { book: "Job", chapter: "4" },
-        oldTestament: { book: "Isaiah", chapter: "3-6" },
+        oldTestament: { book: "1 Chronicles", chapter: "11-12" },
         newTestament: { book: "Ephesians", chapter: "6" }
     },
     {
@@ -1231,7 +1231,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "4" },
         gospel: { book: "John", chapter: "4" },
         wisdom: { book: "Job", chapter: "5" },
-        oldTestament: { book: "Isaiah", chapter: "7-9" },
+        oldTestament: { book: "1 Chronicles", chapter: "13-15" },
         newTestament: { book: "Philippians", chapter: "1" }
     },
     {
@@ -1239,7 +1239,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "5" },
         gospel: { book: "John", chapter: "5" },
         wisdom: { book: "Job", chapter: "6" },
-        oldTestament: { book: "Isaiah", chapter: "10-13" },
+        oldTestament: { book: "1 Chronicles", chapter: "16-17" },
         newTestament: { book: "Philippians", chapter: "2" }
     },
     {
@@ -1247,7 +1247,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "6" },
         gospel: { book: "John", chapter: "6" },
         wisdom: { book: "Job", chapter: "7" },
-        oldTestament: { book: "Isaiah", chapter: "14-18" },
+        oldTestament: { book: "1 Chronicles", chapter: "18-21" },
         newTestament: { book: "Philippians", chapter: "3" }
     },
     {
@@ -1255,7 +1255,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "7" },
         gospel: { book: "John", chapter: "7" },
         wisdom: { book: "Job", chapter: "8" },
-        oldTestament: { book: "Isaiah", chapter: "19-22" },
+        oldTestament: { book: "1 Chronicles", chapter: "22-24" },
         newTestament: { book: "Philippians", chapter: "4" }
     },
     {
@@ -1263,7 +1263,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "8" },
         gospel: { book: "John", chapter: "8" },
         wisdom: { book: "Job", chapter: "9" },
-        oldTestament: { book: "Isaiah", chapter: "23-26" },
+        oldTestament: { book: "1 Chronicles", chapter: "25-26" },
         newTestament: { book: "Colossians", chapter: "1" }
     },
     {
@@ -1271,7 +1271,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "9" },
         gospel: { book: "John", chapter: "9" },
         wisdom: { book: "Job", chapter: "10" },
-        oldTestament: { book: "Isaiah", chapter: "27-29" },
+        oldTestament: { book: "1 Chronicles", chapter: "27-29" },
         newTestament: { book: "Colossians", chapter: "2" }
     },
     {
@@ -1279,7 +1279,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "10" },
         gospel: { book: "John", chapter: "10" },
         wisdom: { book: "Job", chapter: "11" },
-        oldTestament: { book: "Isaiah", chapter: "30-32" },
+        oldTestament: { book: "2 Chronicles", chapter: "1-4" },
         newTestament: { book: "Colossians", chapter: "3-4" }
     },
     {
@@ -1287,7 +1287,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "11" },
         gospel: { book: "John", chapter: "11" },
         wisdom: { book: "Job", chapter: "12" },
-        oldTestament: { book: "Isaiah", chapter: "33-36" },
+        oldTestament: { book: "2 Chronicles", chapter: "5-7" },
         newTestament: { book: "1 Thessalonians", chapter: "1-3" }
     },
     {
@@ -1295,7 +1295,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "12" },
         gospel: { book: "John", chapter: "12" },
         wisdom: { book: "Job", chapter: "13" },
-        oldTestament: { book: "Isaiah", chapter: "37-38" },
+        oldTestament: { book: "2 Chronicles", chapter: "8-10" },
         newTestament: { book: "1 Thessalonians", chapter: "4-5" }
     },
     {
@@ -1303,7 +1303,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "13" },
         gospel: { book: "John", chapter: "13" },
         wisdom: { book: "Job", chapter: "14" },
-        oldTestament: { book: "Isaiah", chapter: "39-41" },
+        oldTestament: { book: "2 Chronicles", chapter: "11-13" },
         newTestament: { book: "2 Thessalonians", chapter: "1-3" }
     },
     {
@@ -1311,7 +1311,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "14" },
         gospel: { book: "John", chapter: "14" },
         wisdom: { book: "Job", chapter: "15" },
-        oldTestament: { book: "Isaiah", chapter: "42-44" },
+        oldTestament: { book: "2 Chronicles", chapter: "14-17" },
         newTestament: { book: "1 Timothy", chapter: "1-2" }
     },
     {
@@ -1319,7 +1319,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "15" },
         gospel: { book: "John", chapter: "15" },
         wisdom: { book: "Job", chapter: "16" },
-        oldTestament: { book: "Isaiah", chapter: "45-48" },
+        oldTestament: { book: "2 Chronicles", chapter: "18-20" },
         newTestament: { book: "1 Timothy", chapter: "3-4" }
     },
     {
@@ -1327,7 +1327,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "16" },
         gospel: { book: "John", chapter: "16" },
         wisdom: { book: "Job", chapter: "17" },
-        oldTestament: { book: "Isaiah", chapter: "49-52" },
+        oldTestament: { book: "2 Chronicles", chapter: "21-23" },
         newTestament: { book: "1 Timothy", chapter: "5" }
     },
     {
@@ -1335,7 +1335,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "17" },
         gospel: { book: "John", chapter: "17" },
         wisdom: { book: "Job", chapter: "18" },
-        oldTestament: { book: "Isaiah", chapter: "53-57" },
+        oldTestament: { book: "2 Chronicles", chapter: "24-26" },
         newTestament: { book: "1 Timothy", chapter: "6" }
     },
     {
@@ -1343,7 +1343,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "18" },
         gospel: { book: "John", chapter: "18" },
         wisdom: { book: "Job", chapter: "19" },
-        oldTestament: { book: "Isaiah", chapter: "58-62" },
+        oldTestament: { book: "2 Chronicles", chapter: "27-29" },
         newTestament: { book: "2 Timothy", chapter: "1-2" }
     },
     {
@@ -1351,7 +1351,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "19" },
         gospel: { book: "John", chapter: "19" },
         wisdom: { book: "Job", chapter: "20" },
-        oldTestament: { book: "Isaiah", chapter: "63-66" },
+        oldTestament: { book: "2 Chronicles", chapter: "30-32" },
         newTestament: { book: "2 Timothy", chapter: "3-4" }
     },
     {
@@ -1359,7 +1359,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "20" },
         gospel: { book: "John", chapter: "20" },
         wisdom: { book: "Job", chapter: "21" },
-        oldTestament: { book: "Micah", chapter: "1-4" },
+        oldTestament: { book: "2 Chronicles", chapter: "33-34" },
         newTestament: { book: "Titus", chapter: "1-3" }
     },
     {
@@ -1367,7 +1367,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "21" },
         gospel: { book: "John", chapter: "21" },
         wisdom: { book: "Job", chapter: "22" },
-        oldTestament: { book: "Micah", chapter: "5-7" },
+        oldTestament: { book: "2 Chronicles", chapter: "35-36" },
         newTestament: { book: "Philemon", chapter: "1" }
     },
     {
@@ -1375,7 +1375,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "22" },
         gospel: { book: "Matthew", chapter: "1" },
         wisdom: { book: "Job", chapter: "23" },
-        oldTestament: { book: "Nahum", chapter: "1-3" },
+        oldTestament: { book: "Ezra", chapter: "1-2" },
         newTestament: { book: "Hebrews", chapter: "1-2" }
     },
     {
@@ -1383,7 +1383,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "23" },
         gospel: { book: "Matthew", chapter: "2" },
         wisdom: { book: "Job", chapter: "24" },
-        oldTestament: { book: "Zephaniah", chapter: "1-3" },
+        oldTestament: { book: "Ezra", chapter: "3-6" },
         newTestament: { book: "Hebrews", chapter: "3" }
     },
     {
@@ -1391,7 +1391,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "24" },
         gospel: { book: "Matthew", chapter: "3" },
         wisdom: { book: "Job", chapter: "25-26" },
-        oldTestament: { book: "Habakkuk", chapter: "1-3" },
+        oldTestament: { book: "Ezra", chapter: "7-8" },
         newTestament: { book: "Hebrews", chapter: "4-5" }
     },
     {
@@ -1399,7 +1399,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "25" },
         gospel: { book: "Matthew", chapter: "4" },
         wisdom: { book: "Job", chapter: "27" },
-        oldTestament: { book: "Jeremiah", chapter: "1-3" },
+        oldTestament: { book: "Ezra", chapter: "9-10" },
         newTestament: { book: "Hebrews", chapter: "6" }
     },
     {
@@ -1407,7 +1407,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "26" },
         gospel: { book: "Matthew", chapter: "5" },
         wisdom: { book: "Job", chapter: "28" },
-        oldTestament: { book: "Jeremiah", chapter: "4-5" },
+        oldTestament: { book: "Nehemiah", chapter: "1-3" },
         newTestament: { book: "Hebrews", chapter: "7" }
     },
     {
@@ -1415,7 +1415,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "27" },
         gospel: { book: "Matthew", chapter: "6" },
         wisdom: { book: "Job", chapter: "29" },
-        oldTestament: { book: "Jeremiah", chapter: "6-8" },
+        oldTestament: { book: "Nehemiah", chapter: "4-6" },
         newTestament: { book: "Hebrews", chapter: "8" }
     },
     {
@@ -1423,7 +1423,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "28" },
         gospel: { book: "Matthew", chapter: "7" },
         wisdom: { book: "Job", chapter: "30" },
-        oldTestament: { book: "Jeremiah", chapter: "9-11" },
+        oldTestament: { book: "Nehemiah", chapter: "7" },
         newTestament: { book: "Hebrews", chapter: "9" }
     },
     {
@@ -1431,7 +1431,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "29" },
         gospel: { book: "Matthew", chapter: "8" },
         wisdom: { book: "Job", chapter: "31" },
-        oldTestament: { book: "Jeremiah", chapter: "12-14" },
+        oldTestament: { book: "Nehemiah", chapter: "8-9" },
         newTestament: { book: "Hebrews", chapter: "10" }
     },
     {
@@ -1439,7 +1439,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "30" },
         gospel: { book: "Matthew", chapter: "9" },
         wisdom: { book: "Job", chapter: "32" },
-        oldTestament: { book: "Jeremiah", chapter: "15-17" },
+        oldTestament: { book: "Nehemiah", chapter: "10-11" },
         newTestament: { book: "Hebrews", chapter: "11" }
     },
     {
@@ -1447,7 +1447,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "31" },
         gospel: { book: "Matthew", chapter: "10" },
         wisdom: { book: "Job", chapter: "33" },
-        oldTestament: { book: "Jeremiah", chapter: "18-21" },
+        oldTestament: { book: "Nehemiah", chapter: "12-13" },
         newTestament: { book: "Hebrews", chapter: "12" }
     },
     {
@@ -1455,7 +1455,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "32" },
         gospel: { book: "Matthew", chapter: "11" },
         wisdom: { book: "Job", chapter: "34" },
-        oldTestament: { book: "Jeremiah", chapter: "22-24" },
+        oldTestament: { book: "Tobit", chapter: "1-3" },
         newTestament: { book: "Hebrews", chapter: "13" }
     },
     {
@@ -1463,7 +1463,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "33" },
         gospel: { book: "Matthew", chapter: "12" },
         wisdom: { book: "Job", chapter: "35" },
-        oldTestament: { book: "Jeremiah", chapter: "25-27" },
+        oldTestament: { book: "Tobit", chapter: "4-6" },
         newTestament: { book: "James", chapter: "1" }
     },
     {
@@ -1471,7 +1471,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "34" },
         gospel: { book: "Matthew", chapter: "13" },
         wisdom: { book: "Job", chapter: "36" },
-        oldTestament: { book: "Jeremiah", chapter: "28-30" },
+        oldTestament: { book: "Tobit", chapter: "7-10" },
         newTestament: { book: "James", chapter: "2" }
     },
     {
@@ -1479,7 +1479,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "35" },
         gospel: { book: "Matthew", chapter: "14" },
         wisdom: { book: "Job", chapter: "37" },
-        oldTestament: { book: "Jeremiah", chapter: "31-32" },
+        oldTestament: { book: "Tobit", chapter: "11-14" },
         newTestament: { book: "James", chapter: "3" }
     },
     {
@@ -1487,7 +1487,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "36" },
         gospel: { book: "Matthew", chapter: "15" },
         wisdom: { book: "Job", chapter: "38" },
-        oldTestament: { book: "Jeremiah", chapter: "33-34" },
+        oldTestament: { book: "Judith", chapter: "1-4" },
         newTestament: { book: "James", chapter: "4" }
     },
     {
@@ -1495,7 +1495,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "37" },
         gospel: { book: "Matthew", chapter: "16" },
         wisdom: { book: "Job", chapter: "39" },
-        oldTestament: { book: "Jeremiah", chapter: "35-37" },
+        oldTestament: { book: "Judith", chapter: "5-7" },
         newTestament: { book: "James", chapter: "5" }
     },
     {
@@ -1503,7 +1503,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "38" },
         gospel: { book: "Matthew", chapter: "17" },
         wisdom: { book: "Job", chapter: "40-41" },
-        oldTestament: { book: "Jeremiah", chapter: "38-41" },
+        oldTestament: { book: "Judith", chapter: "8-9" },
         newTestament: { book: "1 Peter", chapter: "1" }
     },
     {
@@ -1511,7 +1511,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "39" },
         gospel: { book: "Matthew", chapter: "18" },
         wisdom: { book: "Job", chapter: "42" },
-        oldTestament: { book: "Jeremiah", chapter: "42-45" },
+        oldTestament: { book: "Judith", chapter: "10-12" },
         newTestament: { book: "1 Peter", chapter: "2" }
     },
     {
@@ -1519,7 +1519,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "40" },
         gospel: { book: "Matthew", chapter: "19" },
         wisdom: { book: "Proverbs", chapter: "1" },
-        oldTestament: { book: "Jeremiah", chapter: "46-48" },
+        oldTestament: { book: "Judith", chapter: "13-16" },
         newTestament: { book: "1 Peter", chapter: "3" }
     },
     {
@@ -1527,7 +1527,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "41" },
         gospel: { book: "Matthew", chapter: "20" },
         wisdom: { book: "Proverbs", chapter: "2" },
-        oldTestament: { book: "Jeremiah", chapter: "49-50" },
+        oldTestament: { book: "Esther", chapter: "1-3" },
         newTestament: { book: "1 Peter", chapter: "4" }
     },
     {
@@ -1535,7 +1535,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "42" },
         gospel: { book: "Matthew", chapter: "21" },
         wisdom: { book: "Proverbs", chapter: "3" },
-        oldTestament: { book: "Jeremiah", chapter: "51" },
+        oldTestament: { book: "Esther", chapter: "4-5" },
         newTestament: { book: "1 Peter", chapter: "5" }
     },
     {
@@ -1543,7 +1543,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "43" },
         gospel: { book: "Matthew", chapter: "22" },
         wisdom: { book: "Proverbs", chapter: "4" },
-        oldTestament: { book: "Jeremiah", chapter: "52" },
+        oldTestament: { book: "Esther", chapter: "6-8" },
         newTestament: { book: "2 Peter", chapter: "1-3" }
     },
     {
@@ -1551,7 +1551,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "44" },
         gospel: { book: "Matthew", chapter: "23" },
         wisdom: { book: "Proverbs", chapter: "5" },
-        oldTestament: { book: "Lamentations", chapter: "1-3" },
+        oldTestament: { book: "Esther", chapter: "9-10" },
         newTestament: { book: "1 John", chapter: "1-2" }
     },
     {
@@ -1559,7 +1559,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "45" },
         gospel: { book: "Matthew", chapter: "24" },
         wisdom: { book: "Proverbs", chapter: "6" },
-        oldTestament: { book: "Lamentations", chapter: "4-5" },
+        oldTestament: { book: "Isaiah", chapter: "1-2" },
         newTestament: { book: "1 John", chapter: "3" }
     },
     {
@@ -1567,7 +1567,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "46" },
         gospel: { book: "Matthew", chapter: "25" },
         wisdom: { book: "Proverbs", chapter: "7" },
-        oldTestament: { book: "Baruch", chapter: "1-2" },
+        oldTestament: { book: "Isaiah", chapter: "3-6" },
         newTestament: { book: "1 John", chapter: "4" }
     },
     {
@@ -1575,7 +1575,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "47" },
         gospel: { book: "Matthew", chapter: "26" },
         wisdom: { book: "Proverbs", chapter: "8" },
-        oldTestament: { book: "Baruch", chapter: "3-4" },
+        oldTestament: { book: "Isaiah", chapter: "7-9" },
         newTestament: { book: "1 John", chapter: "5" }
     },
     {
@@ -1583,7 +1583,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "48" },
         gospel: { book: "Matthew", chapter: "27" },
         wisdom: { book: "Proverbs", chapter: "9" },
-        oldTestament: { book: "Baruch", chapter: "5-6" },
+        oldTestament: { book: "Isaiah", chapter: "10-13" },
         newTestament: { book: "2 John", chapter: "1" }
     },
     {
@@ -1591,7 +1591,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "49" },
         gospel: { book: "Matthew", chapter: "28" },
         wisdom: { book: "Proverbs", chapter: "10" },
-        oldTestament: { book: "Ezekiel", chapter: "1-3" },
+        oldTestament: { book: "Isaiah", chapter: "14-18" },
         newTestament: { book: "3 John", chapter: "1" }
     },
     {
@@ -1599,7 +1599,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "50" },
         gospel: { book: "Mark", chapter: "1" },
         wisdom: { book: "Proverbs", chapter: "11" },
-        oldTestament: { book: "Ezekiel", chapter: "4-7" },
+        oldTestament: { book: "Isaiah", chapter: "19-22" },
         newTestament: { book: "Jude", chapter: "1" }
     },
     {
@@ -1607,7 +1607,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "51" },
         gospel: { book: "Mark", chapter: "2" },
         wisdom: { book: "Proverbs", chapter: "12" },
-        oldTestament: { book: "Ezekiel", chapter: "8-11" },
+        oldTestament: { book: "Isaiah", chapter: "23-26" },
         newTestament: { book: "Romans", chapter: "1" }
     },
     {
@@ -1615,7 +1615,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "52" },
         gospel: { book: "Mark", chapter: "3" },
         wisdom: { book: "Proverbs", chapter: "13" },
-        oldTestament: { book: "Ezekiel", chapter: "12-14" },
+        oldTestament: { book: "Isaiah", chapter: "27-29" },
         newTestament: { book: "Romans", chapter: "2" }
     },
     {
@@ -1623,7 +1623,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "53" },
         gospel: { book: "Mark", chapter: "4" },
         wisdom: { book: "Proverbs", chapter: "14" },
-        oldTestament: { book: "Ezekiel", chapter: "15-16" },
+        oldTestament: { book: "Isaiah", chapter: "30-32" },
         newTestament: { book: "Romans", chapter: "3" }
     },
     {
@@ -1631,7 +1631,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "54" },
         gospel: { book: "Mark", chapter: "5" },
         wisdom: { book: "Proverbs", chapter: "15" },
-        oldTestament: { book: "Ezekiel", chapter: "17-19" },
+        oldTestament: { book: "Isaiah", chapter: "33-36" },
         newTestament: { book: "Romans", chapter: "4" }
     },
     {
@@ -1639,7 +1639,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "55" },
         gospel: { book: "Mark", chapter: "6" },
         wisdom: { book: "Proverbs", chapter: "16" },
-        oldTestament: { book: "Ezekiel", chapter: "20-21" },
+        oldTestament: { book: "Isaiah", chapter: "37-38" },
         newTestament: { book: "Romans", chapter: "5" }
     },
     {
@@ -1647,7 +1647,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "56" },
         gospel: { book: "Mark", chapter: "7" },
         wisdom: { book: "Proverbs", chapter: "17" },
-        oldTestament: { book: "Ezekiel", chapter: "22-23" },
+        oldTestament: { book: "Isaiah", chapter: "39-41" },
         newTestament: { book: "Romans", chapter: "6" }
     },
     {
@@ -1655,7 +1655,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "57" },
         gospel: { book: "Mark", chapter: "8" },
         wisdom: { book: "Proverbs", chapter: "18" },
-        oldTestament: { book: "Ezekiel", chapter: "24-26" },
+        oldTestament: { book: "Isaiah", chapter: "42-44" },
         newTestament: { book: "Romans", chapter: "7" }
     },
     {
@@ -1663,7 +1663,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "58" },
         gospel: { book: "Mark", chapter: "9" },
         wisdom: { book: "Proverbs", chapter: "19" },
-        oldTestament: { book: "Ezekiel", chapter: "27-29" },
+        oldTestament: { book: "Isaiah", chapter: "45-48" },
         newTestament: { book: "Romans", chapter: "8" }
     },
     {
@@ -1671,7 +1671,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "59" },
         gospel: { book: "Mark", chapter: "10" },
         wisdom: { book: "Proverbs", chapter: "20" },
-        oldTestament: { book: "Ezekiel", chapter: "30-32" },
+        oldTestament: { book: "Isaiah", chapter: "49-52" },
         newTestament: { book: "Romans", chapter: "9" }
     },
     {
@@ -1679,7 +1679,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "60" },
         gospel: { book: "Mark", chapter: "11" },
         wisdom: { book: "Proverbs", chapter: "21" },
-        oldTestament: { book: "Ezekiel", chapter: "33-34" },
+        oldTestament: { book: "Isaiah", chapter: "53-57" },
         newTestament: { book: "Romans", chapter: "10" }
     },
     {
@@ -1687,7 +1687,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "61" },
         gospel: { book: "Mark", chapter: "12" },
         wisdom: { book: "Proverbs", chapter: "22" },
-        oldTestament: { book: "Ezekiel", chapter: "35-36" },
+        oldTestament: { book: "Isaiah", chapter: "58-62" },
         newTestament: { book: "Romans", chapter: "11" }
     },
     {
@@ -1695,7 +1695,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "62" },
         gospel: { book: "Mark", chapter: "13" },
         wisdom: { book: "Proverbs", chapter: "23" },
-        oldTestament: { book: "Ezekiel", chapter: "37-38" },
+        oldTestament: { book: "Isaiah", chapter: "63-66" },
         newTestament: { book: "Romans", chapter: "12" }
     },
     {
@@ -1703,7 +1703,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "63" },
         gospel: { book: "Mark", chapter: "14" },
         wisdom: { book: "Proverbs", chapter: "24" },
-        oldTestament: { book: "Ezekiel", chapter: "39-40" },
+        oldTestament: { book: "Jeremiah", chapter: "1-3" },
         newTestament: { book: "Romans", chapter: "13" }
     },
     {
@@ -1711,7 +1711,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "64" },
         gospel: { book: "Mark", chapter: "15" },
         wisdom: { book: "Proverbs", chapter: "25" },
-        oldTestament: { book: "Ezekiel", chapter: "41-42" },
+        oldTestament: { book: "Jeremiah", chapter: "4-5" },
         newTestament: { book: "Romans", chapter: "14" }
     },
     {
@@ -1719,7 +1719,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "65" },
         gospel: { book: "Mark", chapter: "16" },
         wisdom: { book: "Proverbs", chapter: "26" },
-        oldTestament: { book: "Ezekiel", chapter: "43-45" },
+        oldTestament: { book: "Jeremiah", chapter: "6-8" },
         newTestament: { book: "Romans", chapter: "15" }
     },
     {
@@ -1727,7 +1727,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "66" },
         gospel: { book: "Luke", chapter: "1" },
         wisdom: { book: "Proverbs", chapter: "27" },
-        oldTestament: { book: "Ezekiel", chapter: "46-48" },
+        oldTestament: { book: "Jeremiah", chapter: "9-11" },
         newTestament: { book: "Romans", chapter: "16" }
     },
     {
@@ -1735,7 +1735,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "67" },
         gospel: { book: "Luke", chapter: "2" },
         wisdom: { book: "Proverbs", chapter: "28" },
-        oldTestament: { book: "Daniel", chapter: "1-2" },
+        oldTestament: { book: "Jeremiah", chapter: "12-14" },
         newTestament: { book: "1 Corinthians", chapter: "1" }
     },
     {
@@ -1743,7 +1743,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "68" },
         gospel: { book: "Luke", chapter: "3" },
         wisdom: { book: "Proverbs", chapter: "29" },
-        oldTestament: { book: "Daniel", chapter: "3" },
+        oldTestament: { book: "Jeremiah", chapter: "15-17" },
         newTestament: { book: "1 Corinthians", chapter: "2" }
     },
     {
@@ -1751,7 +1751,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "69" },
         gospel: { book: "Luke", chapter: "4" },
         wisdom: { book: "Proverbs", chapter: "30" },
-        oldTestament: { book: "Daniel", chapter: "4-6" },
+        oldTestament: { book: "Jeremiah", chapter: "18-21" },
         newTestament: { book: "1 Corinthians", chapter: "3" }
     },
     {
@@ -1759,7 +1759,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "70" },
         gospel: { book: "Luke", chapter: "5" },
         wisdom: { book: "Proverbs", chapter: "31" },
-        oldTestament: { book: "Daniel", chapter: "7-9" },
+        oldTestament: { book: "Jeremiah", chapter: "22-24" },
         newTestament: { book: "1 Corinthians", chapter: "4" }
     },
     {
@@ -1767,7 +1767,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "71" },
         gospel: { book: "Luke", chapter: "6" },
         wisdom: { book: "Ecclesiastes", chapter: "1-2" },
-        oldTestament: { book: "Daniel", chapter: "10-12" },
+        oldTestament: { book: "Jeremiah", chapter: "25-27" },
         newTestament: { book: "1 Corinthians", chapter: "5" }
     },
     {
@@ -1775,7 +1775,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "72" },
         gospel: { book: "Luke", chapter: "7" },
         wisdom: { book: "Ecclesiastes", chapter: "3-4" },
-        oldTestament: { book: "Daniel", chapter: "13" },
+        oldTestament: { book: "Jeremiah", chapter: "28-30" },
         newTestament: { book: "1 Corinthians", chapter: "6" }
     },
     {
@@ -1783,7 +1783,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "73" },
         gospel: { book: "Luke", chapter: "8" },
         wisdom: { book: "Ecclesiastes", chapter: "5-6" },
-        oldTestament: { book: "Daniel", chapter: "14" },
+        oldTestament: { book: "Jeremiah", chapter: "31-32" },
         newTestament: { book: "1 Corinthians", chapter: "7" }
     },
     {
@@ -1791,7 +1791,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "74" },
         gospel: { book: "Luke", chapter: "9" },
         wisdom: { book: "Ecclesiastes", chapter: "7-8" },
-        oldTestament: { book: "Obadiah", chapter: "1" },
+        oldTestament: { book: "Jeremiah", chapter: "33-34" },
         newTestament: { book: "1 Corinthians", chapter: "8" }
     },
     {
@@ -1799,7 +1799,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "75" },
         gospel: { book: "Luke", chapter: "10" },
         wisdom: { book: "Ecclesiastes", chapter: "9-10" },
-        oldTestament: { book: "Haggai", chapter: "1-2" },
+        oldTestament: { book: "Jeremiah", chapter: "35-37" },
         newTestament: { book: "1 Corinthians", chapter: "9" }
     },
     {
@@ -1807,7 +1807,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "76" },
         gospel: { book: "Luke", chapter: "11" },
         wisdom: { book: "Ecclesiastes", chapter: "11-12" },
-        oldTestament: { book: "Zechariah", chapter: "1-5" },
+        oldTestament: { book: "Jeremiah", chapter: "38-41" },
         newTestament: { book: "1 Corinthians", chapter: "10" }
     },
     {
@@ -1815,7 +1815,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "77" },
         gospel: { book: "Luke", chapter: "12" },
         wisdom: { book: "Song of Solomon", chapter: "1-2" },
-        oldTestament: { book: "Zechariah", chapter: "6-9" },
+        oldTestament: { book: "Jeremiah", chapter: "42-45" },
         newTestament: { book: "1 Corinthians", chapter: "11" }
     },
     {
@@ -1823,7 +1823,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "78" },
         gospel: { book: "Luke", chapter: "13" },
         wisdom: { book: "Song of Solomon", chapter: "3-4" },
-        oldTestament: { book: "Zechariah", chapter: "10-14" },
+        oldTestament: { book: "Jeremiah", chapter: "46-48" },
         newTestament: { book: "1 Corinthians", chapter: "12" }
     },
     {
@@ -1831,7 +1831,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "79" },
         gospel: { book: "Luke", chapter: "14" },
         wisdom: { book: "Song of Solomon", chapter: "5-6" },
-        oldTestament: { book: "Malachi", chapter: "1-4" },
+        oldTestament: { book: "Jeremiah", chapter: "49-50" },
         newTestament: { book: "1 Corinthians", chapter: "13" }
     },
     {
@@ -1839,7 +1839,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "80" },
         gospel: { book: "Luke", chapter: "15" },
         wisdom: { book: "Song of Solomon", chapter: "7-8" },
-        oldTestament: { book: "Joel", chapter: "1-3" },
+        oldTestament: { book: "Jeremiah", chapter: "51" },
         newTestament: { book: "1 Corinthians", chapter: "14" }
     },
     {
@@ -1847,7 +1847,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "81" },
         gospel: { book: "Luke", chapter: "16" },
         wisdom: { book: "Wisdom of Solomon", chapter: "1" },
-        oldTestament: { book: "Jonah", chapter: "1-4" },
+        oldTestament: { book: "Jeremiah", chapter: "52" },
         newTestament: { book: "1 Corinthians", chapter: "15" }
     },
     {
@@ -1855,7 +1855,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "82" },
         gospel: { book: "Luke", chapter: "17" },
         wisdom: { book: "Wisdom of Solomon", chapter: "2" },
-        oldTestament: { book: "1 Chronicles", chapter: "1" },
+        oldTestament: { book: "Lamentations", chapter: "1-3" },
         newTestament: { book: "1 Corinthians", chapter: "16" }
     },
     {
@@ -1863,7 +1863,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "83" },
         gospel: { book: "Luke", chapter: "18" },
         wisdom: { book: "Wisdom of Solomon", chapter: "3" },
-        oldTestament: { book: "1 Chronicles", chapter: "2-3" },
+        oldTestament: { book: "Lamentations", chapter: "4-5" },
         newTestament: { book: "2 Corinthians", chapter: "1" }
     },
     {
@@ -1871,7 +1871,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "84" },
         gospel: { book: "Luke", chapter: "19" },
         wisdom: { book: "Wisdom of Solomon", chapter: "4" },
-        oldTestament: { book: "1 Chronicles", chapter: "4-5" },
+        oldTestament: { book: "Baruch", chapter: "1-2" },
         newTestament: { book: "2 Corinthians", chapter: "2" }
     },
     {
@@ -1879,7 +1879,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "85" },
         gospel: { book: "Luke", chapter: "20" },
         wisdom: { book: "Wisdom of Solomon", chapter: "5" },
-        oldTestament: { book: "1 Chronicles", chapter: "6" },
+        oldTestament: { book: "Baruch", chapter: "3-4" },
         newTestament: { book: "2 Corinthians", chapter: "3" }
     },
     {
@@ -1887,7 +1887,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "86" },
         gospel: { book: "Luke", chapter: "21" },
         wisdom: { book: "Wisdom of Solomon", chapter: "6" },
-        oldTestament: { book: "1 Chronicles", chapter: "7-8" },
+        oldTestament: { book: "Baruch", chapter: "5-6" },
         newTestament: { book: "2 Corinthians", chapter: "4-5" }
     },
     {
@@ -1895,7 +1895,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "87" },
         gospel: { book: "Luke", chapter: "22" },
         wisdom: { book: "Wisdom of Solomon", chapter: "7" },
-        oldTestament: { book: "1 Chronicles", chapter: "9-10" },
+        oldTestament: { book: "Ezekiel", chapter: "1-3" },
         newTestament: { book: "2 Corinthians", chapter: "6-7" }
     },
     {
@@ -1903,7 +1903,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "88" },
         gospel: { book: "Luke", chapter: "23" },
         wisdom: { book: "Wisdom of Solomon", chapter: "8" },
-        oldTestament: { book: "1 Chronicles", chapter: "11-12" },
+        oldTestament: { book: "Ezekiel", chapter: "4-7" },
         newTestament: { book: "2 Corinthians", chapter: "8" }
     },
     {
@@ -1911,7 +1911,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "89" },
         gospel: { book: "Luke", chapter: "24" },
         wisdom: { book: "Wisdom of Solomon", chapter: "9" },
-        oldTestament: { book: "1 Chronicles", chapter: "13-15" },
+        oldTestament: { book: "Ezekiel", chapter: "8-11" },
         newTestament: { book: "2 Corinthians", chapter: "9-10" }
     },
     {
@@ -1919,7 +1919,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "90" },
         gospel: { book: "Acts", chapter: "1" },
         wisdom: { book: "Wisdom of Solomon", chapter: "10" },
-        oldTestament: { book: "1 Chronicles", chapter: "16-17" },
+        oldTestament: { book: "Ezekiel", chapter: "12-14" },
         newTestament: { book: "2 Corinthians", chapter: "11" }
     },
     {
@@ -1927,7 +1927,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "91" },
         gospel: { book: "Acts", chapter: "2" },
         wisdom: { book: "Wisdom of Solomon", chapter: "11" },
-        oldTestament: { book: "1 Chronicles", chapter: "18-21" },
+        oldTestament: { book: "Ezekiel", chapter: "15-16" },
         newTestament: { book: "2 Corinthians", chapter: "12-13" }
     },
     {
@@ -1935,7 +1935,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "92" },
         gospel: { book: "Acts", chapter: "3" },
         wisdom: { book: "Wisdom of Solomon", chapter: "12" },
-        oldTestament: { book: "1 Chronicles", chapter: "22-24" },
+        oldTestament: { book: "Ezekiel", chapter: "17-19" },
         newTestament: { book: "Galatians", chapter: "1" }
     },
     {
@@ -1943,7 +1943,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "93" },
         gospel: { book: "Acts", chapter: "4" },
         wisdom: { book: "Wisdom of Solomon", chapter: "13" },
-        oldTestament: { book: "1 Chronicles", chapter: "25-26" },
+        oldTestament: { book: "Ezekiel", chapter: "20-21" },
         newTestament: { book: "Galatians", chapter: "2" }
     },
     {
@@ -1951,7 +1951,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "94" },
         gospel: { book: "Acts", chapter: "5" },
         wisdom: { book: "Wisdom of Solomon", chapter: "14" },
-        oldTestament: { book: "1 Chronicles", chapter: "27-29" },
+        oldTestament: { book: "Ezekiel", chapter: "22-23" },
         newTestament: { book: "Galatians", chapter: "3" }
     },
     {
@@ -1959,7 +1959,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "95" },
         gospel: { book: "Acts", chapter: "6" },
         wisdom: { book: "Wisdom of Solomon", chapter: "15" },
-        oldTestament: { book: "2 Chronicles", chapter: "1-4" },
+        oldTestament: { book: "Ezekiel", chapter: "24-26" },
         newTestament: { book: "Galatians", chapter: "4" }
     },
     {
@@ -1967,7 +1967,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "96" },
         gospel: { book: "Acts", chapter: "7" },
         wisdom: { book: "Wisdom of Solomon", chapter: "16" },
-        oldTestament: { book: "2 Chronicles", chapter: "5-7" },
+        oldTestament: { book: "Ezekiel", chapter: "27-29" },
         newTestament: { book: "Galatians", chapter: "5" }
     },
     {
@@ -1975,7 +1975,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "97" },
         gospel: { book: "Acts", chapter: "8" },
         wisdom: { book: "Wisdom of Solomon", chapter: "17" },
-        oldTestament: { book: "2 Chronicles", chapter: "8-10" },
+        oldTestament: { book: "Ezekiel", chapter: "30-32" },
         newTestament: { book: "Galatians", chapter: "6" }
     },
     {
@@ -1983,7 +1983,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "98" },
         gospel: { book: "Acts", chapter: "9" },
         wisdom: { book: "Wisdom of Solomon", chapter: "18" },
-        oldTestament: { book: "2 Chronicles", chapter: "11-13" },
+        oldTestament: { book: "Ezekiel", chapter: "33-34" },
         newTestament: { book: "Ephesians", chapter: "1" }
     },
     {
@@ -1991,7 +1991,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "99" },
         gospel: { book: "Acts", chapter: "10" },
         wisdom: { book: "Wisdom of Solomon", chapter: "19" },
-        oldTestament: { book: "2 Chronicles", chapter: "14-17" },
+        oldTestament: { book: "Ezekiel", chapter: "35-36" },
         newTestament: { book: "Ephesians", chapter: "2" }
     },
     {
@@ -1999,7 +1999,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "100" },
         gospel: { book: "Acts", chapter: "11" },
         wisdom: { book: "Sirach", chapter: "1" },
-        oldTestament: { book: "2 Chronicles", chapter: "18-20" },
+        oldTestament: { book: "Ezekiel", chapter: "37-38" },
         newTestament: { book: "Ephesians", chapter: "3" }
     },
     {
@@ -2007,7 +2007,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "101" },
         gospel: { book: "Acts", chapter: "12" },
         wisdom: { book: "Sirach", chapter: "2" },
-        oldTestament: { book: "2 Chronicles", chapter: "21-23" },
+        oldTestament: { book: "Ezekiel", chapter: "39-40" },
         newTestament: { book: "Ephesians", chapter: "4" }
     },
     {
@@ -2015,7 +2015,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "102" },
         gospel: { book: "Acts", chapter: "13" },
         wisdom: { book: "Sirach", chapter: "3" },
-        oldTestament: { book: "2 Chronicles", chapter: "24-26" },
+        oldTestament: { book: "Ezekiel", chapter: "41-42" },
         newTestament: { book: "Ephesians", chapter: "5" }
     },
     {
@@ -2023,7 +2023,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "103" },
         gospel: { book: "Acts", chapter: "14" },
         wisdom: { book: "Sirach", chapter: "4" },
-        oldTestament: { book: "2 Chronicles", chapter: "27-29" },
+        oldTestament: { book: "Ezekiel", chapter: "43-45" },
         newTestament: { book: "Ephesians", chapter: "6" }
     },
     {
@@ -2031,7 +2031,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "104" },
         gospel: { book: "Acts", chapter: "15" },
         wisdom: { book: "Sirach", chapter: "5" },
-        oldTestament: { book: "2 Chronicles", chapter: "30-32" },
+        oldTestament: { book: "Ezekiel", chapter: "46-48" },
         newTestament: { book: "Philippians", chapter: "1" }
     },
     {
@@ -2039,7 +2039,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "105" },
         gospel: { book: "Acts", chapter: "16" },
         wisdom: { book: "Sirach", chapter: "6" },
-        oldTestament: { book: "2 Chronicles", chapter: "33-34" },
+        oldTestament: { book: "Daniel", chapter: "1-2" },
         newTestament: { book: "Philippians", chapter: "2" }
     },
     {
@@ -2047,7 +2047,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "106" },
         gospel: { book: "Acts", chapter: "17" },
         wisdom: { book: "Sirach", chapter: "7" },
-        oldTestament: { book: "2 Chronicles", chapter: "35-36" },
+        oldTestament: { book: "Daniel", chapter: "3" },
         newTestament: { book: "Philippians", chapter: "3" }
     },
     {
@@ -2055,7 +2055,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "107" },
         gospel: { book: "Acts", chapter: "18" },
         wisdom: { book: "Sirach", chapter: "8" },
-        oldTestament: { book: "Ezra", chapter: "1-2" },
+        oldTestament: { book: "Daniel", chapter: "4-6" },
         newTestament: { book: "Philippians", chapter: "4" }
     },
     {
@@ -2063,7 +2063,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "108" },
         gospel: { book: "Acts", chapter: "19" },
         wisdom: { book: "Sirach", chapter: "9" },
-        oldTestament: { book: "Ezra", chapter: "3-6" },
+        oldTestament: { book: "Daniel", chapter: "7-9" },
         newTestament: { book: "Colossians", chapter: "1" }
     },
     {
@@ -2071,7 +2071,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "109" },
         gospel: { book: "Acts", chapter: "20" },
         wisdom: { book: "Sirach", chapter: "10" },
-        oldTestament: { book: "Ezra", chapter: "7-8" },
+        oldTestament: { book: "Daniel", chapter: "10-12" },
         newTestament: { book: "Colossians", chapter: "2" }
     },
     {
@@ -2079,7 +2079,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "110" },
         gospel: { book: "Acts", chapter: "21" },
         wisdom: { book: "Sirach", chapter: "11" },
-        oldTestament: { book: "Ezra", chapter: "9-10" },
+        oldTestament: { book: "Daniel", chapter: "13" },
         newTestament: { book: "Colossians", chapter: "3-4" }
     },
     {
@@ -2087,7 +2087,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "111" },
         gospel: { book: "Acts", chapter: "22" },
         wisdom: { book: "Sirach", chapter: "12" },
-        oldTestament: { book: "Nehemiah", chapter: "1-3" },
+        oldTestament: { book: "Daniel", chapter: "14" },
         newTestament: { book: "1 Thessalonians", chapter: "1-3" }
     },
     {
@@ -2095,7 +2095,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "112" },
         gospel: { book: "Acts", chapter: "23" },
         wisdom: { book: "Sirach", chapter: "13" },
-        oldTestament: { book: "Nehemiah", chapter: "4-6" },
+        oldTestament: { book: "Hosea", chapter: "1-4" },
         newTestament: { book: "1 Thessalonians", chapter: "4-5" }
     },
     {
@@ -2103,7 +2103,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "113" },
         gospel: { book: "Acts", chapter: "24" },
         wisdom: { book: "Sirach", chapter: "14" },
-        oldTestament: { book: "Nehemiah", chapter: "7" },
+        oldTestament: { book: "Hosea", chapter: "5-9" },
         newTestament: { book: "2 Thessalonians", chapter: "1-3" }
     },
     {
@@ -2111,7 +2111,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "114" },
         gospel: { book: "Acts", chapter: "25" },
         wisdom: { book: "Sirach", chapter: "15" },
-        oldTestament: { book: "Nehemiah", chapter: "8-9" },
+        oldTestament: { book: "Hosea", chapter: "10-14" },
         newTestament: { book: "1 Timothy", chapter: "1-2" }
     },
     {
@@ -2119,7 +2119,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "115" },
         gospel: { book: "Acts", chapter: "26" },
         wisdom: { book: "Sirach", chapter: "16" },
-        oldTestament: { book: "Nehemiah", chapter: "10-11" },
+        oldTestament: { book: "Joel", chapter: "1-3" },
         newTestament: { book: "1 Timothy", chapter: "3-4" }
     },
     {
@@ -2127,7 +2127,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "116" },
         gospel: { book: "Acts", chapter: "27" },
         wisdom: { book: "Sirach", chapter: "17" },
-        oldTestament: { book: "Nehemiah", chapter: "12-13" },
+        oldTestament: { book: "Amos", chapter: "1-5" },
         newTestament: { book: "1 Timothy", chapter: "5" }
     },
     {
@@ -2135,7 +2135,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "117" },
         gospel: { book: "Acts", chapter: "28" },
         wisdom: { book: "Sirach", chapter: "18" },
-        oldTestament: { book: "Tobit", chapter: "1-3" },
+        oldTestament: { book: "Amos", chapter: "6-9" },
         newTestament: { book: "1 Timothy", chapter: "6" }
     },
     {
@@ -2143,7 +2143,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "118" },
         gospel: { book: "Revelation", chapter: "1" },
         wisdom: { book: "Sirach", chapter: "19" },
-        oldTestament: { book: "Tobit", chapter: "4-6" },
+        oldTestament: { book: "Obadiah", chapter: "1" },
         newTestament: { book: "2 Timothy", chapter: "1-2" }
     },
     {
@@ -2151,7 +2151,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "119" },
         gospel: { book: "Revelation", chapter: "2" },
         wisdom: { book: "Sirach", chapter: "20" },
-        oldTestament: { book: "Tobit", chapter: "7-10" },
+        oldTestament: { book: "Jonah", chapter: "1-4" },
         newTestament: { book: "2 Timothy", chapter: "3-4" }
     },
     {
@@ -2159,7 +2159,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "120" },
         gospel: { book: "Revelation", chapter: "3" },
         wisdom: { book: "Sirach", chapter: "21" },
-        oldTestament: { book: "Tobit", chapter: "11-14" },
+        oldTestament: { book: "Micah", chapter: "1-4" },
         newTestament: { book: "Titus", chapter: "1-3" }
     },
     {
@@ -2167,7 +2167,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "121" },
         gospel: { book: "Revelation", chapter: "4" },
         wisdom: { book: "Sirach", chapter: "22" },
-        oldTestament: { book: "Judith", chapter: "1-4" },
+        oldTestament: { book: "Micah", chapter: "5-7" },
         newTestament: { book: "Philemon", chapter: "1" }
     },
     {
@@ -2175,7 +2175,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "122" },
         gospel: { book: "Revelation", chapter: "5" },
         wisdom: { book: "Sirach", chapter: "23" },
-        oldTestament: { book: "Judith", chapter: "5-7" },
+        oldTestament: { book: "Nahum", chapter: "1-3" },
         newTestament: { book: "Hebrews", chapter: "1-2" }
     },
     {
@@ -2183,7 +2183,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "123" },
         gospel: { book: "Revelation", chapter: "6" },
         wisdom: { book: "Sirach", chapter: "24" },
-        oldTestament: { book: "Judith", chapter: "8-9" },
+        oldTestament: { book: "Habakkuk", chapter: "1-3" },
         newTestament: { book: "Hebrews", chapter: "3" }
     },
     {
@@ -2191,7 +2191,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "124" },
         gospel: { book: "Revelation", chapter: "7" },
         wisdom: { book: "Sirach", chapter: "25" },
-        oldTestament: { book: "Judith", chapter: "10-12" },
+        oldTestament: { book: "Zephaniah", chapter: "1-3" },
         newTestament: { book: "Hebrews", chapter: "4-5" }
     },
     {
@@ -2199,7 +2199,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "125" },
         gospel: { book: "Revelation", chapter: "8" },
         wisdom: { book: "Sirach", chapter: "26" },
-        oldTestament: { book: "Judith", chapter: "13-16" },
+        oldTestament: { book: "Haggai", chapter: "1-2" },
         newTestament: { book: "Hebrews", chapter: "6" }
     },
     {
@@ -2207,7 +2207,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "126" },
         gospel: { book: "Revelation", chapter: "9" },
         wisdom: { book: "Sirach", chapter: "27" },
-        oldTestament: { book: "Esther", chapter: "1-3" },
+        oldTestament: { book: "Zechariah", chapter: "1-5" },
         newTestament: { book: "Hebrews", chapter: "7" }
     },
     {
@@ -2215,7 +2215,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "127" },
         gospel: { book: "Revelation", chapter: "10" },
         wisdom: { book: "Sirach", chapter: "28" },
-        oldTestament: { book: "Esther", chapter: "4-5" },
+        oldTestament: { book: "Zechariah", chapter: "6-9" },
         newTestament: { book: "Hebrews", chapter: "8" }
     },
     {
@@ -2223,7 +2223,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "128" },
         gospel: { book: "Revelation", chapter: "11" },
         wisdom: { book: "Sirach", chapter: "29" },
-        oldTestament: { book: "Esther", chapter: "6-8" },
+        oldTestament: { book: "Zechariah", chapter: "10-14" },
         newTestament: { book: "Hebrews", chapter: "9" }
     },
     {
@@ -2231,7 +2231,7 @@ const READING_PLAN = [
         psalm: { book: "Psalm", chapter: "129" },
         gospel: { book: "Revelation", chapter: "12" },
         wisdom: { book: "Sirach", chapter: "30" },
-        oldTestament: { book: "Esther", chapter: "9-10" },
+        oldTestament: { book: "Malachi", chapter: "1-4" },
         newTestament: { book: "Hebrews", chapter: "10" }
     },
     {
